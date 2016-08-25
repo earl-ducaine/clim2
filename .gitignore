@@ -1,5 +1,5 @@
 .git-branch-name
-*.tmp
+# *.tmp
 *.a
 *.o
 *.fasl
