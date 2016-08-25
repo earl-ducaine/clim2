@@ -166,7 +166,7 @@
 
 (defun font-name-of-aliased-font (display fontname)
   (excl:with-native-string (nfn fontname)
-    (let ((font (x11:xloadqueryfont display nfn)))      
+    (let ((font (x11:xloadqueryfont display nfn)))
       (unless (zerop font)
         (unwind-protect
             (loop for i from 0 below (x11:xfontstruct-n-properties font)
@@ -174,7 +174,7 @@
                                   (* i 2 #-64bit 4 #+64bit 8)
                                   (x11:xfontstruct-properties font))
                   when (eql x11:xa-font (x11:xfontprop-name fontprop))
-                    do (return (values (excl:native-to-string 
+                    do (return (values (excl:native-to-string
                                         (x11:xgetatomname display
                                                           (x11:xfontprop-card32 fontprop))))))
           (x11:xfreefont display font))))))
@@ -354,7 +354,7 @@ setup."
           (let* ((default-fallback (disassemble-x-font-name (font-name-of-aliased-font display *default-fallback-font*)))
                  (weight (nth 3 default-fallback))
                  (slant (nth 4 default-fallback)))
-            (loop for character-set from (1+ charset-number) 
+            (loop for character-set from (1+ charset-number)
                   for encoding being the hash-keys of (list-fonts-by-registry display) using (hash-value fonts)
                   for fallback-font = (find-font-with-properties fonts weight slant)
                   for default-font-match-string = (format nil "-*-*-*-*-*-*-*-*-*-*-*-*-~A-~A" (first encoding) (second encoding))
@@ -795,7 +795,7 @@ setup."
 	;; rather than simply setting the frame-state to :shrunk
 	;; and :enabled respectively.  (This happens on the
 	;; respective :after methods in silica/framem.lisp.)
-	;; Note that according to the documenation, calling 
+	;; Note that according to the documenation, calling
 	;; these methods also directly iconify/deiconify the
 	;; frame (by calling the functions x11:xmapwindow
 	;; and x11:xiconifywindow and  --see tk-silica/xt-frames.lisp.)
@@ -804,7 +804,7 @@ setup."
 	(case (tk::event-type event)
 	  (:map-notify
 	   (when (eq state :shrunk)
-	     (note-frame-deiconified (frame-manager frame) frame) 
+	     (note-frame-deiconified (frame-manager frame) frame)
 	     ))
 	  (:unmap-notify
 	   ;; spr17465
@@ -816,7 +816,7 @@ setup."
 	   ;; response, since it is not only unnecessary, it is detrimental.
 	   ;; That is the purpose of *suppress-xevents*.
 	   (when (eq state :enabled)
-	     (note-frame-iconified (frame-manager frame) frame) 
+	     (note-frame-iconified (frame-manager frame) frame)
 	     )))))))
 
 (defmethod find-widget-class-and-name-for-sheet
@@ -1108,7 +1108,7 @@ setup."
                          (multiple-value-list
                           (port-glyph-for-character-from-font-set port character font-set))))))
            (port-glyph-for-character-from-font-set port character font-set))))
-   
+
    (defmethod port-glyph-for-character-from-font-set ((port xt-port) character font-set)
      (multiple-value-bind (native-string length) (excl:string-to-native (string character))
        (unwind-protect
@@ -1555,7 +1555,7 @@ setup."
                (loop for index from 0 below max-keypermod
                      do (setf keysym (x11:xkeycodetokeysym display key index))
                      while (zerop keysym)
-                     
+
                      finally  (return keysym))))
       (unwind-protect
           ;; "The modifiermap member of the XModifierKeymap structure
@@ -1569,11 +1569,11 @@ setup."
                                        0 :unsigned-byte)
                          unless (zerop key)
                            do (case (translate-key key)
-                                ((#.x11:XK-Meta-L #.x11:XK-Meta-R)
+                                ((#.x11:|XK-Meta-L| #.x11:|XK-Meta-R|)
                                  (setf +meta-modifier-mask+ mod-keyword))
-                                ((#.x11:XK-Super-L #.x11:XK-Super-R)
+                                ((#.x11:|XK-Super-L| #.x11:|XK-Super-R|)
                                  (setf +super-modifier-mask+ mod-keyword))
-                                ((#.x11:XK-Hyper-L #.x11:XK-Hyper-R)
+                                ((#.x11:|XK-Hyper-L| #.x11:|XK-Hyper-R|)
                                  (setf +hyper-modifier-mask+ mod-keyword)))))
         (x11:xfreemodifiermap modifier-map)))
     (values +meta-modifier-mask+ +super-modifier-mask+ +hyper-modifier-mask+)))
@@ -1895,7 +1895,7 @@ the geometry of the children. Instead the parent has control. "))
 ;;; New function.  Put near port-set-pointer-position-1 in tk-silica/xt-silica.lisp
 ;;; On motif, port-set-pointer-position used to
 ;;; call port-set-pointer-position-1, which sets the pointer
-;;; based on the underlying sheet.  
+;;; based on the underlying sheet.
 ;;; We need a function which sets it explicitly relatibe
 ;;; to the root.
 (defun port-set-pointer-position-root (port sheet x y)
@@ -1944,7 +1944,7 @@ the geometry of the children. Instead the parent has control. "))
 ;;; created, then the X-side might not be ready yet.
 ;;; In particular, the call to widget-window will fail.
 ;;; So, if the call fails, we now re-try a few times.
-;;; Eventually we time-out so that we don't risk an 
+;;; Eventually we time-out so that we don't risk an
 ;;; infinite-loop.
 (defmethod raise-mirror ((port xt-port) (sheet top-level-sheet))
   ;; Compensate for the top-level-sheet's mirror not being the right window.
@@ -2275,14 +2275,14 @@ the geometry of the children. Instead the parent has control. "))
    ;; (cim 12/13/94)
    (cond ((typep frame 'tk-silica::motif-menu-frame)
 	  ;; spr25913
-	  ;; For this type of frame, calling set-values on the 
+	  ;; For this type of frame, calling set-values on the
 	  ;; sheet-direct-mirror does not cause the frame to move.
-	  ;; For now, be paranoid and specialize only on the 
+	  ;; For now, be paranoid and specialize only on the
 	  ;; specific class.
 	  (frame-shell frame))
 	 ((popup-frame-p frame)
 	  (sheet-direct-mirror (frame-top-level-sheet frame)))
-	 (t 
+	 (t
 	  (frame-shell frame)))
    :x x :y y))
 
@@ -2321,5 +2321,3 @@ the geometry of the children. Instead the parent has control. "))
 (defmacro with-toolkit-dialog-component ((tag value) &body body)
   `(letf-globally (((getf (mp:process-property-list mp:*current-process*) ',tag) ,value))
        ,@body))
-
-

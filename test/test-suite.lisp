@@ -2493,7 +2493,7 @@ Luke Luck licks the lakes Luke's duck likes."))
 (define-test (select-file-test menus-and-dialogs) (stream)
   "A simple test of SELECT-FILE."
   (let ((sel-file (select-file (pane-frame stream))))
-    (cond (sel-file 
+    (cond (sel-file
 	   (write-string (namestring sel-file)))
 	  (t
 	   (write-string "[cancel]")))))
@@ -3437,42 +3437,42 @@ Luke Luck licks the lakes Luke's duck likes."))
 	     ,@body)
 	 (setf (symbol-function 'read-gesture) ,oldn)))))
 
-(define-benchmark (simple-menu-choose :iterations 10) (stream)
-  "Pop up a simple menu of colors"
-  (without-clim-input
-   (if #-(or aclpc acl86win32) (typep (port stream) 'xm-silica::xt-port)
-       #+(or aclpc acl86win32) nil
-        (sleep 0.1) ;; Avoid division by zero!
-        (menu-choose '(("Red" :value +red+)
-                       ("Green" :value +green+)
-                       ("Blue" :value +blue+)
-                       ("Yellow" :value +yellow+)
-                       ("Orange" :value +orange+)
-                       ("White" :value +white+)
-                       ("Black" :value +black+))
-                     :label "Please choose a color"
-                     :printer #'print-menu-item        ;no Macintosh menus, please
-                     :cache nil
-                     :associated-window stream))))
+;; (define-benchmark (simple-menu-choose :iterations 10) (stream)
+;;   "Pop up a simple menu of colors"
+;;   (without-clim-input
+;;    (if #-(or aclpc acl86win32) (typep (port stream) 'xm-silica::xt-port)
+;;        #+(or aclpc acl86win32) nil
+;;         (sleep 0.1) ;; Avoid division by zero!
+;;         (menu-choose '(("Red" :value +red+)
+;;                        ("Green" :value +green+)
+;;                        ("Blue" :value +blue+)
+;;                        ("Yellow" :value +yellow+)
+;;                        ("Orange" :value +orange+)
+;;                        ("White" :value +white+)
+;;                        ("Black" :value +black+))
+;;                      :label "Please choose a color"
+;;                      :printer #'print-menu-item        ;no Macintosh menus, please
+;;                      :cache nil
+;;                      :associated-window stream))))
 
-(define-benchmark (cached-menu-choose :iterations 10) (stream)
-  "Pop up a cached menu of colors"
-  (without-clim-input
-   (if #-(or aclpc acl86win32) (typep (port stream) 'xm-silica::xt-port)
-       #+(or aclpc acl86win32) nil
-        (sleep 0.1) ;; Avoid division by zero!
-        (menu-choose '(("Red" :value +red+)
-                       ("Green" :value +green+)
-                       ("Blue" :value +blue+)
-                       ("Yellow" :value +yellow+)
-                       ("Orange" :value +orange+)
-                       ("White" :value +white+)
-                       ("Black" :value +black+))
-                     :label "Please choose a color"
-                     :printer #'print-menu-item        ;no Macintosh menus, please
-                     :cache t
-                     :unique-id 'test-color-menu
-                     :associated-window stream))))
+;; (define-benchmark (cached-menu-choose :iterations 10) (stream)
+;;   "Pop up a cached menu of colors"
+;;   (without-clim-input
+;;    (if #-(or aclpc acl86win32) (typep (port stream) 'xm-silica::xt-port)
+;;        #+(or aclpc acl86win32) nil
+;;         (sleep 0.1) ;; Avoid division by zero!
+;;         (menu-choose '(("Red" :value +red+)
+;;                        ("Green" :value +green+)
+;;                        ("Blue" :value +blue+)
+;;                        ("Yellow" :value +yellow+)
+;;                        ("Orange" :value +orange+)
+;;                        ("White" :value +white+)
+;;                        ("Black" :value +black+))
+;;                      :label "Please choose a color"
+;;                      :printer #'print-menu-item        ;no Macintosh menus, please
+;;                      :cache t
+;;                      :unique-id 'test-color-menu
+;;                      :associated-window stream))))
 
 (define-benchmark (simple-dialog) (stream)
   "Present a simple dialog"
@@ -3612,11 +3612,6 @@ Luke Luck licks the lakes Luke's duck likes."))
     ((form 'form :gesture :select))
   (format t "~%The result of evaluating ~S is ~S" form (eval form)))
 
-(define-command (exit-clim-tests :command-table clim-tests :menu t)
-    ()
-  (frame-exit *application-frame*))
-
-
-
-
-
+;; (define-command (exit-clim-tests :command-table clim-tests :menu t)
+;;     ()
+;;   (frame-exit *application-frame*))

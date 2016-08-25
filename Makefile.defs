@@ -6,14 +6,14 @@ CLIM		= clim.dxl
 
 SHARED_EXT = so
 
-LISP	= ../src/lispi$(exe)
-DCL	= dcli
+LISP	= /home/rett/bin/alisp
+DCL	= /home/rett/dev/acl100express/alisp.dxl
 
 # Set the case mode when building and dumping an image
 # case_mode:
 #	ansi -- traditional case-insensitive upper-case CL
 #	modern -- case-sensitive lower-case CL
-case_mode = modern
+case_mode = ansi
 
 ifeq ($(case_mode),ansi)
 CASE_MODE		= :case-insensitive-upper
@@ -32,7 +32,7 @@ endif
 # load_patches:
 #	yes -- load them
 #	no -- don't load
-load_patches = yes
+load_patches = no
 
 ifeq ($(load_patches),no)
 STOP_PATCHES = '(pushnew :clim-dont-load-patches *features*)'

@@ -14,7 +14,7 @@
 		(push (list* x ys) ,points)))
 	 ,@body)
        (plot-points ,stream ,points ,@options))))
-  
+
 ;; We should make presentations of these types
 
 (define-presentation-type graph-plot ())
@@ -22,10 +22,10 @@
 (define-presentation-type graph-region ())
 
 (define-presentation-method accept ((type graph-region) stream (view textual-view) &key)
-  (let ((ltrb (accept `((sequence-enumerated 
+  (let ((ltrb (accept `((sequence-enumerated
 			  ((sequence-enumerated real real) :echo-space nil)
 			  ((sequence-enumerated real real) :echo-space nil))
-			:separator #\: :echo-space nil) 
+			:separator #\: :echo-space nil)
 		      :prompt nil :stream stream)))
     (destructuring-bind ((left top) (right bottom)) ltrb
       (make-rectangle* left top right bottom))))
@@ -33,7 +33,7 @@
 (define-presentation-method present (region (type graph-region) stream (view textual-view) &key)
   (with-bounding-rectangle* (left top right bottom) region
     (present `((,left ,top) (,right ,bottom))
-	     `((sequence-enumerated 
+	     `((sequence-enumerated
 		 ((sequence-enumerated real real) :echo-space nil)
 		 ((sequence-enumerated real real) :echo-space nil))
 	       :separator #\: :echo-space nil)
@@ -63,7 +63,7 @@
 				    (sheet-pointer-cursor window)))
 	  (tracking-pointer (window)
 	    (:pointer-motion (x y)
-	     (draw-it) 
+	     (draw-it)
 	     (setq nx x ny y)
 	     (draw-it)
 	     (setf (sheet-pointer-cursor window)
@@ -83,7 +83,7 @@
 (define-presentation-type plot-point ())
 
 (define-presentation-method accept ((type plot-point) stream (view textual-view) &key)
-  (values (accept `((sequence-enumerated real real) :echo-space nil) 
+  (values (accept `((sequence-enumerated real real) :echo-space nil)
 		  :prompt nil :stream stream)))
 
 (define-presentation-method present (point (type plot-point) stream (view textual-view) &key)
@@ -103,10 +103,10 @@
 
 (define-presentation-type graph-axis ())
 
-(defun plot-points (stream points &key x-labels y-labels 
+(defun plot-points (stream points &key x-labels y-labels
 				       y-labelling
 				       x-min y-min
-				       x-max y-max 
+				       x-max y-max
 				       width height
 				       (type :plot))
   (etypecase points
@@ -117,7 +117,7 @@
 
   (multiple-value-setq  (width height)
     (default-width-and-height stream type points width height))
-    
+
   (multiple-value-setq (x-min y-min x-max y-max y-labelling)
     (default-graph-axis type points x-min y-min x-max y-max y-labelling))
 
@@ -149,7 +149,7 @@
 	(updating-output (stream :unique-id :caption)
 	  (formatting-cell (stream)
 	    (draw-caption stream type y-labels)))))))
-   
+
 (defun draw-caption (stream type y-labels)
   (updating-output (stream :unique-id 'captions
 			   :cache-value (cons type (copy-list y-labels))
@@ -172,7 +172,7 @@
 			  (draw-line* stream 0 (/ ascent 2) 20 (/ ascent 2)
 				      :ink (get-contrasting-inks stream n-lines i)
 				      :line-dashes (get-contrasting-dash-patterns
-						     stream n-lines i))) 
+						     stream n-lines i)))
 			(draw-rectangle* stream 0 0 20 (+ ascent descent)
 					 :ink
 					 (get-contrasting-inks stream n-lines i)))))
@@ -182,7 +182,7 @@
 	    (incf i)))))))
 
 (defun draw-axis (stream type width height
-		  x-min y-min x-max y-max x-labels y-labels 
+		  x-min y-min x-max y-max x-labels y-labels
 		  points transform y-labelling)
   (declare (ignore y-labels))
   ;; Y Axis
@@ -195,7 +195,7 @@
 	(draw-line* stream 0 0 0 height)
 	(do ((y y-min (+ y-labelling y)))
 	    ((> y y-max))
-	  (multiple-value-bind (tx ty) 
+	  (multiple-value-bind (tx ty)
 	      (transform-position transform x-min y)
 	    (draw-line* stream (- tx 2) ty (+ tx 2) ty)
 	    (let ((label (format nil "~3d" y)))
@@ -213,7 +213,7 @@
 	(draw-line* stream 0 0 width 0)
 	(let ((i 0))
 	  (dolist (label x-labels)
-	    (multiple-value-bind (tx ty) 
+	    (multiple-value-bind (tx ty)
 		(transform-position transform
 				    (if (eq type :bar) (1+ i) (aref points i 0)) y-min)
 	      (draw-line* stream tx (- ty 2) tx (+ ty 2))
@@ -229,10 +229,10 @@
   (destructuring-bind (rows columns) (array-dimensions points)
     (let ((totals (make-array rows :initial-element 0))
 	  (start-angles (make-array rows :initial-element 0)))
-      (dotimes (i rows) 
+      (dotimes (i rows)
 	(dotimes (j (1- columns))
 	  (incf (aref totals i) (aref points i (1+ j)))))
-      
+
       (dotimes (j (1- columns))
 	(updating-output (stream :unique-id `(pie ,j)
 				 :id-test #'equal
@@ -243,7 +243,7 @@
 	  (with-output-as-presentation (stream (1+ j) 'graph-line)
 	    (dotimes (i rows)
 	      (let ((angle (* 2 pi (/ (aref points i (1+ j)) (aref totals i)))))
-		(draw-circle* stream (+ 100 (* 125 i)) 100 50 
+		(draw-circle* stream (+ 100 (* 125 i)) 100 50
 			      :filled t
 			      :start-angle (aref start-angles i)
 			      :end-angle (incf (aref start-angles i) angle)
@@ -275,11 +275,11 @@
 		  (multiple-value-bind (top-tx top-ty) (transform-position transform x y)
 		    (declare (ignore top-tx))
 		    (let ((rx (+ base-tx offset (* thickness i))))
-		      (draw-rectangle* stream rx base-ty (+ rx thickness) top-ty 
-				       :filled t 
+		      (draw-rectangle* stream rx base-ty (+ rx thickness) top-ty
+				       :filled t
 				       :ink (get-contrasting-inks stream n-lines i)))))))))))))
-				 
-				 
+
+
 (defmethod draw-data (stream (type (eql :plot)) width height x-min y-min x-max y-max
 		      points transform)
   (destructuring-bind (rows columns) (array-dimensions points)
@@ -298,23 +298,23 @@
 	  (let (last-tx last-ty)
 	    (with-output-as-presentation (stream (1+ i) 'graph-line)
 	      (draw-lines*
-		stream 
-		(let ((r nil)) 
+		stream
+		(let ((r nil))
 		  (dotimes (j rows (nreverse r))
 		    (let ((x (aref points j 0))
 			  (y (aref points j (1+ i))))
 		      (multiple-value-bind
 			(tx ty)
 			  (transform-position transform x y)
-			(when last-tx 
-			  (push last-tx r) 
+			(when last-tx
+			  (push last-tx r)
 			  (push last-ty r)
 			  (push tx r)
 			  (push ty r))
 			(setq last-tx tx last-ty ty)))))
 		:ink (get-contrasting-inks stream n-lines i)
 		:line-dashes (get-contrasting-dash-patterns stream n-lines i))))
-      
+
 	  (dotimes (j rows)
 	    (let ((x (aref points j 0))
 		  (y (aref points j (1+ i))))
@@ -334,7 +334,7 @@
   (if (< i 2)
       (medium-foreground stream)
       (make-contrasting-inks i j)))
-      
+
 (defmethod default-width-and-height (stream (type (eql :plot)) points width height)
   (declare (ignore stream points width height)) ;;--??
   (values 400 300))
@@ -349,13 +349,13 @@
     (values (+ (* rows 10) (* columns rows 30))
 	    300)))
 
-(defmethod default-graph-axis ((type (eql :pie)) points supplied-x-min supplied-y-min 
+(defmethod default-graph-axis ((type (eql :pie)) points supplied-x-min supplied-y-min
 			       supplied-x-max supplied-y-max y-labelling)
   (declare (ignore points supplied-x-min supplied-y-min supplied-x-max
 		   supplied-y-max y-labelling))
   (values))
 
-(defmethod default-graph-axis ((type (eql :plot)) points supplied-x-min supplied-y-min 
+(defmethod default-graph-axis ((type (eql :plot)) points supplied-x-min supplied-y-min
 			       supplied-x-max supplied-y-max y-labelling)
   (let ((x-min supplied-x-min)
 	(y-min supplied-y-min)
@@ -376,13 +376,13 @@
 		  (clim-utils:maxf y-max y))))))))
     (values (or supplied-x-min x-min)
 	    (or supplied-y-min y-min)
-	    (or supplied-x-max x-max) 
+	    (or supplied-x-max x-max)
 	    (or supplied-y-max y-max)
-	    (or y-labelling 
-		(float (/ (- (or supplied-y-max y-max) 
+	    (or y-labelling
+		(float (/ (- (or supplied-y-max y-max)
 			     (or supplied-y-min y-min)) 10))))))
 
-(defmethod default-graph-axis ((type (eql :bar)) points supplied-x-min supplied-y-min 
+(defmethod default-graph-axis ((type (eql :bar)) points supplied-x-min supplied-y-min
 			       supplied-x-max supplied-y-max y-labelling)
   (declare (ignore supplied-x-min supplied-x-max))
   (destructuring-bind (rows columns) (array-dimensions points)
@@ -407,16 +407,16 @@
 		  (clim-utils:maxf y-max y)))))))
       (values supplied-x-min
 	      (or supplied-y-min y-min)
-	      supplied-x-max 
+	      supplied-x-max
 	      (or supplied-y-max y-max)
-	      (or y-labelling 
+	      (or y-labelling
 		  (float (/ (- (or supplied-y-max y-max)
 			       (or supplied-y-min y-min)) 10)))))))
 
 
 ;; Actual demo code.
 
-(define-application-frame plot-demo () 
+(define-application-frame plot-demo ()
     ((y-labelling :initform 5)
      (plot-data :initform (let ((x #2a((1960 5 11 14)
 				       (1970 8 15 16)
@@ -438,7 +438,7 @@
      (x-labels :initform (copy-list '("60" "70" "80" "90" "2000")))
      (y-labels :initform  (copy-list '("Mexico City" "Tokyo" "New York"))))
   (:command-table (plot-demo :inherit-from (plot-command-table accept-values-pane)))
-  (:panes 
+  (:panes
     (graph-window :application
 		  :label "Plot"
 		  :display-function 'display-graph
@@ -466,7 +466,7 @@
     (command :interactor :height '(5 :line)))
   (:pointer-documentation t)
   (:layouts
-   (:default (vertically () 
+   (:default (vertically ()
 	       graph-window
 	       options
 	       data-window
@@ -476,7 +476,7 @@
   (with-slots (x-min y-min x-max y-max graph-type) frame
 
     (setf graph-type (accept '(member :plot :bar :pie)
-			     :default graph-type 
+			     :default graph-type
 			     :stream stream
 			     :prompt "Graph type"))
     (unless (eq graph-type :pie)
@@ -498,7 +498,7 @@
 			  :default y-max
 			  :stream stream
 			  :prompt "Max Y")))))
-    
+
 (defmethod frame-standard-output ((fr plot-demo))
   (get-frame-pane fr 'command))
 
@@ -549,7 +549,7 @@
 				       :id-test #'equal
 				       :cache-value label
 				       :cache-test #'equalp)
-		(formatting-cell (stream) 
+		(formatting-cell (stream)
 		  (with-output-as-presentation (stream i 'y-label)
 		    (with-text-style (stream '(nil :bold-italic :large))
 		      (write-string label stream)))))
@@ -578,7 +578,7 @@
 			    (format stream "~2D" n)))))))))))))))
 
 (define-presentation-action drag-it-translator
-    (blank-area command plot-command-table 
+    (blank-area command plot-command-table
      :documentation "Drag scrolling"
      :gesture :describe)
     (window)
@@ -613,7 +613,7 @@
 (defun viewport-range (window)
   (multiple-value-bind (vwidth vheight)
       (bounding-rectangle-size (pane-viewport-region window))
-    (with-bounding-rectangle* (left top right bottom) 
+    (with-bounding-rectangle* (left top right bottom)
 	(silica:viewport-contents-extent (pane-viewport window))
       (let ((cwidth (- right left))
 	    (cheight (- bottom top)))
@@ -629,12 +629,13 @@
   #+mswindows (declare (ignore printer))
   #+mswindows
   (notify-user *application-frame* "Not implemented on this platform")
-  #+unix
-  (with-open-stream 
-      (pipe (excl:run-shell-command  (format nil "lpr -P~A" printer) :input :stream :wait nil))
-    (with-output-to-postscript-stream (stream pipe :multi-page t)
-      (display-graph *application-frame* stream))))
-      
+;;  #+unix
+  ;; (with-open-stream
+  ;;     (pipe (excl:run-shell-command  (format nil "lpr -P~A" printer) :input :stream :wait nil))
+  ;;   (with-output-to-postscript-stream (stream pipe :multi-page t)
+  ;;     (display-graph *application-frame* stream)))
+  )
+
 (define-plot-demo-command (com-edit-x-label :name t :menu t)
     ((i 'x-label :gesture :select))
   (with-application-frame (frame)
@@ -660,20 +661,20 @@
 		  :default (aref (slot-value frame 'plot-data) i
 				 j)))))))
 
-(define-plot-demo-command (com-quit-plot-demo :menu "Quit" :name "Quit") () 
+(define-plot-demo-command (com-quit-plot-demo :menu "Quit" :name "Quit") ()
   (frame-exit *application-frame*))
 
 (defmethod display-graph ((frame plot-demo) stream &key &allow-other-keys)
   (with-slots (y-labelling graph-type plot-data x-labels y-labels
 			   x-min y-min x-max y-max) frame
     (plot-points stream plot-data
-		 :y-labelling y-labelling 
+		 :y-labelling y-labelling
 		 :x-labels x-labels :y-labels y-labels
-		 :x-min x-min :y-min y-min 
+		 :x-min x-min :y-min y-min
 		 :x-max x-max :y-max y-max
 		 :type graph-type)))
 
-(define-plot-demo-command com-describe-graph-line 
+(define-plot-demo-command com-describe-graph-line
     ((line 'graph-line :gesture :describe))
   (describe line))
 
@@ -681,7 +682,7 @@
     ((point 'graph-point :gesture :describe))
   (describe point))
 
-(define-plot-demo-command (com-describe-region :name t) 
+(define-plot-demo-command (com-describe-region :name t)
     ((region 'graph-region :gesture :describe))
   (describe region))
 
@@ -716,7 +717,7 @@
       (let ((new-data (make-array (list rows (1- columns)))))
 	(dotimes (i rows)
 	  (dotimes (j (1- columns) )
-	    (setf (aref new-data i j) 
+	    (setf (aref new-data i j)
 		  (aref plot-data i (if (>= j line) (1+ j) j)))))
 	(setf plot-data new-data))
       (setf y-labels (append (subseq y-labels 0 (1- line))
@@ -733,7 +734,7 @@
 		  (max (+ (aref plot-data i j) (- (random 10) 5)) 0))))
 	(redisplay-frame-pane frame (get-frame-pane frame 'graph-window))
 	(force-output (get-frame-pane frame 'graph-window))))))
-	
+
 
 (define-plot-demo-command (com-save-as-data :name t) ()
   ;;--- It would be nice to be able to specify a default for the file
@@ -744,7 +745,7 @@
 		 (not (notify-user *application-frame* (format nil "Overwrite ~A" file)
 				   :style :warning)))
 	(return-from com-save-as-data))
-      (with-open-file (s file :direction :output 
+      (with-open-file (s file :direction :output
 			      :if-exists :supersede :if-does-not-exist :create)
 	(with-standard-io-syntax
 	  (with-slots (x-labels y-labels plot-data) *application-frame*
@@ -754,7 +755,7 @@
 	    (terpri s)
 	    (write plot-data :stream s)
 	    (terpri s)))))))
-	  
+
 (define-plot-demo-command (com-load-data :name t) ()
   ;;--- It would be nice to ensure that user could only specify a file
   ;;--- that exists
