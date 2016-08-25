@@ -11,14 +11,14 @@
 
 
 ;;; To use the Browser, first choose a browser type and browser subtype from
-;;; the ACCEPTING-VALUES pane in the lower right corner. 
-;;; 
+;;; the ACCEPTING-VALUES pane in the lower right corner.
+;;;
 ;;; After you have selected a browser type, use the "Show Graph" command to
 ;;; specify the root node for the graph.  You can supply more than one root.
 ;;; The type of the object you supply to "Show Graph" varies with what the
 ;;; browser type is (for example, when browsing classes you should type in
 ;;; a class name.)
-;;; 
+;;;
 ;;; Once there is a graph drawn, there are a number of useful mouse gestures
 ;;; defined for the nodes in the graph:
 ;;; - Mouse-Left on a leaf node shows one level of inferiors for that node.
@@ -38,7 +38,7 @@
 ;;; There are some other options in the ACCEPTING-VALUES pane:
 ;;; - The "starting depth" option specifies how deep to make the initial graph.
 ;;; - The "merge duplicate nodes" option specifies whether nodes in the tree
-;;;   should be shared or not.  
+;;;   should be shared or not.
 ;;;
 ;;; There are also a few command buttons:
 ;;; - The "Decache" button clears the graph.
@@ -77,7 +77,7 @@
   (declare (dynamic-extent continuation))
   ;; Heavily truncate the printed result
   (let ((*print-base* 10)
-	(*print-radix* nil)	  
+	(*print-radix* nil)
 	(*print-readably* nil)
 	(*print-pretty* nil)
 	(*print-length* *browser-print-length*)
@@ -95,7 +95,7 @@
 (defun invoke-centering-line (continuation stream)
   (multiple-value-bind (sx sy) (stream-cursor-position stream)
     (let ((inside-width (window-inside-width stream))
-	  (line-width (bounding-rectangle-width 
+	  (line-width (bounding-rectangle-width
 			(with-output-to-output-record (stream)
 			  (funcall continuation stream)))))
       (stream-set-cursor-position stream (+ sx (floor (- inside-width line-width) 2)) sy)
@@ -120,7 +120,7 @@
      ;; RECURSES is T iff this node eventually calls itself
      (recurses  :accessor node-recurses  :initform nil)
      (tick :accessor node-tick :initform 0)))
-  
+
 (defmethod node-object-name ((node basic-call-node))
   (node-object node))
 
@@ -233,13 +233,13 @@
 	     (setq *browser-types* (nconc *browser-types* (list ',type)))))
        (defmethod browser-type-subtypes ((type (eql ',type)))
 	 ',subtype-names)
-       ,@(mapcar 
+       ,@(mapcar
 	   #'(lambda (entry)
 	       (destructuring-bind (subtype node-maker root-node-maker grapher-args) entry
 		 `(defmethod browser-type-information ((type (eql ',type))
 						       (subtype (eql ',subtype)))
 		    (values ',node-maker ',root-node-maker
-			    ',graph-type ',grapher-args 
+			    ',graph-type ',grapher-args
 			    ',presentation-type ',options))))
 	   subtypes))))
 
@@ -247,7 +247,7 @@
 ;;; Function call browsing
 
 (defclass function-call-node (call-node) ())
-  
+
 (declaim (inline make-function-call-node))
 (defun make-function-call-node (object)
   (make-instance 'function-call-node :object object))
@@ -276,7 +276,7 @@
 
 (defun function-browser-make-root (object)
   (typecase object
-    (function 
+    (function
       (make-function-call-node object))
     (symbol
       (when (fboundp object)
@@ -301,8 +301,8 @@
 	;; Return all the real methods for this generic function
 	(loop for method in (clos-internals::sort-generic-function-methods
 			      function
-			      (copy-list (#-aclpc clos:generic-function-methods 
-                              #+aclpc generic-function-methods 
+			      (copy-list (#-aclpc clos:generic-function-methods
+                              #+aclpc generic-function-methods
                               function))
 			      :sort :heuristic)
 	      as function = (#-aclpc clos:method-function #+aclpc method-function method)
@@ -356,7 +356,7 @@
 (define-presentation-method accept ((type class) stream (view textual-view) &key)
   (find-class
     (completing-from-suggestions (stream :partial-completers '(#\-))
-      (map nil #'(lambda (x) 
+      (map nil #'(lambda (x)
 		   (if (listp x)
 		       (suggest (first x) (second x))
 		       (suggest (symbol-name x) x)))
@@ -466,7 +466,7 @@
 		(destructuring-bind (gf method) item
 		  (with-output-as-presentation (stream method 'expression
 						:allow-sensitive-inferiors nil)
-		    (prin1 (#-aclpc clos:generic-function-name 
+		    (prin1 (#-aclpc clos:generic-function-name
                     #+aclpc generic-function-name gf) stream)))))))))))
 
 
@@ -482,7 +482,7 @@
 #+(or allegro genera)
 (define-presentation-method accept ((type package) stream (view textual-view) &key)
   (completing-from-suggestions (stream :partial-completers '(#\-))
-    (map nil #'(lambda (package) 
+    (map nil #'(lambda (package)
 		 (suggest (package-name package) package))
 	 (list-all-packages))))
 
@@ -491,7 +491,7 @@
 
 
 (defclass package-call-node (call-node) ())
-  
+
 (declaim (inline make-package-call-node))
 (defun make-package-call-node (object)
   (make-instance 'package-call-node :object object))
@@ -570,7 +570,7 @@
 			 (make-pathname :name :wild
 					:type :wild
 					:version :newest
-					:directory (append (pathname-directory pathname) 
+					:directory (append (pathname-directory pathname)
 							   (list (pathname-name pathname)))
 					:defaults pathname)
 			 pathname)))
@@ -764,10 +764,10 @@
      (vertically ()
        (:fill graph)
        (horizontally ()
-	 (:fill interactor) 
+	 (:fill interactor)
 	 control-panel)))))
 
-  
+
 #+genera (define-genera-application browser :select-key #\)
 #+genera (zwei:defindentation (define-browser-command 0 3 1 3 2 1))
 
@@ -828,7 +828,7 @@
 				(merge-duplicates nil)
 				(arc-drawer #'draw-line-arc)
 				(arc-drawing-options nil)
-				(generation-separation 
+				(generation-separation
 				  *default-generation-separation*)
 				(within-generation-separation
 				  *default-within-generation-separation*)
@@ -911,7 +911,7 @@
   (with-slots (browser-subtype) browser
     (when nodes
       (let ((generated nil))
-	(labels 
+	(labels
 	  ((collect-inferiors (node parent-node depth)
 	     ;; Disallow direct recursion in a simple-minded way
 	     (when (and (plusp depth)
@@ -967,7 +967,7 @@
 (defmethod node-recurses-p ((browser browser) node inferior)
   (with-slots (all-nodes) browser
     (or (eql node inferior)			;quick test often succeeds
-	(let ((mark-table 
+	(let ((mark-table
 		#+genera (scl:make-hash-table :size (length all-nodes) :number-of-values 0)
 		#-genera (make-hash-table :size (length all-nodes))))
 	  (labels ((recurses (inferiors)
@@ -1034,13 +1034,13 @@
 
 (defmethod accept-call-graph-options ((browser browser) stream)
   (with-slots (browser-type browser-subtype tree-depth
-	       merge-duplicate-nodes auto-snapshot browser-options 
+	       merge-duplicate-nodes auto-snapshot browser-options
 	       root-nodes root-node-maker all-nodes) browser
     (flet ((accept (type default prompt query-id &rest options)
 	     (apply #'accept type
 		     :stream stream :default default
 		     :query-identifier query-id
-		     :prompt prompt 
+		     :prompt prompt
 		     options)))
       (declare (dynamic-extent #'accept))
       (multiple-value-bind (new-type ignore type-changed)
@@ -1139,7 +1139,7 @@
   (with-slots (browser-subtype root-nodes) *application-frame*
     (with-open-file (file-stream file :direction :output)
       (with-output-to-postscript-stream
-	  (stream file-stream 
+	  (stream file-stream
 		  :orientation orientation
 		  :multi-page t)
 	(with-text-style (stream '(:sans-serif :bold :large))
@@ -1159,17 +1159,18 @@
   #+mswindows (declare (ignore printer orientation))
   #+mswindows
   (notify-user *application-frame* "Not implemented for this platform")
-  #+unix
-  (with-open-stream 
-      (pipe (excl:run-shell-command  (format nil "lpr -P~A" printer) :input :stream :wait nil))
-    (with-output-to-postscript-stream (stream pipe 
-					      :orientation orientation
-					      :multi-page t)
-      (with-text-style (stream '(:sans-serif :bold :large))
-	(display-title-pane *application-frame* stream))
-      (terpri stream)
-      (terpri stream)
-      (display-graph-pane *application-frame* stream))))
+  ;;#+unix
+  ;; (with-open-stream
+  ;;     (pipe (excl:run-shell-command  (format nil "lpr -P~A" printer) :input :stream :wait nil))
+  ;;   (with-output-to-postscript-stream (stream pipe
+  ;; 					      :orientation orientation
+  ;; 					      :multi-page t)
+  ;;     (with-text-style (stream '(:sans-serif :bold :large))
+  ;; 	(display-title-pane *application-frame* stream))
+  ;;     (terpri stream)
+  ;;     (terpri stream)
+  ;;     (display-graph-pane *application-frame* stream)))
+  )
 
 (define-browser-command (com-set-graph-type :name t)
     ((type `(member ,@*graph-displayer-types*)))
@@ -1187,7 +1188,7 @@
    (call-node com-show-node-inferiors browser
     :gesture :select
     :tester ((object)
-	     (node-any-inferior-objects-p 
+	     (node-any-inferior-objects-p
 	       object (slot-value *application-frame* 'browser-subtype))))
    (object)
   (list object))
@@ -1441,7 +1442,7 @@
 		 collect (list (#-aclpc clos:method-generic-function #+aclpc method-generic-function method) method))))
     (setq method-list (sort method-list #'string-lessp
 			    :key #'(lambda (item)
-				     (let ((name (#-aclpc clos:generic-function-name 
+				     (let ((name (#-aclpc clos:generic-function-name
                                   #+aclpc generic-function-name (first item))))
 				       (if (listp name) (second name) name)))))
     (when (and method-list

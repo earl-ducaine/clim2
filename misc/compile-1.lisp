@@ -12,7 +12,7 @@
 (pushnew :ansi-90 *features*)
 
 #+(and allegro microsoft)
-(eval-when (compile load eval) 
+(eval-when (compile load eval)
   (pushnew :acl86win32 *features*))
 
 #-(version>= 6 0)
@@ -42,14 +42,14 @@
 ;;;; Set up translations so we can find stuff.
 ;;;
 (setf (logical-pathname-translations "clim2")
-  (list (list ";**;*.*" 
-	      (format nil 
-		      #+acl86win32 "~A**\\*.*" 
+  (list (list ";**;*.*"
+	      (format nil
+		      #+acl86win32 "~A**\\*.*"
 		      #-acl86win32 "~A**/*.*"
-		      (directory-namestring 
+		      (directory-namestring
 		       (make-pathname
 			:directory
-			(butlast (pathname-directory 
+			(butlast (pathname-directory
 				  *load-pathname*))))))))
 
 ;;;; system definitions we need
@@ -59,7 +59,7 @@
 (load "clim2:;sys;sysdcl")
 
 ;;; NT stuff (should this move to sys;sysdcl, or ?)
-#+acl86win32 
+#+acl86win32
 (load "clim2:;aclpc;sysdcl")
 
 ;;; postscript stuff
@@ -310,7 +310,7 @@
 		     (ignore-if-unknown nil)
 		     (load-too nil))
 	   (cond ((ignore-errors (excl:find-system s))
-		  (excl:compile-system s 
+		  (excl:compile-system s
 				       :include-components include-components)
 		  (when load-too
 		    (excl:tenuring
