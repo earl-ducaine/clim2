@@ -27,4 +27,16 @@
    6. You make need to run the make twice (or more) due to the fact
       that Allegro only allows you to use a restricted amount of
       garbage collection.
+   7. 
 
+
+
+
+** Testing
+
+   1. start up alegro, e.g.
+      alisp
+   2. (load "load-clim")
+   3. (load "clim-example")
+
+   
