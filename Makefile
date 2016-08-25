@@ -16,7 +16,8 @@ endif
 XINCLUDES ?= /usr/include
 XLIBDIR   ?= /usr/lib
 
-TKLIB=-lXm -lXpm -lXext -lXp
+# TKLIB=-lXm -lXpm -lXext -lXp
+TKLIB=-lXm -lXpm -lXext
 XTLIB=-lXt
 XLIB=-lX11
 
@@ -33,7 +34,7 @@ PRODUCT-OBJS= $(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS) $(SHARED-XM-OBJS)
 
 #MOTIFXTRAS=-lgen
 
-#PICFLAGS = -K pic
+PICFLAGS = -fPIC
 SHAREFLAGS =
 MAKE_SHARED = ld -shared -L$(XLIBDIR)
 STD_DEFINES = -DSVR4 -DSYSV

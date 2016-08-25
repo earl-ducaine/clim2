@@ -1,8 +1,18 @@
-(setq sys::*libtk-pathname* "-lXm -lXpm -lXext -lXp")
+(defpackage :sys
+  (:documentation "package for building clim")
+  (:use :cl))
+
+(defpackage :excl
+  (:documentation "package for building clim")
+  (:use :cl))
+
+
+(defparameter sys::*libtk-pathname* "-lXm -lXpm -lXext ")
 (setq sys::*libxt-pathname* "-lXt")
 (setq sys::*libx11-pathname* "-lX11")
 (setq sys::*libwnn-pathname* "libwnn.a")
-(excl:set-case-mode :case-sensitive-lower)
+
+;;(excl:set-case-mode :case-sensitive-lower)
 
 (load "misc/compile-1.lisp")
 (declaim (optimize (speed 3) (debug 1) (safety 1)))
