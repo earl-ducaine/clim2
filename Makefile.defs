@@ -6,7 +6,7 @@ CLIM		= clim.dxl
 
 SHARED_EXT = so
 
-LISP	= ../src/lispi$(exe)
+LISP	= /home/rett/bin/alisp
 DCL	= dcli
 
 # Set the case mode when building and dumping an image

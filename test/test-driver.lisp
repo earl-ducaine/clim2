@@ -96,7 +96,8 @@
 (defun wait-for-clim-input-state (invocation &optional (timeout *default-input-state-timeout*))
   (let ((process (invocation-process invocation)))
     (let ((port (port (invocation-frame invocation))))
-      (when port #-acl86win32 (xm-silica::port-finish-output port)))
+      ;; (when port #-acl86win32 (xm-silica::port-finish-output port))
+      )
     (mp:process-allow-schedule)
     (flet ((input-state-p (process)
 	     (or (not (mp:process-thread process))
@@ -433,7 +434,8 @@
 
 (defun warp-the-pointer (sheet x y)
   (multiple-value-setq (x y) (transform-position (sheet-device-transformation sheet) x y))
-  #-acl86win32 (tk-silica::port-set-pointer-position-1 (port sheet) sheet x y))
+  ;; #-acl86win32 (tk-silica::port-set-pointer-position-1 (port sheet) sheet x y)
+  )
 
 (define-condition cannot-find-presentation-error (simple-error) ())
 
@@ -960,8 +962,8 @@
 				     :frame frame)))
     (funcall continuation)))
 
-(define-test-step press-push-button (button)
-  #-acl86win32 (xm-silica::queue-active-event nil nil button))
+;; (define-test-step press-push-button (button)
+;;   #-acl86win32 (xm-silica::queue-active-event nil nil button))
 
 (defmacro with-waiting ((&key timeout) &body clauses)
   (let ((i 0)
