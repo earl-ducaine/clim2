@@ -1,77 +1,43 @@
-# If ../makefile.top doesn't exist, then you must specify HOST=xxx on the
-# `make' command line.
 
-include ../makefile.top
-include ../makefile.defs
+include Makefile.defs
 
-ifeq ($(OS_NAME),windows)
-HOST = windows
+Makefile=Makefile.linux
+
+ifeq ($(shell if test -d /usr/include/openmotif; then echo yes; fi),yes)
+XINCLUDES = -I/usr/include/openmotif
+XLIBDIR   = /usr/lib/openmotif
 endif
 
-ifeq ($(OS_NAME),sunos)
-ifeq ($(MACHINE),sparc)
-HOST = sun4-svr4
-endif
-ifeq ($(MACHINE),x86_64)
-HOST = solamd64
-endif
+# This is the old location, but include it here, just in case 
+ifeq ($(shell if test -d /usr/X11R6/include; then echo yes; fi),yes)
+XINCLUDES = -I/usr/X11R6/include
+XLIBDIR   = /usr/X11R6/lib
 endif
 
-ifeq ($(OS_NAME),linux)
-ifeq ($(MACHINE),ppc)
-HOST = linuxppc
+XINCLUDES ?= /usr/include
+XLIBDIR   ?= /usr/lib
+
+TKLIB=-lXm -lXpm -lXext -lXp
+XTLIB=-lXt
+XLIB=-lX11
+
+ifdef FI_USE_DMALLOC
+THREADLIB = -lpthread -ldmallocth
+CFLAGS = -I/usr/local/include
 else
-ifeq ($(MACHINE),arm64)
-HOST = arm64
-else
-ifeq ($(SIXTYFOURBIT),yes)
-HOST = amd64
-else
-HOST = linux
-endif
-endif
-endif
+THREADLIB = -lpthread
 endif
 
-ifeq ($(OS_NAME),freebsd)
-HOST = freebsd
-endif
+SET_LIBRARY_PATH = LD_RUN_PATH=$(XLIBDIR):/lib:/usr/lib; export LD_RUN_PATH
 
-ifeq ($(OS_NAME),darwin)
-HOST = macosx
-endif
+PRODUCT-OBJS= $(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS) $(SHARED-XM-OBJS)
 
-ifeq ($(OS_NAME),hp-ux)
-ifeq ($(SIXTYFOURBIT),yes)
-HOST = hp64
-else
-HOST = hpprism
-endif
-endif
+#MOTIFXTRAS=-lgen
 
-ifeq ($(OS_NAME),irix)
-HOST = sgi4d-svr4
-endif
+#PICFLAGS = -K pic
+SHAREFLAGS = 
+MAKE_SHARED = ld -shared -L$(XLIBDIR)
+STD_DEFINES = -DSVR4 -DSYSV
+AR = ar cq
 
-ifeq ($(OS_NAME),aix)
-ifeq ($(SIXTYFOURBIT),yes)
-HOST = power64
-else
-HOST = rs6000
-endif
-endif
-
-ifeq ($(OS_NAME),osf1)
-ifeq ($(MACHINE),alpha)
-HOST = alpha
-endif
-endif
-
-# If no HOST specified then we'd like to get an error immediately
-# rather than ploughing on with an inappropriate default
-
-ifndef HOST
-HOST = unknown
-endif
-
-include Makefile.$(HOST)
+include Makefile.generic
