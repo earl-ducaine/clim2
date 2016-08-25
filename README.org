@@ -20,4 +20,11 @@
    1. makefile.defs to parent folder
    2. Create a file: makefile.top in the parent folder.
       touch ../makefile.top
-   3. 
+   3. Edit Makefile.defs, LISP should point to your allegro lisp, e.g. /home/me/bin/alisp.
+   4. Copy Makefile.defs to parent directory.
+   5. Build with make, setting the hosd environment variable.
+      export HOST=linux; make
+   6. You make need to run the make twice (or more) due to the fact
+      that Allegro only allows you to use a restricted amount of
+      garbage collection.
+

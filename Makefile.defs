@@ -6,8 +6,8 @@ CLIM		= clim.dxl
 
 SHARED_EXT = so
 
-LISP	= /home/rett/bin/alisp
-DCL	= dcli
+LISP	= /home/rett/dev/acl100express/alisp
+DCL	= /home/rett/dev/acl100express/alisp.dxl
 
 # Set the case mode when building and dumping an image
 # case_mode:
