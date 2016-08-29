@@ -14,13 +14,24 @@
    code.
 
 
+** Install build envirenment and package dependancies
 
+   sudo apt-get install build-essential 
+   sudo apt-get install libmotif-dev
+   sudo apt-get install libxp-dev
+
+
+** Files to add to path
+   ln -s ~/dev/common-lisp/acl100express/src/runlisp.sh .
 
 ** Compiling Express Allegro on linux-86
    1. makefile.defs to parent folder
    2. Create a file: makefile.top in the parent folder.
       touch ../makefile.top
-   3. Edit Makefile.defs, LISP should point to your allegro lisp, e.g. /home/me/bin/alisp.
+   3. Edit Makefile.defs
+      LISP should point to your allegro lisp, e.g. /home/me/bin/alisp.
+      DCL shold point to your allegro lisp image.  If you're using
+      Allegro Express something like: alisp.dxl
    4. Copy Makefile.defs to parent directory.
    5. Build with make, setting the hosd environment variable.
       export HOST=linux; make
@@ -40,3 +51,4 @@
    3. (load "clim-example")
 
    
+
