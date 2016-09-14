@@ -20,8 +20,3 @@
 	     (setq *test-frame* frame)
 	     (run-frame-top-level frame))))
     (mp:process-run-function "test" #'run)))
-
-
-
-
-(test)

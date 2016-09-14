@@ -13,9 +13,6 @@
    See the file LICENSE for information on the license for this source
    code.
 
-
-
-
 ** Compiling Express Allegro on linux-86
    1. makefile.defs to parent folder
    2. Create a file: makefile.top in the parent folder.
@@ -27,9 +24,24 @@
    6. You make need to run the make twice (or more) due to the fact
       that Allegro only allows you to use a restricted amount of
       garbage collection.
-   7. 
 
 
+
+
+
+** quicklisp
+   
+   The easiest way to load things is by quicklisp
+
+   1. cd ~/bin
+   2. ln -s ~/acl100express/bin/alist .
+   3. cd ~/quickload/local-projects
+   4. ln -s ~/clim2 .
+   5. rm system-index.txt
+   6. cd ~/clim2
+   7. alist
+   8. (ql:quickload "~/clim2")
+   
 
 
 ** Testing
