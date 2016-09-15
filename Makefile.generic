@@ -13,43 +13,15 @@ concat_runlisp_args = -o concat.out
 endif
 
 compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
-	rm -f build.tmp
-	echo '(setq sys::*libtk-pathname* "$(TKLIB)")' >> build.tmp
-	echo '(setq sys::*libxt-pathname* "$(XTLIB)")' >> build.tmp
-	echo '(setq sys::*libx11-pathname* "$(XLIB)")' >> build.tmp
-	echo '(setq sys::*libwnn-pathname* "$(WNNLIB)")' >> build.tmp
-	echo '(excl:set-case-mode $(CASE_MODE))' >> build.tmp
-	echo $(STOP_PATCHES) >> build.tmp
-	echo '(load "misc/compile-1.lisp")' >> build.tmp
-	echo '(declaim (optimize (speed $(SPEED)) (debug $(DEBUG)) (safety $(SAFETY))))' >> build.tmp
-	echo '(setq *compile-print* $(compile_print))' >> build.tmp
-	echo '(setq *compile-verbose* $(compile_verbose))' >> build.tmp
-	echo '(setq excl::*warn-smp-usage* nil)' >> build.tmp
-	echo '(setq excl:*redefinition-warnings* $(redef_warning))' >> build.tmp
-	echo '(setq excl:*record-source-file-info* $(RECORD_SOURCE_FILE_INFO))' >> build.tmp
-	echo '(setq comp:save-local-names-switch $(SAVE_LOCAL_NAMES))' >> build.tmp
-	echo '(setq comp:save-source-level-debug-info-switch $(SAVE_SOURCE_DEBUG))' >> build.tmp
-	echo '(setq excl:*load-local-names-info* $(LOAD_LOCAL_NAMES_INFO))' >> build.tmp
-	echo '(setq excl:*load-source-file-info* $(LOAD_SOURCE_FILE_INFO))' >> build.tmp
-	echo '(setq excl:*record-xref-info* $(RECORD_XREF_INFO))' >> build.tmp
-	echo '(setq excl:*load-xref-info* $(LOAD_XREF_INFO))' >> build.tmp
-	echo '(setf (sys:gsgc-switch :print) $(gc_print))' >> build.tmp
-	echo '(compile-it (quote $(SYSTEM)))' >> build.tmp
-	echo '(exit 0)' >> build.tmp
 	(eval '$(SET_LIBRARY_PATH)'; \
-	 bash ../src/runlisp.sh -f build.tmp $(build_runlisp_args) \
+	 bash runlisp.sh -f build.tmp $(build_runlisp_args) \
 	 $(CL) $(CLOPTS))
 
 # Concatenation
 
 cat: compile
-	rm -f cat.tmp
-	echo '(load "misc/compile-1.lisp")' >> cat.tmp
-	echo '(setf (sys:gsgc-switch :print) $(gc_print))' >> cat.tmp	
-	echo '(concatenate-it (quote $(SYSTEM)))' >> cat.tmp
-	echo '(exit 0)' >> cat.tmp
 	(eval '$(SET_LIBRARY_PATH)'; \
-	 bash ../src/runlisp.sh -f cat.tmp $(concat_runlisp_args) \
+	 bash runlisp.sh -f cat.tmp $(concat_runlisp_args) \
 	 $(CL) $(CLOPTS))
 	ls -lt $(PRODUCT-FASLS) $(ICS-PRODUCT_FASLS) >> Clim-sizes.n
 	ls -lt $(PRODUCT-FASLS) $(ICS-PRODUCT_FASLS)
@@ -167,7 +139,8 @@ cleanfasls: FORCE
 	find . -name '*.fasl' -print | xargs rm -f
 
 clean:
-	rm -f *.out *.tmp
+	# rm -f *.out *.tmp
+	rm -f *.out
 	find . -name '*.fasl' -print | xargs rm -f
 	rm -f *.o *.$(SHARED_EXT) *.a slim \
 	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c stub-wnn.c

@@ -1,9 +1,6 @@
 # If ../makefile.top doesn't exist, then you must specify HOST=xxx on the
 # `make' command line.
 
-include ../makefile.top
-include ../makefile.defs
-
 ifeq ($(OS_NAME),windows)
 HOST = windows
 endif

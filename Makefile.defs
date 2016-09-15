@@ -6,8 +6,8 @@ CLIM		= clim.dxl
 
 SHARED_EXT = so
 
-LISP	= ../src/lispi$(exe)
-DCL	= dcli
+LISP	= alisp
+DCL	= ~/dev/acl100express/alisp.dxl
 
 # Set the case mode when building and dumping an image
 # case_mode:
