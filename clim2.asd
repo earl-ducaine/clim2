@@ -45,3 +45,7 @@
       (:file "package")
       (:file "clim-example" :depends-on (:demo))
       ))
+
+
+
+(format t "to run demo: (clim-demo:start-demo)")

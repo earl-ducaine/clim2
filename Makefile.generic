@@ -48,7 +48,7 @@ $(CLIM): FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS)
 	       (setq sys::*libxt-pathname* \"$(XTLIB)\") \
 	       (setq sys::*libx11-pathname* \"$(XLIB)\") \
 	       (setq sys::*libwnn-pathname* \"$(WNNLIB)\") \
-	       (excl:set-case-mode  $(CASE_MODE)) \
+	       (excl:set-case-mode  :case-insensitive-upper) \
 	       (load \"misc/dev-load-1.lisp\") \
 	       (load-it '$(SYSTEM)))) \
 	   :autoload-warning nil \
@@ -116,7 +116,7 @@ profile: FORCE
 
 benchmark: FORCE
 	($(ECHO) " \
-	(clim-test::benchmark-clim $(BENCHMARK_FILE))" \
+	(clim-test::benchmark-clim nil)" \
 	| $(LISP) -I $(CLIM) $(CLOPTS))
 
 testps: FORCE
