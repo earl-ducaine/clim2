@@ -1,10 +1,7 @@
 
 * The Common Lisp Interface Manager
 
-
 ** Description
-
-
    The contents of this repo are known to compile and work in Allegro
    CL 8.2 and later.  No work has been done to make it work on other
    Common Lisps, even though there is considerable conditionalization
@@ -25,12 +22,7 @@
       that Allegro only allows you to use a restricted amount of
       garbage collection.
 
-
-
-
-
 ** quicklisp
-   
    The easiest way to load things is by quicklisp
 
    1. cd ~/bin
@@ -40,9 +32,9 @@
    5. rm system-index.txt
    6. cd ~/clim2
    7. alist
-   8. (ql:quickload "~/clim2")
-   
+   8. (ql:quickload :clim2)
 
+      You may need to run this multiple times
 
 ** Testing
 
