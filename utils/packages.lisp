@@ -3277,27 +3277,28 @@
 (defpackage clim-user
   (:use clim-lisp clim))
 
-;; #+allegro
-;; (flet ((lock-package (package)
-;; 	 (setq package (find-package package))
-;; 	 (setf (package-definition-lock package) t)))
-;;   (mapcar #'lock-package '(
-;; 			   ;;-- We gotta fix the make-pane problem
-;; 			   ;;-- first
-;; 			   ;; clim
-;; 			   clim-utils
-;; 			   clim-silica
-;; 			   clim-internals
-;; 			   clim-lisp)))
+#+allegro
+(flet ((lock-package (package)
+	 (setq package (find-package package))
+	 (setf (package-definition-lock package) t)))
+  (mapcar #'lock-package '(
+			   ;;-- We gotta fix the make-pane problem
+			   ;;-- first
+			   ;; clim
+			   clim-utils
+			   clim-silica
+			   clim-internals
+			   clim-lisp)))
 
-;; (in-package :clim)
+(in-package :clim)
 
-;; (cl:defparameter *clim-version* excl::*common-lisp-version-number*)
+(cl:defparameter *clim-version* excl::*common-lisp-version-number*)
 
-;; #+(version>= 5 0)
-;; (cl:locally (cl:declare (cl:special excl::*version-info*))
-;;   (cl:when (cl:boundp 'excl::*version-info*)
-;;     (cl:push (cl:cons "CLIM" *clim-version*) excl::*version-info*)))
+#+(version>= 5 0)
+(cl:locally (cl:declare (cl:special excl::*version-info*))
+  (cl:when (cl:boundp 'excl::*version-info*)
+    (cl:push (cl:cons "CLIM" *clim-version*) excl::*version-info*)))
+
 
 ;; #+(version>= 6 0 pre-final 0)
 ;; (excl::lb1215005) ;; rfe4046

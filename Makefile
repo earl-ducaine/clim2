@@ -1,5 +1,6 @@
 include Makefile.defs
 
+
 Makefile=Makefile
 
 ifeq ($(shell if test -d /usr/include/openmotif; then echo yes; fi),yes)
