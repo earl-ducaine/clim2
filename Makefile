@@ -90,19 +90,6 @@ PRODUCT-OBJS=	$(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
 ICS-PRODUCT-FASLS= $(PRODUCT-WNN-FASLS)
 ICS-PRODUCT-OBJS=  $(STATIC-WNN-OBJS)
 
-# Makefile=Makefile
-
-# ifeq ($(shell if test -d /usr/include/openmotif; then echo yes; fi),yes)
-# XINCLUDES = -I/usr/include/openmotif
-# XLIBDIR   = /usr/lib/openmotif
-# endif
-
-# This is the old location, but include it here, just in case
-# ifeq ($(shell if test -d /usr/X11R6/include; then echo yes; fi),yes)
-# XINCLUDES = -I/usr/X11R6/include
-# XLIBDIR   = /usr/X11R6/lib
-# endif
-
 XINCLUDES ?= /usr/include
 XLIBDIR   ?= /usr/lib
 
@@ -136,9 +123,7 @@ compile_depends = wnn.$(SHARED_EXT)
 
 
 compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
-	(eval '$(SET_LIBRARY_PATH)'; \
-	 bash runlisp.sh -f build.tmp $(build_runlisp_args) \
-	 $(CL) $(CLOPTS))
+	(eval '$(SET_LIBRARY_PATH)'; bash runlisp.sh -f build.tmp $(build_runlisp_args) $(CL) $(CLOPTS))
 
 # Concatenation
 cat: compile
@@ -190,80 +175,14 @@ $(CLIM): FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS)
 	   :discard-source-file-info t \
 	   :discard-xref-info t) \
 	 (exit 0))" | $(CL) $(CLOPTS))
-	@ls -lLt $(CLIM) >> Clim-sizes.n
-	@ls -lLt $(CLIM)
 	@echo $(SYSTEM) built!!!!
 
-# Training
-
-train: FORCE
-	(eval '$(SET_LIBRARY_PATH)' ; \
-	$(ECHO) " \
-	(progn \
-	  (load \"misc/train.lisp\") \
-	  (train-clim :frame-tests $(FRAME_TESTS) :train-times $(TRAIN_TIMES) \
-		:benchmarkp $(TRAIN_BM) :profilep $(TRAIN_PROFILEP) \
-		:compile $(TRAIN_COMPILE) :psview $(PSVIEW) \
-		:hpglview $(HPGLVIEW)))" \
-	| $(LISP) -I $(CLIM) $(CLOPTS))
-	echo $(SYSTEM) trained!!!!
-
-# the following two rules are used by make-dist so that we don't have
-# to build a slim image to run the test suite
-
-load-train: FORCE
-	(eval '$(SET_LIBRARY_PATH)' ; \
-	$(ECHO) " \
-	  (setq sys::*libtk-pathname* \"$(TKLIB)\") \
-	  (setq sys::*libxt-pathname* \"$(XTLIB)\") \
-	  (setq sys::*libx11-pathname* \"$(XLIB)\") \
-	  (setq sys::*libwnn-pathname* \"$(WNNLIB)\") \
-	  (load \"misc/dev-load-1.lisp\") \
-	  (load-it '$(SYSTEM)) \
-	  (load \"misc/train.lisp\") \
-	  (train-clim :frame-tests $(FRAME_TESTS) :train-times $(TRAIN_TIMES) \
-		:benchmarkp $(TRAIN_BM) :profilep $(TRAIN_PROFILEP) \
-		:compile $(TRAIN_COMPILE) :psview $(PSVIEW) \
-		:hpglview $(HPGLVIEW) :report-file \"$(REPORT_FILE)\") \
-	  (clim-test::generate-pretty-test-report :file \"$(REPORT_FILE)\")" \
-	| $(LISP) -I $(CLIM) $(CLOPTS))
-
-generate_test_report: FORCE
-	($(ECHO) " \
-	(clim-test::generate-pretty-test-report :file \"$(REPORT_FILE)\")" \
-	| $(LISP) -I $(CLIM) $(CLOPTS))
-
-profile: FORCE
-	($(ECHO) " \
-	(clim-user::run-profile-clim-tests)" \
-	| $(LISP) -I $(CLIM) $(CLOPTS))
-
-benchmark: FORCE
-	($(ECHO) " \
-	(clim-test::benchmark-clim nil)" \
-	| $(LISP) -I $(CLIM) $(CLOPTS))
-
-testps: FORCE
-	($(ECHO) " \
-	(load \"test/postscript-tests.lisp\") \
-	(clim-user::run-postscript-tests :output $(PSVIEW))" \
-	| $(LISP) -I $(CLIM) $(CLOPTS))
-
 # Misc
-
-cleanobjs:
-	rm -f *.o
-
-cleanfasls: FORCE
-	find . -name '*.fasl' -print | xargs rm -f
-
 clean:
-
 	# rm -f *.out *.tmp
 	rm -rf ~/.cache/common-lisp
 	rm -f *.out
 	find . -name '*.fasl' -print | xargs rm -f
-
 	rm Clim-sizes.n
 	rm -f *.o *.$(SHARED_EXT) *.a slim \
 	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c stub-wnn.c
@@ -365,15 +284,6 @@ climol.$(SHARED_EXT): xlibsupport.o xtsupport.o olsupport.o $(IMPORTS)
 	$(MAKE_SHARED) $(SHAREFLAGS) -o climol.$(SHARED_EXT) \
 		xlibsupport.o xtsupport.o olsupport.o \
 		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB))
-
-# climol.sl: xlibsupport.o xtsupport.o olsupport.o $(IMPORTS)
-# 	(eval '$(SET_LIBRARY_PATH)' ; \
-# 	$(MAKE_SHARED) $(SHAREFLAGS) -o climol.sl \
-# 		xlibsupport.o xtsupport.o olsupport.o \
-#		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB))
-
-# mainxm.o contains foreign code from the libraries X11,Xt and Xm
-# required by Motif version of CLIM statically linked
 
 makemainxm: $(ACL_MAIN_OBJ) $(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
 	(eval '$(SET_LIBRARY_PATH)' ; \
