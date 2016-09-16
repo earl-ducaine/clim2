@@ -10,16 +10,17 @@
    See the file LICENSE for information on the license for this source
    code.
 
-** Compiling Express Allegro on linux-86
-   1. makefile.defs to parent folder
-   2. Create a file: makefile.top in the parent folder.
-      touch ../makefile.top
-   3. Edit Makefile.defs, LISP should point to your allegro lisp, e.g. /home/me/bin/alisp.
-   4. Copy Makefile.defs to parent directory.
-   5. Build with make, setting the hosd environment variable.
+** Compiling: Express Allegro on linux-86
+   This is currently the only configuration supported.  Most build
+   code supporting other platforms has been removed in an attempt to
+   simplify the build process and migrate it to asdf.
+   1. Edit Makefile, LISP should point to your allegro lisp, e.g. ~/bin/alisp.
+   2. CL should point to your base alegro image files, e.g. ~/bin/alisp.dxl
+      
+   3. From the command line:
       export HOST=linux; make
-   6. You make need to run the make twice (or more) due to the fact
-      that Allegro only allows you to use a restricted amount of
+   4. You may need to run the make twice (or more times) due to the
+      fact that Allegro only allows you to use a restricted amount of
       garbage collection.
 
 ** quicklisp
