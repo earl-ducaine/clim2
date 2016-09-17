@@ -115,20 +115,14 @@ AR = ar cq
 
 #  Makefile.generic for CLIM 2.0
 
-all: compile cat # $(CLIM)
-makeclimfasls: compile cat
-
+all: compile
 
 compile_depends = wnn.$(SHARED_EXT)
 
 
 compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
-	(eval '$(SET_LIBRARY_PATH)'; bash runlisp.sh -f build.tmp $(build_runlisp_args) $(CL) $(CLOPTS))
+	ls .
 
-# Concatenation
-cat: compile
-	(eval '$(SET_LIBRARY_PATH)'; \
-	 bash runlisp.sh -f cat.tmp $(concat_runlisp_args) $(CL) $(CLOPTS))
 
 $(PRODUCT-FASLS) $(ICS-PRODUCT_FASLS): cat
 
