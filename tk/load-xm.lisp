@@ -7,7 +7,7 @@
 (eval-when (compile eval load)
   (require :climg))
 
-(defvar sys::*clim-library-search-path* '("/usr/X11/lib/" "/usr/X11R6/lib/" "/usr/local/lib/"
+(defvar sys::*clim-library-search-path* '("/usr/X11/lib/" "/usr/X11R6/lib/" "/usr/local/lib/" "/home/rett/dev/common-lisp/clim2/"
                                           "/opt/local/lib/" "/sw/lib/"))
 
 ;;; On Mac OS X, the linker hard-codes the paths to libraries into

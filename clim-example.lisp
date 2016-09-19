@@ -2,6 +2,25 @@
 
 (in-package :clim-user)
 
+
+(define-application-frame test-frame () ()
+  (:pane
+   (vertically ()
+     (make-clim-interactor-pane
+      :foreground +green+
+      :background +red+)
+     (make-pane 'push-button
+		:label (make-graphical-label))
+     (make-pane 'push-button
+		:label "press me"
+		:activate-callback (command-callback #'(lambda (gadget) (print :hello)))
+		:background +black+
+		:foreground +cyan+
+		:text-style (make-text-style :serif :roman 20)))))
+
+
+
+
 (define-application-frame test ()
   ()
   (:panes
