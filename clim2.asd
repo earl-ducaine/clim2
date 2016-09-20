@@ -1,13 +1,4 @@
 
-(progn
-
-  (format t
-	  (asdf::run-program
-	   "export HOST=linux; make"
-	   :output :string))
-  ;; (load "load-clim.lisp")
-  )
-
 (asdf:defsystem :clim2
     :depends-on ()
     :serial t
@@ -16,7 +7,7 @@
      (:file "load-clim")
 ;;     (:file "cat")
      (:module demo
-	      :depends-on (:package)
+	      :depends-on (:package :load-clim)
 	      :serial t
 	      :components
 	      (
