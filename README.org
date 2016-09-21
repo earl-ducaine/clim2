@@ -2,43 +2,55 @@
 * The Common Lisp Interface Manager
 
 ** Description
-   The contents of this repo are known to compile and work in Allegro
-   CL 8.2 and later.  No work has been done to make it work on other
-   Common Lisps, even though there is considerable conditionalization
-   for many other CLs.
+   The contents of this repo are known to compile and work with the
+   latest version of Allegro Express.  The short term goal is to get
+   thing to work with SBCL.
 
    See the file LICENSE for information on the license for this source
-   code.
+   code.  Note that newer files may also copywrited under the MIT
+   copywrite.  Those files are noted specifically in the file header.
 
-** Compiling: Express Allegro on linux-86
-   This is currently the only configuration supported.  Most build
-   code supporting other platforms has been removed in an attempt to
-   simplify the build process and migrate it to asdf.
-   1. Edit Makefile, LISP should point to your allegro lisp, e.g. ~/bin/alisp.
-   2. CL should point to your base alegro image files, e.g. ~/bin/alisp.dxl
-      
-   3. From the command line:
-      export HOST=linux; make
-   4. You may need to run the make twice (or more times) due to the
-      fact that Allegro only allows you to use a restricted amount of
-      garbage collection.
-
-** quicklisp
-   The easiest way to load things is by quicklisp
+** Compilation Dependancies: Express Allegro and Ubuntu x86-32
+   Install Expresss Allegro on Ubuntu x86-32 12.04.  Add alisp to the
+   path using something like the following:
 
    1. cd ~/bin
    2. ln -s ~/acl100express/bin/alist .
-   3. cd ~/quickload/local-projects
-   4. ln -s ~/clim2 .
-   5. rm system-index.txt
-   6. cd ~/clim2
-   7. alist
-   8. (ql:quickload :clim2)
+   3. ln -s ~/acl100express/bin/alisp.dxl .
 
-      You may need to run this multiple times
+** Install Motif
+   You'll also need to install the motif toolkit and build essentials.
+   Something like:
+
+   1. sudo apt-get install libmotif-dev
+   2. sudo apt-get libxt-dev
+   3. sudo apt-get install build-essential
+
+** Build motif wraper
+   1. cd ~/clim2/c-src
+   2. make
+
+** Build  clim2 
+   You may need to run this multiple times.  Allegro Express has a
+   garbage collection limit that cause the build to abend.
+   1. cd ~/clim2
+   2. ./make.sh  
+
+** Install quicklisp
+   The easiest way to load things is by quicklisp.  First install
+   quicklisp from the quicklisp website, configuring it for you
+   Allegro Express configuraiton.  Then link clim2
+
+   1. cd ~/quickload/local-projects
+   2. ln -s ~/clim2 .
+   3. rm system-index.txt
+   4. cd ~/clim2
+   5. alist
+   6. (ql:quickload :clim2-pre-compile-1)
+   7. (ql:quickload :clim2)
+   8. (clim-demo:start-demo)
 
 ** Testing
-
    1. start up alegro, e.g.
       alisp
    2. (load "load-clim")

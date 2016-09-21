@@ -9,75 +9,54 @@
 ;;; (setq *ignore-package-name-case* t)
 
 ;; Forgive them, lord, for they know not what they do.
-(pushnew :ansi-90 *features*)
-
-#+(and allegro microsoft)
 (eval-when (compile load eval)
-  (pushnew :acl86win32 *features*))
+  (pushnew :ansi-90 *features*))
 
-#-(version>= 6 0)
-(setq comp:generate-call-count-code-switch
-  (named-function |(> debug 1)|
-		  (lambda (safety size speed debug)
-		    (declare (ignore safety size speed))
-		    (> debug 1))))
+(eval-when (compile load eval)
+  ;; [bug18430]:
+  (setq comp:declared-fixnums-remain-fixnums-switch
+	(named-function |(> speed 2)|
+			(lambda (safety size speed debug compilation-speed)
+			  (declare (ignore safety size debug compilation-speed))
+			  (> speed 2)))))
 
-#-(version>= 8 2)
-(setq comp:declared-fixnums-remain-fixnums-switch
-  (named-function |(> speed 2)|
-		  (lambda (safety size speed debug)
-		    (declare (ignore safety size debug))
-		    (> speed 2))))
-
-
-;; [bug18430]:
-#+(version>= 8 2)
-(setq comp:declared-fixnums-remain-fixnums-switch
-  (named-function |(> speed 2)|
-		  (lambda (safety size speed debug compilation-speed)
-		    (declare (ignore safety size debug compilation-speed))
-		    (> speed 2))))
-
-
+(eval-when (compile load eval)
 ;;;; Set up translations so we can find stuff.
-;;;
-(setf (logical-pathname-translations "clim2")
-  (list (list ";**;*.*"
-	      (format nil
-		      #+acl86win32 "~A**\\*.*"
-		      #-acl86win32 "~A**/*.*"
-		      (directory-namestring
-		       (make-pathname
-			:directory
-			(butlast (pathname-directory
-				  *load-pathname*))))))))
+  (setf (logical-pathname-translations "clim2")
+	(list (list ";**;*.*"
+		    (format nil "~A**/*.*"
+			    (directory-namestring
+			     (make-pathname
+			      :directory
+			      (butlast (pathname-directory
+					*load-pathname*)))))))))
 
 ;;;; system definitions we need
-;;;
 
 ;;; Basic clim and also all the X stuff
-(load "clim2:;sys;sysdcl")
-
-;;; NT stuff (should this move to sys;sysdcl, or ?)
-#+acl86win32
-(load "clim2:;aclpc;sysdcl")
+(eval-when (compile load eval)
+  (load "clim2:;sys;sysdcl"))
 
 ;;; postscript stuff
-(load "clim2:;postscript;sysdcl")
+(eval-when (compile load eval)
+  (load "clim2:;postscript;sysdcl"))
 
 ;;; HPGL, only for Unix
-#-acl86win32
-(load "clim2:;hpgl;sysdcl")
+(eval-when (compile load eval)
+  (load "clim2:;hpgl;sysdcl"))
 
 ;;; demo stuff
-(load "clim2:;demo;sysdcl")
+(eval-when (compile load eval)
+  (load "clim2:;demo;sysdcl"))
 
 ;;; testing stuff (this is really a serious mess)
-(load "clim2:;test;testdcl")
+(eval-when (compile load eval)
+  (load "clim2:;test;testdcl"))
 
 ;;; climtoys.  I think this is never there, but just to be compatible.
-(when (probe-file "clim2:;climtoys;sysdcl.lisp")
-  (load "clim2:;climtoys;sysdcl"))
+(eval-when (compile load eval)
+  (when (probe-file "clim2:;climtoys;sysdcl.lisp")
+    (load "clim2:;climtoys;sysdcl")))
 
 ;;;; System declarations for compiling, concatenating &c.
 ;;;
@@ -118,78 +97,56 @@
 ;;; As well as this, the system definitions need looked at more and
 ;;; cleaned up.
 
-(defsystem climg
+(eval-when (compile load eval)
+  (defsystem climg
     ;; climg is generic clim and ends up as climg.fasl.  This is
     ;; clim-standalone + the PS stubs.
     ()
-  (:serial
-   clim-standalone			;from sys;sysdcl
-   postscript-clim-stubs		;from postscript;sysdcl
-   ))
+    (:serial
+     clim-standalone			;from sys;sysdcl
+     postscript-clim-stubs		;from postscript;sysdcl
+     )))
 
-(defsystem climdemo
+(eval-when (compile load eval)
+  (defsystem climdemo
     ;; climdemo.fasl.  This is a hack becuse files used by the system
     ;; in test;sysdcl have nasties in, other than that we could
     ;; probably make this be just clim-demo + clim-tests.
     ()
-  (:serial
-;;;   #+acl86win32
-;;;   "clim2:;aclpc;sysdcl"                ;get defsys for compile.  Ick.
-   #+acl86win32
-   "clim2:;aclpc;pkgdcl"                ;get package for compile.  Ick.
-   clim-demo				;demo;sysdcl
-   "clim2:;test;test-suite"             ;hack!
-   ))
+    (:serial
+     clim-demo				;demo;sysdcl
+     "clim2:;test;test-suite"             ;hack!
+     )))
 
-#-acl86win32
-(defsystem hpgl-clim-cat
+(eval-when (compile load eval)
+  (defsystem hpgl-clim-cat
     ;; a cattable hpgl-clim, see clim2:;hpgl;sysdcl
     (:default-pathname "clim2:;hpgl;")
-  (:serial
-   ("pkg")
-   ("hpgl-port")
-   ("hpgl-medium")))
+    (:serial
+     ("pkg")
+     ("hpgl-port")
+     ("hpgl-medium"))))
 
-(defsystem empty-cat
+(eval-when (compile load eval)
+  (defsystem empty-cat
     ;; so we can make empty fasls trivially
     ()
-  (:serial))
+    (:serial)))
 
-#+acl86win32
-(defsystem aclnt-clim-cat
-    ;; a cattable aclnt-clim, see clim2:;aclnt;sysdcl
-    (:default-pathname "clim2:;aclpc;")
-  (:serial
-   "pkgdcl"
-   "winwidgh"
-   "climpat"
-   "acl-prel"
-   "acl-class"
-   "acl-dc"
-   "acl-port"
-   "acl-mirror"
-   "acl-medium"
-   "acl-pixmaps"
-   "acl-frames"
-   "acl-widget"
-   "acl-scroll"
-   last))
-
-#-acl86win32
-(defsystem xlib-cat
+(eval-when (compile load eval)
+  (defsystem xlib-cat
     ;; a cattable xlib, see clim2:;sys;sysdcl
     (:default-pathname "clim2:;xlib;")
-  (:serial
-   "pkg"
-   "ffi"
-   ("load-xlib")
-   ("xlib-defs" (:load-before-compile "ffi"))
-   ("xlib-funs" (:load-before-compile "ffi"))
-   ("x11-keysyms" (:load-before-compile "ffi"))
-   ("last" (:load-before-compile "load-xlib" "xlib-funs"))
-   ))
+    (:serial
+     "pkg"
+     "ffi"
+     ("load-xlib")
+     ("xlib-defs" (:load-before-compile "ffi"))
+     ("xlib-funs" (:load-before-compile "ffi"))
+     ("x11-keysyms" (:load-before-compile "ffi"))
+     ("last" (:load-before-compile "load-xlib" "xlib-funs"))
+     )))
 
-#-acl86win32
 (defmacro define-xt-cat-system (name file &rest modules)
   ;; this is like define-xt-system but uses xlib-cat, not xlib.  See
   ;; clim2:;sys;sysdcl.  The `special' file comes before the xlib
@@ -222,89 +179,59 @@
       ("xt-init")
       ,@modules)))
 
-#-acl86win32
-(define-xt-cat-system xm-tk-cat "load-xm"
-  ;; cattable xm-tk, see clim2:;sys;sysdcl
-  ("xm-defs")
-  ("xm-funs")
-  ("xm-classes")
-  ("xm-callbacks")
-  ("xm-init")
-  ("xm-widgets")
-  ("xm-font-list")
-  ("xm-protocols")
-  ("convenience")
-  ("make-widget"))
+(eval-when (compile load eval)
+  (define-xt-cat-system xm-tk-cat "load-xm"
+    ;; cattable xm-tk, see clim2:;sys;sysdcl
+    ("xm-defs")
+    ("xm-funs")
+    ("xm-classes")
+    ("xm-callbacks")
+    ("xm-init")
+    ("xm-widgets")
+    ("xm-font-list")
+    ("xm-protocols")
+    ("convenience")
+    ("make-widget")))
 
-#+ignore
-(define-xt-cat-system ol-tk-cat "load-ol"
-  ;; cattable ol-tk, see clim2:;sys;sysdcl
-  ("ol-defs")
-  ("ol-funs")
-  ("ol-classes")
-  ("ol-init")
-  ("ol-widgets")
-  ("ol-callbacks")
-  ("make-widget"))
-
-#-acl86win32
-(defsystem motif-clim-cat
+(eval-when (compile load eval)
+  (defsystem motif-clim-cat
     ;; cattable motif-clim, see clim2:;sys;sysdcl
     (:default-pathname "clim2:;tk-silica;")
-  (:serial
-   xm-tk-cat
-   ("pkg")
-   ("xt-silica")
-   ("xt-stipples")
-   ("xm-silica")
-   ("xt-graphics")
-   ("image")
-   ("xt-frames")
-   ("xm-frames")
-   ("xm-dialogs")
-   ("xt-gadgets")
-   ("xm-gadgets")
-   ("xt-pixmaps")
-   ("gc-cursor")
-   last))
+    (:serial
+     xm-tk-cat
+     ("pkg")
+     ("xt-silica")
+     ("xt-stipples")
+     ("xm-silica")
+     ("xt-graphics")
+     ("image")
+     ("xt-frames")
+     ("xm-frames")
+     ("xm-dialogs")
+     ("xt-gadgets")
+     ("xm-gadgets")
+     ("xt-pixmaps")
+     ("gc-cursor")
+     last)))
 
-#+ignore
-(defsystem openlook-clim-cat
-    ;; cattable openlook-clim, see clim2:;sys;sysdcl
-    (:default-pathname "clim2:;tk-silica;")
-  (:serial
-   ol-tk-cat
-   ("pkg")
-   ("xt-silica")
-   ("xt-stipples")
-   ("ol-silica")
-   ("xt-graphics")
-   ("image")
-   ("xt-frames")
-   ("ol-frames")
-   ("xt-gadgets")
-   ("ol-gadgets")
-   ("xt-pixmaps")
-   ("gc-cursor")
-   last))
-
-(defsystem wnn-cat
+(eval-when (compile load eval)
+  (defsystem wnn-cat
     ;; cattable wnn, see clim2:;sys;sysdcl
     (:default-pathname "clim2:;wnn;")
-  (:serial
-   "pkg"
-   "load-wnn"
-   "jl-defs"
-   "jl-funs"
-   "jserver"))
+    (:serial
+     "pkg"
+     "load-wnn"
+     "jl-defs"
+     "jl-funs"
+     "jserver")))
 
-;;;; Compiling a system.
+;;; Compiling a system.
+;;;
 ;;; This is just hard-wired -- the makefile says (compile-it
 ;;; <something>), which determines which top-level system to build,
 ;;; but all the other systems are wired in here.  And currently there
 ;;; is only one possible top-level system per platform, unless by some
 ;;; miracle the openlook stuff still built!
-
 (defun compile-it (sys)
   (flet ((cl (s &key (include-components t)
 		     (ignore-if-unknown nil)
@@ -327,23 +254,20 @@
       ;; compatibility;sysdcl) systems were not being bult on any
       ;; platform.
       ;; I am not sure if this is the right test...
-      #+(and allegro ics (not acl86win32))
       (cl 'wnn)
       (cl 'postscript-clim)
       (cl 'climdemo)
       ;; This currently does not build on windows but I think it
       ;; should do in future
-      #-acl86win32
       (cl 'testing)
       (cl 'clim-toys :ignore-if-unknown t)
-      #-acl86win32
       (cl 'hpgl-clim))))
 
-;;;; Concatenating systems
+;;; Concatenating systems
+;;;
 ;;; This is fairly hacky as well.  This code *knows* about what
 ;;; pathnames to dump systems under.  Again, SYS is just the top-level
 ;;; system (it should agree with the one we gave to COMPILE-IT above.
-
 (defun concatenate-it (sys)
   (ecase sys
     ((aclnt-clim)
@@ -357,14 +281,10 @@
   (concatenate-system 'postscript-clim "clim2:;climps.fasl")
   ;; The wnn system depends on ics.  The debug system is just there
   ;; for backwards compatibility
-  #+(and allegro ics (not acl86win32))
   (concatenate-system 'wnn-cat "clim2:;climwnn.fasl")
-  #+(and allegro ics (not acl86win32))
   (concatenate-system 'empty-cat "clim2:;clim-debugwnn.fasl")
   ;; hpgl only on unix
-  #-acl86win32
   (concatenate-system 'hpgl-clim-cat "clim2:;climhpgl.fasl")
   ;; formerly the bogusly-named system with X debugging stuff in, now
   ;; exists only for backwards compatibility.
-  #-acl86win32
   (concatenate-system 'empty-cat "clim2:;clim-debug.fasl"))
