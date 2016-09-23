@@ -1,3 +1,4 @@
+(ql:quickload :clim2-pre-compile-0)
 (setq sys::*libtk-pathname* "-lXm -lXpm -lXext -lXp")
 (setq sys::*libxt-pathname* "-lXt")
 (setq sys::*libx11-pathname* "-lX11")
