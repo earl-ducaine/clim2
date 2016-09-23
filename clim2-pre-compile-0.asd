@@ -2,5 +2,4 @@
     :depends-on ()
     :serial t
     :components
-    (
-     ))
+    ((:file "utils/excl-verification-load")     ))

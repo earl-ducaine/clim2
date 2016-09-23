@@ -115,7 +115,7 @@
     (:default-pathname "clim2:;utils;")
   ;; These files establish a uniform Lisp environment
   (:serial
-   "excl-verification"
+;;   "excl-verification"
    ("packages" (:module-class compile-always))
    "defun-utilities" ;; extract-declarations and friends
    #+(or Genera (not ansi-90)) "defun"
@@ -491,4 +491,3 @@
 (compare-system-files 'clim "sys:clim;rel-2;" "sys:clim;rel-2;shared;")
 
 ||#
-

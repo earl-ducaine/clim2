@@ -10,7 +10,7 @@
 (proclaim '(optimize (speed 3) (safety 1) (debug 1)))
 
 #+(and allegro microsoft)
-(eval-when (compile load eval) 
+(eval-when (compile load eval)
   (pushnew :acl86win32 *features*))
 
 #+microsoft
@@ -19,7 +19,7 @@
     (defun system::rcsnote (&rest args)
       nil)))
 
-(defvar *clim-root* (make-pathname 
+(defvar *clim-root* (make-pathname
                        :device (pathname-device *load-pathname*)
                        :directory (butlast (pathname-directory *load-pathname*))))
 
@@ -44,7 +44,7 @@
 	    (excl::*defconstant-redefinition-check* nil))
 	(load-system 'aclnt-clim)))
 
-    ;; postscript backend 
+    ;; postscript backend
     (progn
       (load (climpath "postscript\\sysdcl.lisp"))
       (compile-system 'postscript-clim)
@@ -122,7 +122,8 @@
 		  "test/test-suite.fasl"
 		  "demo/demo-last.fasl")
 		"climdemo.fasl")
-  (append-files '("utils/excl-verification.fasl"
+  (append-files '(
+;;		  "utils/excl-verification.fasl"
 		  "utils/packages.fasl"
 		  "utils/defun-utilities.fasl"
 		  "utils/reader.fasl"

@@ -1,6 +1,6 @@
 
 (asdf:defsystem :clim2
-    :depends-on ()
+    :depends-on (:clim2-pre-compile-0)
     :serial t
     :components
     ((:file "package")
