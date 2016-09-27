@@ -47,17 +47,20 @@
     ;; postscript backend
     (progn
       (load (climpath "postscript\\sysdcl.lisp"))
-      (compile-system 'postscript-clim)
+      ;; (compile-system 'postscript-clim)
       (let ((excl:*redefinition-warnings* nil)
 	    (excl::*defconstant-redefinition-check* nil))
-	(load-system 'postscript-clim)))
+	;; (load-system 'postscript-clim)
+	))
 
     (compile-file-if-needed (climpath "test\\test-suite.lisp"))
     (load (climpath "test\\test-suite.fasl"))
 
     (let ((excl:*redefinition-warnings* nil))
       (load (climpath "demo\\sysdcl.lisp"))
-      (compile-system 'clim-demo))
+      ;; could this have ever been executed?
+      ;; (compile-system 'clim-demo)
+      )
 
 )) ;; with-compilation-unit
 
@@ -95,33 +98,35 @@
 		  "aclpc/acl-scroll.fasl"
 		  "utils/last.fasl")
 		"climnt.fasl")
-  (append-files '("postscript/postscript-port.fasl"
-		  "postscript/postscript-medium.fasl"
-		  "postscript/laserwriter-metrics.fasl")
-		"climps.fasl")
-  (append-files '("demo/packages.fasl"
-		  "demo/demo-driver.fasl"
-		  "demo/listener.fasl"
-		  "demo/graphics-demos.fasl"
-		  "demo/cad-demo.fasl"
-		  "demo/bitmap-editor.fasl"
-		  "demo/navdata.fasl"
-		  "demo/navfun.fasl"
-		  "demo/puzzle.fasl"
-		  "demo/address-book.fasl"
-		  "demo/thinkadot.fasl"
-		  "demo/plot.fasl"
-		  "demo/color-editor.fasl"
-		  "demo/graphics-editor.fasl"
-		  "demo/ico.fasl"
-		  "demo/browser.fasl"
-		  "demo/peek-frame.fasl"
-		  "demo/process-browser.fasl"
-		  "demo/custom-records.fasl"
-		  "demo/demo-activity.fasl"
-		  "test/test-suite.fasl"
-		  "demo/demo-last.fasl")
-		"climdemo.fasl")
+
+  ;; (append-files '("postscript/postscript-port.fasl"
+  ;; 		  "postscript/postscript-medium.fasl"
+  ;; 		  "postscript/laserwriter-metrics.fasl")
+  ;; 		"climps.fasl")
+
+  ;; (append-files '("demo/packages.fasl"
+  ;; 		  "demo/demo-driver.fasl"
+  ;; 		  "demo/listener.fasl"
+  ;; 		  "demo/graphics-demos.fasl"
+  ;; 		  "demo/cad-demo.fasl"
+  ;; 		  "demo/bitmap-editor.fasl"
+  ;; 		  "demo/navdata.fasl"
+  ;; 		  "demo/navfun.fasl"
+  ;; 		  "demo/puzzle.fasl"
+  ;; 		  "demo/address-book.fasl"
+  ;; 		  "demo/thinkadot.fasl"
+  ;; 		  "demo/plot.fasl"
+  ;; 		  "demo/color-editor.fasl"
+  ;; 		  "demo/graphics-editor.fasl"
+  ;; 		  "demo/ico.fasl"
+  ;; 		  "demo/browser.fasl"
+  ;; 		  "demo/peek-frame.fasl"
+  ;; 		  "demo/process-browser.fasl"
+  ;; 		  "demo/custom-records.fasl"
+  ;; 		  "demo/demo-activity.fasl"
+  ;; 		  "test/test-suite.fasl"
+  ;; 		  "demo/demo-last.fasl")
+  ;; 		"climdemo.fasl")
   (append-files '(
 ;;		  "utils/excl-verification.fasl"
 		  "utils/packages.fasl"

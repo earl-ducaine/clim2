@@ -3,7 +3,7 @@
 ;;
 
 #|
-:Distribute Systems CLIM-BINARIES Latest :Distribute Patch Sources No :Include Patches Yes :Query Confirm-Only :Machine Types Imach :File Types Binaries 
+:Distribute Systems CLIM-BINARIES Latest :Distribute Patch Sources No :Include Patches Yes :Query Confirm-Only :Machine Types Imach :File Types Binaries
 |#
 (sct:define-distribution-system clim-binaries
     (:default-pathname "SYS:CLIM;REL-2;"
@@ -11,9 +11,13 @@
      :distribute-binaries t
      :source-category :restricted)
   (:module clim
-    ("CLIM" "Genera-CLIM" "CLX-CLIM" "PostScript-CLIM" "CLIM-Demo" "CLIM-Compatibility")
+	   ("CLIM" "Genera-CLIM"
+		   "CLX-CLIM"
+;;;		   "PostScript-CLIM"
+		   "CLIM-Demo"
+		   "CLIM-Compatibility")
     (:type :system) (:version :latest))
-  (:serial 
+  (:serial
     ";SYS;LOAD-CLIM2.LISP"
     clim
     ";TEST;TEST-SUITE.*"
@@ -32,9 +36,14 @@
      :distribute-binaries nil
      :source-category :restricted)
   (:module clim
-    ("CLIM" "Genera-CLIM" "CLX-CLIM" "PostScript-CLIM" "CLIM-Demo" "CLIM-Compatibility")
+	   ("CLIM"
+	    "Genera-CLIM"
+	    "CLX-CLIM"
+;;;	    "PostScript-CLIM"
+	    "CLIM-Demo"
+	    "CLIM-Compatibility")
     (:type :system) (:version :newest))
-  (:serial 
+  (:serial
     ";SYS;LOAD-CLIM2.LISP"
     clim
     ";TEST;TEST-SUITE.LISP"
@@ -52,7 +61,7 @@
      :distribute-sources t
      :distribute-binaries t
      :source-category :basic)
-  (:serial 
+  (:serial
     "LOAD-CLIM2.LISP"
     "SYS:CLIM;REL-2;SPECS;CLIM.PS"))
 
@@ -61,7 +70,7 @@
      :distribute-sources t
      :distribute-binaries t
      :source-category :basic)
-  (:serial 
+  (:serial
     "TEST-SUITE.*"
     "TEST.*"
     "TEST-BUTTONS.*"
@@ -73,7 +82,7 @@
 	  (clim 50 (:distribute-sources nil))
 	  (genera-clim 50 (:distribute-sources nil))
 	  (clx-clim 50 (:distribute-sources t))
-	  (postscript-clim 50 (:distribute-sources nil))
+;;;	  (postscript-clim 50 (:distribute-sources nil))
 	  (clim-demo 50 (:distribute-sources t))
 	  (clim-tests :newest (:distribute-sources t))))
 

@@ -437,31 +437,30 @@
 ;;; somehow be unified -- either everything above should go into other
 ;;; dirs or it should be dragged up here.
 
-
-#||
+;; #||
 
-;; You get the general idea...
-(defun clone-CLIM ()
-  (sct:copy-system 'clim
-    :copy-sources t :copy-binaries nil
-    :destination '((#p"S:>sys>clim>sys>*.*.*" #p"S:>rel-8-0>sys>clim>sys>*.*.*")
-		   (#p"S:>sys>clim>utils>*.*.*" #p"S:>rel-8-0>sys>clim>utils>*.*.*")
-		   (#p"S:>sys>clim>silica>*.*.*" #p"S:>rel-8-0>sys>clim>silica>*.*.*")
-		   (#p"S:>sys>clim>clim>*.*.*" #p"S:>rel-8-0>sys>clim>clim>*.*.*")))
-  (sct:copy-system 'genera-clim
-    :copy-sources t :copy-binaries nil
-    :destination '((#p"S:>sys>clim>genera>*.*.*" #p"S:>rel-8-0>sys>clim>genera>*.*.*")))
-  (sct:copy-system 'clx-clim
-    :copy-sources t :copy-binaries nil
-    :destination '((#p"S:>sys>clim>clx>*.*.*" #p"S:>rel-8-0>sys>clim>clx>*.*.*")))
-  (sct:copy-system 'postscript-clim
-    :copy-sources t :copy-binaries nil
-    :destination '((#p"S:>sys>clim>postscript>*.*.*" #p"S:>rel-8-0>sys>clim>postscript>*.*.*")))
-  (sct:copy-system 'clim-demo
-    :copy-sources t :copy-binaries nil
-    :destination '((#p"S:>sys>clim>demo>*.*.*" #p"S:>rel-8-0>sys>clim>demo>*.*.*"))))
+;; ;; You get the general idea...
+;; (defun clone-CLIM ()
+;;   (sct:copy-system 'clim
+;;     :copy-sources t :copy-binaries nil
+;;     :destination '((#p"S:>sys>clim>sys>*.*.*" #p"S:>rel-8-0>sys>clim>sys>*.*.*")
+;; 		   (#p"S:>sys>clim>utils>*.*.*" #p"S:>rel-8-0>sys>clim>utils>*.*.*")
+;; 		   (#p"S:>sys>clim>silica>*.*.*" #p"S:>rel-8-0>sys>clim>silica>*.*.*")
+;; 		   (#p"S:>sys>clim>clim>*.*.*" #p"S:>rel-8-0>sys>clim>clim>*.*.*")))
+;;   (sct:copy-system 'genera-clim
+;;     :copy-sources t :copy-binaries nil
+;;     :destination '((#p"S:>sys>clim>genera>*.*.*" #p"S:>rel-8-0>sys>clim>genera>*.*.*")))
+;;   (sct:copy-system 'clx-clim
+;;     :copy-sources t :copy-binaries nil
+;;     :destination '((#p"S:>sys>clim>clx>*.*.*" #p"S:>rel-8-0>sys>clim>clx>*.*.*")))
+;;   (sct:copy-system 'postscript-clim
+;;     :copy-sources t :copy-binaries nil
+;;     :destination '((#p"S:>sys>clim>postscript>*.*.*" #p"S:>rel-8-0>sys>clim>postscript>*.*.*")))
+;;   (sct:copy-system 'clim-demo
+;;     :copy-sources t :copy-binaries nil
+;;     :destination '((#p"S:>sys>clim>demo>*.*.*" #p"S:>rel-8-0>sys>clim>demo>*.*.*"))))
 
-||#
+;; ||#
 
 #||
 ()

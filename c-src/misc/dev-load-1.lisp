@@ -67,10 +67,10 @@
        (tenuring
 	(excl:load-system 'clim-toys)))
 
-     #+never
-     (clim-defsys::fake-load-system
-      (cons sys '(postscript-clim clim-demo))
-      :recurse t)
+     ;; #+never
+     ;; (clim-defsys::fake-load-system
+     ;;  (cons sys '(postscript-clim clim-demo))
+     ;;  :recurse t)
 
      (ignore-errors
       (load (case sys

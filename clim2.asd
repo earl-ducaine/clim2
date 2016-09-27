@@ -1,12 +1,18 @@
+;;; This file was written by Earl DuCaine.  It may be used in
+;;; accordance with the licence specified in the LICENSE file or the
+;;; MIT license.
+
+
+
 
 (asdf:defsystem :clim2
     :depends-on (:clim2-pre-compile-0)
     :serial t
     :components
     ((:file "package")
+     (:file "utils/packages")
      (:file "demo/packages")
      (:file "test/test-pkg")
-
      (:file "load-clim")
 
      ;;;(:file "test/test-pkg")
@@ -24,6 +30,15 @@
      (:file "hpgl/pkg")
      (:file "hpgl/hpgl-port")
      (:file "hpgl/hpgl-medium")
+
+     (:file "postscript/pkgdcl")
+     (:file "postscript/postscript-s")
+;;;     (:file "postscript/postscript-clim-stubs")
+     (:file "postscript/postscript-port")
+     (:file "postscript/postscript-medium")
+     (:file "postscript/read-afm")
+     (:file "postscript/laserwriter-metrics")
+;;;     (:file "postscript/climps")
 
      (:module demo
 	      :depends-on (:package :load-clim)
@@ -57,6 +72,7 @@
 	       (:file "thinkadot")
 	       ))
      (:file "clim-example" :depends-on (:demo))
+     (:file "test/test-suite")
      ))
 
 (format t "~%to run demo: (clim-demo:start-demo)" nil)

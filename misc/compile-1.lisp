@@ -104,7 +104,7 @@
     ()
     (:serial
      clim-standalone			;from sys;sysdcl
-     postscript-clim-stubs		;from postscript;sysdcl
+;;     postscript-clim-stubs		;from postscript;sysdcl
      )))
 
 (eval-when (compile load eval)
@@ -114,8 +114,8 @@
     ;; probably make this be just clim-demo + clim-tests.
     ()
     (:serial
-     clim-demo				;demo;sysdcl
-     "clim2:;test;test-suite"             ;hack!
+;;     clim-demo				;demo;sysdcl
+;;     "clim2:;test;test-suite"             ;hack!
      )))
 
 ;; (eval-when (compile load eval)
@@ -256,8 +256,8 @@
       ;; platform.
       ;; I am not sure if this is the right test...
       ;;;(cl 'wnn)
-      (cl 'postscript-clim)
-      (cl 'climdemo)
+      ;; (cl 'postscript-clim)
+      ;; (cl 'climdemo)
       ;; This currently does not build on windows but I think it
       ;; should do in future
       ;;(cl 'testing)
@@ -280,7 +280,7 @@
   ;; these are the basic things that we get
   (concatenate-system 'climg "clim2:;climg.fasl")
   (concatenate-system 'climdemo "clim2:;climdemo.fasl")
-  (concatenate-system 'postscript-clim "clim2:;climps.fasl")
+  ;; (concatenate-system 'postscript-clim "clim2:;climps.fasl")
   ;; The wnn system depends on ics.  The debug system is just there
   ;; for backwards compatibility
   ;;;(concatenate-system 'wnn-cat "clim2:;climwnn.fasl")

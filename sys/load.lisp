@@ -51,14 +51,15 @@
   #+aclpc (clim-defsystem:load-system "aclpc-clim")
   #+acl86win32 (load-system 'aclnt-clim)
 
-  (unless (and (boundp '*no-clim-demos*) *no-clim-demos*)
-    ;; note: test-suite.fsl has been in the demo folder in past distributions
-    #+aclpc (load (climpath "test\\test-suite.fsl"))
-    #+acl86win32 (load (climpath "test\\test-suite.fasl"))
-    #+aclpc (load (climpath "demo\\sysdcl-pc.lisp"))
-    #+acl86win32 (load (climpath "demo\\sysdcl.lisp"))
-    #+aclpc (clim-defsystem:load-system "clim-demo")
-    #+acl86win32 (load-system 'clim-demo)))
+  ;; (unless (and (boundp '*no-clim-demos*) *no-clim-demos*)
+  ;;   ;; note: test-suite.fsl has been in the demo folder in past distributions
+  ;;   #+aclpc (load (climpath "test\\test-suite.fsl"))
+  ;;   #+acl86win32 (load (climpath "test\\test-suite.fasl"))
+  ;;   #+aclpc (load (climpath "demo\\sysdcl-pc.lisp"))
+  ;;   #+acl86win32 (load (climpath "demo\\sysdcl.lisp"))
+  ;;   #+aclpc (clim-defsystem:load-system "clim-demo")
+  ;;   #+acl86win32 (load-system 'clim-demo))
+  )
 
 ;;; Remove this feature for the final world.
 #+acl86win32-uses-clim-defsystem
@@ -75,8 +76,8 @@
 #+aclpc (load (climpath "postscript\\sysdcl-pc.lisp"))
 #+acl86win32 (load (climpath "postscript\\sysdcl.lisp"))
 
-#+aclpc (clim-defsystem:load-system "postscript-clim")
-#+acl86win32 (load-system 'postscript-clim)
+;; #+aclpc (clim-defsystem:load-system "postscript-clim")
+;; #+acl86win32 (load-system 'postscript-clim)
 
 (in-package :clim-user)
 

@@ -9,46 +9,46 @@
 
 ;; see sys/sysdcl.lisp for the package-module defn (cim 2/28/96)
 
-(defsystem clim-demo
-    (:default-pathname "clim2:;demo;")
-  (:serial
-;;;   #+acl86win32 aclnt-clim
-   postscript-clim-stubs
-   ("packages" (:module-class compile-always))
-   ("demo-driver"     (:load-before-compile "packages"))
-   ("listener"        (:load-before-compile "demo-driver" "packages"))
-   #+acl86win32
-   ("winlisp"         (:load-before-compile "demo-driver" "packages"))
-   ("graphics-demos"  (:load-before-compile "demo-driver" "packages"))
-   ("cad-demo"	     (:load-before-compile "demo-driver" "packages"))
-   ("navdata"	     (:load-before-compile "packages"))
-   ("navfun"          (:load-before-compile "demo-driver" "packages" "navdata"))
-   ("puzzle"          (:load-before-compile "demo-driver" "packages"))
-   ("address-book"    (:load-before-compile "demo-driver" "packages"))
-   ("thinkadot"       (:load-before-compile "demo-driver" "packages"))
-   ("plot"	     (:load-before-compile "demo-driver" "packages"))
-   ("color-editor"    (:load-before-compile "demo-driver" "packages"))
-   ("graphics-editor" (:load-before-compile "demo-driver" "packages"))
+;; (defsystem clim-demo
+;;     (:default-pathname "clim2:;demo;")
+;;   (:serial
+;; ;;;   #+acl86win32 aclnt-clim
+;;    postscript-clim-stubs
+;;    ("packages" (:module-class compile-always))
+;;    ("demo-driver"     (:load-before-compile "packages"))
+;;    ("listener"        (:load-before-compile "demo-driver" "packages"))
+;;    #+acl86win32
+;;    ("winlisp"         (:load-before-compile "demo-driver" "packages"))
+;;    ("graphics-demos"  (:load-before-compile "demo-driver" "packages"))
+;;    ("cad-demo"	     (:load-before-compile "demo-driver" "packages"))
+;;    ("navdata"	     (:load-before-compile "packages"))
+;;    ("navfun"          (:load-before-compile "demo-driver" "packages" "navdata"))
+;;    ("puzzle"          (:load-before-compile "demo-driver" "packages"))
+;;    ("address-book"    (:load-before-compile "demo-driver" "packages"))
+;;    ("thinkadot"       (:load-before-compile "demo-driver" "packages"))
+;;    ("plot"	     (:load-before-compile "demo-driver" "packages"))
+;;    ("color-editor"    (:load-before-compile "demo-driver" "packages"))
+;;    ("graphics-editor" (:load-before-compile "demo-driver" "packages"))
 
-   ;; only compile with non-ICS if no fasl file exist
-   ;; always compile with ICS in case it was previously compiled by
-   ;; non-ICS
-   #-acl86win32
-   ("japanese-graphics-editor" (:module-class #-ics compile-once
-					      #+ics compile-always)
-			       (:load-before-compile "demo-driver" "packages"))
+;;    ;; only compile with non-ICS if no fasl file exist
+;;    ;; always compile with ICS in case it was previously compiled by
+;;    ;; non-ICS
+;;    #-acl86win32
+;;    ("japanese-graphics-editor" (:module-class #-ics compile-once
+;; 					      #+ics compile-always)
+;; 			       (:load-before-compile "demo-driver" "packages"))
 
-   ;;#-acl86win32
-   ("bitmap-editor"   (:load-before-compile "demo-driver" "packages"))
-   ("ico"	     (:load-before-compile "demo-driver" "packages"))
-   ("browser"	     (:load-before-compile "demo-driver" "packages"))
-   ("peek-frame"      (:load-before-compile "demo-driver" "packages"))
-   ("process-browser" (:load-before-compile "demo-driver" "packages"))
-   ("custom-records"  (:load-before-compile "demo-driver" "packages"))
-   ("demo-activity"   (:load-before-compile "demo-driver" "packages"))
-   ("demo-last")
-   #+(or Genera Cloe-Runtime) ("demo-prefill")
-   ))
+;;    ;;#-acl86win32
+;;    ("bitmap-editor"   (:load-before-compile "demo-driver" "packages"))
+;;    ("ico"	     (:load-before-compile "demo-driver" "packages"))
+;;    ("browser"	     (:load-before-compile "demo-driver" "packages"))
+;;    ("peek-frame"      (:load-before-compile "demo-driver" "packages"))
+;;    ("process-browser" (:load-before-compile "demo-driver" "packages"))
+;;    ("custom-records"  (:load-before-compile "demo-driver" "packages"))
+;;    ("demo-activity"   (:load-before-compile "demo-driver" "packages"))
+;;    ("demo-last")
+;;    #+(or Genera Cloe-Runtime) ("demo-prefill")
+;;    ))
 
 #+Genera
 (clim-defsys:import-into-sct 'clim-demo

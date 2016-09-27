@@ -1,7 +1,7 @@
 ;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Package: CL-USER; Base: 10; Lowercase: Yes -*-
 ;; See the file LICENSE for the full license governing this code.
 ;;
- 
+
 (defun flush-clim ()
   (when (find-package 'clim-defsys)
     (set (intern "*SYSTEMS*" 'clim-defsys) nil))
@@ -16,7 +16,11 @@
       (delete-package pkg)))
   (dolist (sys '(clim-utils clim-standalone clim clim-demo
 		 ;; CLIM 2.0
-		 clim-internals clim-silica genera-clim clx-clim postscript-clim
+		 clim-internals
+		 clim-silica
+		 genera-clim
+		 clx-clim
+;;;		 postscript-clim
 		 ;; CLIM 0.9
 		 silica silica-low silica-core ws ws-core ws-panes
 		 silica-x silica-genera silica-coral-2 silica-postscript
@@ -54,9 +58,10 @@
     (apply #'sct:compile-system 'clx-clim :include-components nil
 				:batch #p"sys:clim;rel-2;sys;clx-clim.cwarns"
 				other-keys)
-    (apply #'sct:compile-system 'postscript-clim :include-components nil
-				:batch #p"sys:clim;rel-2;sys;postscript-clim.cwarns"
-				other-keys)))
+    ;; (apply #'sct:compile-system 'postscript-clim :include-components nil
+    ;; 				:batch #p"sys:clim;rel-2;sys;postscript-clim.cwarns"
+    ;; 				other-keys)
+    ))
 
 (defun load-clim2 ()
   (unless (find-package 'clim-defsys)
@@ -72,8 +77,9 @@
 			     other-keys)
     (apply #'sct:load-system 'clx-clim :include-components nil
 			     other-keys)
-    (apply #'sct:load-system 'postscript-clim :include-components nil
-			     other-keys))
+    ;; (apply #'sct:load-system 'postscript-clim :include-components nil
+    ;; 			     other-keys)
+    )
   t)
 
 (defun compile-clim2-demo ()
