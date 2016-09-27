@@ -320,21 +320,21 @@
    ("last" (:load-before-compile "load-xlib" "xlib-funs"))
    ))
 
-#+(and allegro (not acl86win32))
-(defsystem wnn
-    (:default-pathname "clim2:;wnn;")
-  (:serial
-   clim-standalone
-   "pkg"
-   "load-wnn"
-   "jl-defs"
-   "jl-funs"
-   ;; This module gets the same module class as "japanese-input-editor"
-   ;; because this module has definitions that the other module uses, and
-   ;; without also compiling this we get warnings about undefined functions
-   ;; during the compile.  Gross.
-   ("jserver" (:module-class #-ics compile-once
-			     #+ics compile-always))))
+;; #+(and allegro (not acl86win32))
+;; (defsystem wnn
+;;     (:default-pathname "clim2:;wnn;")
+;;   (:serial
+;;    clim-standalone
+;;    "pkg"
+;;    "load-wnn"
+;;    "jl-defs"
+;;    "jl-funs"
+;;    ;; This module gets the same module class as "japanese-input-editor"
+;;    ;; because this module has definitions that the other module uses, and
+;;    ;; without also compiling this we get warnings about undefined functions
+;;    ;; during the compile.  Gross.
+;;    ("jserver" (:module-class #-ics compile-once
+;; 			     #+ics compile-always))))
 
 #+(and allegro (not acl86win32))
 (macrolet ((define-xt-system (name file &rest modules)

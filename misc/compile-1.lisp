@@ -215,16 +215,16 @@
      ("gc-cursor")
      last)))
 
-(eval-when (compile load eval)
-  (defsystem wnn-cat
-    ;; cattable wnn, see clim2:;sys;sysdcl
-    (:default-pathname "clim2:;wnn;")
-    (:serial
-     "pkg"
-     "load-wnn"
-     "jl-defs"
-     "jl-funs"
-     "jserver")))
+;; (eval-when (compile load eval)
+;;   (defsystem wnn-cat
+;;     ;; cattable wnn, see clim2:;sys;sysdcl
+;;     (:default-pathname "clim2:;wnn;")
+;;     (:serial
+;;      "pkg"
+;;      "load-wnn"
+;;      "jl-defs"
+;;      "jl-funs"
+;;      "jserver")))
 
 ;;; Compiling a system.
 ;;;
@@ -255,14 +255,15 @@
       ;; compatibility;sysdcl) systems were not being bult on any
       ;; platform.
       ;; I am not sure if this is the right test...
-      (cl 'wnn)
+      ;;;(cl 'wnn)
       (cl 'postscript-clim)
       (cl 'climdemo)
       ;; This currently does not build on windows but I think it
       ;; should do in future
       (cl 'testing)
       (cl 'clim-toys :ignore-if-unknown t)
-      (cl 'hpgl-clim))))
+      ;;(cl 'hpgl-clim)
+      )))
 
 ;;; Concatenating systems
 ;;;
@@ -282,10 +283,10 @@
   (concatenate-system 'postscript-clim "clim2:;climps.fasl")
   ;; The wnn system depends on ics.  The debug system is just there
   ;; for backwards compatibility
-  (concatenate-system 'wnn-cat "clim2:;climwnn.fasl")
-  (concatenate-system 'empty-cat "clim2:;clim-debugwnn.fasl")
+  ;;;(concatenate-system 'wnn-cat "clim2:;climwnn.fasl")
+  ;;;(concatenate-system 'empty-cat "clim2:;clim-debugwnn.fasl")
   ;; hpgl only on unix
-  (concatenate-system 'hpgl-clim-cat "clim2:;climhpgl.fasl")
+  ;;;;(concatenate-system 'hpgl-clim-cat "clim2:;climhpgl.fasl")
   ;; formerly the bogusly-named system with X debugging stuff in, now
   ;; exists only for backwards compatibility.
   (concatenate-system 'empty-cat "clim2:;clim-debug.fasl"))
