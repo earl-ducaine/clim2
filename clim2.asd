@@ -5,9 +5,8 @@
     :components
     ((:file "package")
      (:file "load-clim")
-     ;;     (:file "cat")
+
      (:file "wnn/pkg")
-     ;;     (:file "load-wnn")
      (:file "wnn/load-wnn")
      (:file "wnn/jl-defs")
      (:file "wnn/jl-funs")
