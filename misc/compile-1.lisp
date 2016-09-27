@@ -260,7 +260,7 @@
       (cl 'climdemo)
       ;; This currently does not build on windows but I think it
       ;; should do in future
-      (cl 'testing)
+      ;;(cl 'testing)
       (cl 'clim-toys :ignore-if-unknown t)
       ;;(cl 'hpgl-clim)
       )))

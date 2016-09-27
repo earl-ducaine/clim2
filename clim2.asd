@@ -4,7 +4,16 @@
     :serial t
     :components
     ((:file "package")
+     (:file "demo/packages")
+     (:file "test/test-pkg")
+
      (:file "load-clim")
+
+     ;;;(:file "test/test-pkg")
+     (:file "test/test-driver")
+     (:file "test/test-clim-tests")
+     (:file "test/test-clim")
+     (:file "test/test-demos")
 
      (:file "wnn/pkg")
      (:file "wnn/load-wnn")
@@ -21,7 +30,7 @@
 	      :serial t
 	      :components
 	      (
-	       (:file "packages")
+;;;	       (:file "packages")
 	       (:file "demo-driver")
 	       (:file "address-book")
 	       (:file "bitmap-editor")

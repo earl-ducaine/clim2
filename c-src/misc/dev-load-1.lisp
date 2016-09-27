@@ -16,6 +16,8 @@
        (*load-xref-info* nil))
    (load "clim2:;sys;sysdcl")))
 
+
+;;; none of this should be needed.
 (defun load-it (sys &key load-composer)
   (let ((*load-source-file-info* t)
 	(*record-source-file-info* t)
@@ -54,10 +56,10 @@
 	(tenuring
 	 (require :composer))))
 
-     (progn
-       (load "clim2:;test;testdcl")
-       (tenuring
-	(excl:load-system 'testing)))
+     ;; (progn
+     ;;   (load "clim2:;test;testdcl")
+     ;;   (tenuring
+     ;; 	(excl:load-system 'testing)))
 
      (when (probe-file "clim2:;climtoys;sysdcl.lisp")
        (load "clim2:;climtoys;sysdcl.lisp")
