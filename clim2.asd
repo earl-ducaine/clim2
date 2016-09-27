@@ -5,7 +5,11 @@
     :components
     ((:file "package")
      (:file "load-clim")
-;;     (:file "cat")
+     ;;     (:file "cat")
+     (:file "hpgl/pkg")
+     (:file "hpgl/hpgl-port")
+     (:file "hpgl/hpgl-medium")
+
      (:module demo
 	      :depends-on (:package :load-clim)
 	      :serial t

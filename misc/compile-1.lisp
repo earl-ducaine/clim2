@@ -118,14 +118,15 @@
      "clim2:;test;test-suite"             ;hack!
      )))
 
-(eval-when (compile load eval)
-  (defsystem hpgl-clim-cat
-    ;; a cattable hpgl-clim, see clim2:;hpgl;sysdcl
-    (:default-pathname "clim2:;hpgl;")
-    (:serial
-     ("pkg")
-     ("hpgl-port")
-     ("hpgl-medium"))))
+;; (eval-when (compile load eval)
+;;   (defsystem hpgl-clim-cat
+;;     ;; a cattable hpgl-clim, see clim2:;hpgl;sysdcl
+;;     (:default-pathname "clim2:;hpgl;")
+;;     (:serial
+;;      ("pkg")
+;;      ("hpgl-port")
+;; ;;     ("hpgl-medium")
+;;      )))
 
 (eval-when (compile load eval)
   (defsystem empty-cat
