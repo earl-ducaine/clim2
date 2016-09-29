@@ -229,9 +229,9 @@
    ;; only compile with non-ICS if no fasl file exist
    ;; always compile with ICS in case it was previously compiled by
    ;; non-ICS
-   #-acl86win32
-   ("japanese-input-editor" (:module-class #-ics compile-once
-					   #+ics compile-always))
+   ;; #-acl86win32
+   ;; ("japanese-input-editor" (:module-class #-ics compile-once
+   ;; 					   #+ics compile-always))
 
    ;; Incremental redisplay
    ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
@@ -404,34 +404,34 @@
    ("xt-graphics")
    ("image")
    ("xt-frames")
-   ("xm-frames")
-   ("xm-dialogs")
-   ("xt-gadgets")
-   ("xm-gadgets")
-   ("xt-pixmaps")
-   ("gc-cursor")
+   ;; ("xm-frames")
+   ;; ("xm-dialogs")
+   ;; ("xt-gadgets")
+   ;; ("xm-gadgets")
+   ;; ("xt-pixmaps")
+   ;; ("gc-cursor")
    last))
 
-#+(and allegro (not acl86win32))
-(defsystem openlook-clim
-    (:default-pathname "clim2:;tk-silica;")
-  (:serial
-   clim-standalone
-   ol-tk
+;; #+(and allegro (not acl86win32))
+;; (defsystem openlook-clim
+;;     (:default-pathname "clim2:;tk-silica;")
+;;   (:serial
+;;    clim-standalone
+;;    ol-tk
 
-   ("pkg")
-   ("xt-silica")
-   ("xt-stipples")
-   ("ol-silica")
-   ("xt-graphics")
-   ("image")
-   ("xt-frames")
-   ("ol-frames")
-   ("xt-gadgets")
-   ("ol-gadgets")
-   ("xt-pixmaps")
-   ("gc-cursor")
-   last))
+;;    ("pkg")
+;;    ("xt-silica")
+;;    ("xt-stipples")
+;;    ("ol-silica")
+;;    ("xt-graphics")
+;;    ("image")
+;;    ("xt-frames")
+;;    ("ol-frames")
+;;    ("xt-gadgets")
+;;    ("ol-gadgets")
+;;    ("xt-pixmaps")
+;;    ;; ("gc-cursor")
+;;    last))
 
 ;;; aclnt-clim is defined in clim2:;aclpc;sysdcl.lisp.  This should
 ;;; somehow be unified -- either everything above should go into other

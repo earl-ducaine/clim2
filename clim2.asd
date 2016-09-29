@@ -15,6 +15,17 @@
      (:file "test/test-pkg")
      (:file "load-clim")
 
+
+
+
+     (:file "tk-silica/xm-frames")
+     (:file "tk-silica/xm-dialogs")
+     (:file "tk-silica/xt-gadgets")
+     (:file "tk-silica/xm-gadgets")
+
+     (:file "tk-silica/xt-pixmaps")
+     (:file "tk-silica/gc-cursor")
+     (:file "clim/japanese-input-editor")
      ;;;(:file "test/test-pkg")
      (:file "test/test-driver")
      (:file "test/test-clim-tests")
