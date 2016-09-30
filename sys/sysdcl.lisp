@@ -311,13 +311,13 @@
     (:default-pathname "clim2:;xlib;")
   (:serial
    clim-standalone
-   "pkg"
-   "ffi"
-   ("load-xlib")
-   ("xlib-defs" (:load-before-compile "ffi"))
-   ("xlib-funs" (:load-before-compile "ffi"))
-   ("x11-keysyms" (:load-before-compile "ffi"))
-   ("last" (:load-before-compile "load-xlib" "xlib-funs"))
+   ;; "pkg"
+   ;; "ffi"
+   ;; ("load-xlib")
+   ;; ("xlib-defs" (:load-before-compile "ffi"))
+   ;; ("xlib-funs" (:load-before-compile "ffi"))
+   ;; ("x11-keysyms" (:load-before-compile "ffi"))
+   ;; ("last" (:load-before-compile "load-xlib" "xlib-funs"))
    ))
 
 ;; #+(and allegro (not acl86win32))
@@ -343,27 +343,27 @@
 		  (:serial
 		   xlib
 		   (,file)
-		   ("pkg")
-		   ("macros")
-		   ("xt-defs")
-		   ("xt-funs")
-		   ("foreign-obj")
-		   ;; Xlib stuff
-		   ("xlib")
-		   ("font")
-		   ("gcontext")
-		   ("graphics")
+		   ;; ("pkg")
+		   ;; ("macros")
+		   ;; ("xt-defs")
+		   ;; ("xt-funs")
+		   ;; ("foreign-obj")
+		   ;; ;; Xlib stuff
+		   ;; ("xlib")
+		   ;; ("font")
+		   ;; ("gcontext")
+		   ;; ("graphics")
 
-		   ;; Toolkit stuff
-		   ("meta-tk")
-		   ("make-classes")
-		   ("foreign")
-		   ("widget")
-		   ("resources")
-		   ("event")
-		   ("callbacks")
-		   ("xt-classes")
-		   ("xt-init")
+		   ;; ;; Toolkit stuff
+		   ;; ("meta-tk")
+		   ;; ("make-classes")
+		   ;; ("foreign")
+		   ;; ("widget")
+		   ;; ("resources")
+		   ;; ("event")
+		   ;; ("callbacks")
+		   ;; ("xt-classes")
+		   ;; ("xt-init")
 		   ,@modules))))
 
 (define-xt-system xm-tk "load-xm"

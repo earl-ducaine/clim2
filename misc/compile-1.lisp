@@ -139,13 +139,13 @@
     ;; a cattable xlib, see clim2:;sys;sysdcl
     (:default-pathname "clim2:;xlib;")
     (:serial
-     "pkg"
-     "ffi"
-     ("load-xlib")
-     ("xlib-defs" (:load-before-compile "ffi"))
-     ("xlib-funs" (:load-before-compile "ffi"))
-     ("x11-keysyms" (:load-before-compile "ffi"))
-     ("last" (:load-before-compile "load-xlib" "xlib-funs"))
+     ;; "pkg"
+     ;; "ffi"
+     ;; ("load-xlib")
+     ;; ("xlib-defs" (:load-before-compile "ffi"))
+     ;; ("xlib-funs" (:load-before-compile "ffi"))
+     ;; ("x11-keysyms" (:load-before-compile "ffi"))
+     ;; ("last" (:load-before-compile "load-xlib" "xlib-funs"))
      )))
 
 (defmacro define-xt-cat-system (name file &rest modules)
@@ -158,26 +158,26 @@
      (:serial
       (,file)
       xlib-cat
-      ("pkg")
-      ("macros")
-      ("xt-defs")
-      ("xt-funs")
-      ("foreign-obj")
-      ;; Xlib stuff
-      ("xlib")
-      ("font")
-      ("gcontext")
-      ("graphics")
-      ;; Toolkit stuff
-      ("meta-tk")
-      ("make-classes")
-      ("foreign")
-      ("widget")
-      ("resources")
-      ("event")
-      ("callbacks")
-      ("xt-classes")
-      ("xt-init")
+      ;; ("pkg")
+      ;; ("macros")
+      ;; ("xt-defs")
+      ;; ("xt-funs")
+      ;; ("foreign-obj")
+      ;; ;; Xlib stuff
+      ;; ("xlib")
+      ;; ("font")
+      ;; ("gcontext")
+      ;; ("graphics")
+      ;; ;; Toolkit stuff
+      ;; ("meta-tk")
+      ;; ("make-classes")
+      ;; ("foreign")
+      ;; ("widget")
+      ;; ("resources")
+      ;; ("event")
+      ;; ("callbacks")
+      ;; ("xt-classes")
+      ;; ("xt-init")
       ,@modules)))
 
 (eval-when (compile load eval)
@@ -201,7 +201,7 @@
     (:default-pathname "clim2:;tk-silica;")
     (:serial
      xm-tk-cat
-     ("pkg")
+     ;; ("pkg")
      ;; ("xt-silica")
      ;; ("xt-stipples")
      ;; ("xm-silica")
@@ -214,7 +214,8 @@
      ;; ("xm-gadgets")
      ;; ("xt-pixmaps")
      ;; ("gc-cursor")
-     last)))
+     ;; last
+     )))
 
 ;; (eval-when (compile load eval)
 ;;   (defsystem wnn-cat

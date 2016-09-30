@@ -1,3 +1,4 @@
+
 ;;; This file was written by Earl DuCaine.  It may be used in
 ;;; accordance with the licence specified in the LICENSE file or the
 ;;; MIT license.
@@ -14,6 +15,37 @@
      (:file "demo/packages")
      (:file "test/test-pkg")
      (:file "load-clim")
+     (:file "tk/pkg")
+     (:file "tk-silica/pkg")
+     (:file "xlib/pkg")
+
+     (:file "xlib/ffi")
+     (:file "xlib/load-xlib")
+     (:file "xlib/xlib-defs")
+     (:file "xlib/xlib-funs")
+     (:file "xlib/x11-keysyms")
+     (:file "xlib/last")
+
+
+     (:file "tk/macros")
+     (:file "tk/xt-defs")
+     (:file "tk/xt-funs")
+     (:file "tk/foreign-obj")
+      ;; Xlib stuff
+     (:file "tk/xlib")
+     (:file "tk/font")
+     (:file "tk/gcontext")
+     (:file "tk/graphics")
+      ;; Toolkit stuff
+     (:file "tk/meta-tk")
+     (:file "tk/make-classes")
+     (:file "tk/foreign")
+     (:file "tk/widget")
+     (:file "tk/resources")
+     (:file "tk/event")
+     (:file "tk/callbacks")
+     (:file "tk/xt-classes")
+     (:file "tk/xt-init")
 
 
      (:file "tk/xm-defs")
