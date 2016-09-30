@@ -200,7 +200,7 @@
     ;; cattable motif-clim, see clim2:;sys;sysdcl
     (:default-pathname "clim2:;tk-silica;")
     (:serial
-     xm-tk-cat
+;;     xm-tk-cat
      ;; ("pkg")
      ;; ("xt-silica")
      ;; ("xt-stipples")
