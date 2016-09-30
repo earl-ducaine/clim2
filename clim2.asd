@@ -16,8 +16,23 @@
      (:file "load-clim")
 
 
+     (:file "tk/xm-defs")
+     (:file "tk/xm-funs")
+     (:file "tk/xm-classes")
+     (:file "tk/xm-callbacks")
+     (:file "tk/xm-init")
+     (:file "tk/xm-widgets")
+     (:file "tk/xm-font-list")
+     (:file "tk/xm-protocols")
+     (:file "tk/convenience")
+     (:file "tk/make-widget")
 
-
+     (:file "tk-silica/xt-silica")
+     (:file "tk-silica/xt-stipples")
+     (:file "tk-silica/xm-silica")
+     (:file "tk-silica/xt-graphics")
+     (:file "tk-silica/image")
+     (:file "tk-silica/xt-frames")
      (:file "tk-silica/xm-frames")
      (:file "tk-silica/xm-dialogs")
      (:file "tk-silica/xt-gadgets")
