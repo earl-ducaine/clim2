@@ -19,12 +19,18 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
+
+     (:file "clim/panes")
+     (:file "clim/default-frame")
+     (:file "clim/activities")
+     ;;     (:file "clim/db-menu")
+     (:file "clim/noting-progress")
+     (:file "clim/menus")
+     (:file "clim/accept-values")
+
+     (:file "clim/drag-and-drop")
+     (:file "clim/item-list-manager")
      (:file "clim/stream-trampolines")
-
-
-
-
-
 
      (:file "xlib/ffi")
      (:file "xlib/load-xlib")
@@ -32,7 +38,6 @@
      (:file "xlib/xlib-funs")
      (:file "xlib/x11-keysyms")
      (:file "xlib/last")
-
 
      (:file "tk/macros")
      (:file "tk/xt-defs")

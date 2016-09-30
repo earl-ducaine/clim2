@@ -273,17 +273,17 @@
    ("command-processor" (:load-before-compile "clim-defs" "command"))
    ("basic-translators" (:load-before-compile "ptypes2" "command"))
    ("frames" (:load-before-compile "clim-defs" "command-processor"))
-   ("panes" (:load-before-compile "frames"))
-   ("default-frame" (:load-before-compile "frames"))
-   ("activities" (:load-before-compile "frames"))
+   ;; ("panes" (:load-before-compile "frames"))
+   ;; ("default-frame" (:load-before-compile "frames"))
+   ;; ("activities" (:load-before-compile "frames"))
    ("db-menu" (:load-before-compile "frames"))
-   #+acl86win32 ("db-list" (:load-before-compile "db-menu"))
-   #+acl86win32 ("db-text" (:load-before-compile "frames"))
-   ("noting-progress" (:load-before-compile "frames"))
-   ("menus" (:load-before-compile "defresource" "clim-defs"))
-   ("accept-values" (:load-before-compile "clim-defs" "incremental-redisplay" "frames"))
-   ("drag-and-drop" (:load-before-compile "frames"))
-   "item-list-manager"
+   ;; #+acl86win32 ("db-list" (:load-before-compile "db-menu"))
+   ;; #+acl86win32 ("db-text" (:load-before-compile "frames"))
+   ;; ("noting-progress" (:load-before-compile "frames"))
+   ;; ("menus" (:load-before-compile "defresource" "clim-defs"))
+   ;; ("accept-values" (:load-before-compile "clim-defs" "incremental-redisplay" "frames"))
+   ;; ("drag-and-drop" (:load-before-compile "frames"))
+   ;; "item-list-manager"
 
    ;; ;; Bootstrap everything
    ;; ("stream-trampolines" (:load-before-compile "defprotocol" "stream-defprotocols"))
