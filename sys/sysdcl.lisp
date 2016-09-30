@@ -285,10 +285,10 @@
    ("drag-and-drop" (:load-before-compile "frames"))
    "item-list-manager"
 
-   ;; Bootstrap everything
-   ("stream-trampolines" (:load-before-compile "defprotocol" "stream-defprotocols"))
-   #+lucid "lucid-after"
-   #+(or Genera Cloe-Runtime) "prefill"
+   ;; ;; Bootstrap everything
+   ;; ("stream-trampolines" (:load-before-compile "defprotocol" "stream-defprotocols"))
+   ;; #+lucid "lucid-after"
+   ;; #+(or Genera Cloe-Runtime) "prefill"
    ))
 
 (defsystem clim-homegrown

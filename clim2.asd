@@ -19,6 +19,13 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
+     (:file "clim/stream-trampolines")
+
+
+
+
+
+
      (:file "xlib/ffi")
      (:file "xlib/load-xlib")
      (:file "xlib/xlib-defs")
