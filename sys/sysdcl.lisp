@@ -194,89 +194,89 @@
   (:serial
    ;; clim-utils is in clim-silica, should it be?
    ;;clim-utils
-   ;; clim-silica
+   clim-silica
 
-   ;; ;; Basic tools
-   ;; "gestures"
-   ;; "defprotocol"
-   ;; "stream-defprotocols"
-   ;; "defresource"
-   ;; "temp-strings"
-   ;; #+CCL-2 "coral-defs"
-   ;; "clim-defs"
+   ;; Basic tools
+   "gestures"
+   "defprotocol"
+   "stream-defprotocols"
+   "defresource"
+   "temp-strings"
+   #+CCL-2 "coral-defs"
+   "clim-defs"
 
-   ;; ;; Definitions and protocols
-   ;; "stream-class-defs"
-   ;; "interactive-defs"
-   ;; "cursor"
-   ;; "view-defs"
-   ;; "input-defs"
-   ;; "input-protocol"
-   ;; "output-protocol"
+   ;; Definitions and protocols
+   "stream-class-defs"
+   "interactive-defs"
+   "cursor"
+   "view-defs"
+   "input-defs"
+   "input-protocol"
+   "output-protocol"
 
-   ;; ;; Output recording
-   ;; ("recording-defs" (:load-before-compile "clim-defs"))
-   ;; "formatted-output-defs"
-   ;; ("recording-protocol" (:load-before-compile "recording-defs"))
-   ;; ("text-recording" (:load-before-compile "recording-protocol"))
-   ;; ("graphics-recording" (:load-before-compile "recording-protocol"))
-   ;; ("design-recording" (:load-before-compile "graphics-recording"))
+   ;; Output recording
+   ("recording-defs" (:load-before-compile "clim-defs"))
+   "formatted-output-defs"
+   ("recording-protocol" (:load-before-compile "recording-defs"))
+   ("text-recording" (:load-before-compile "recording-protocol"))
+   ("graphics-recording" (:load-before-compile "recording-protocol"))
+   ("design-recording" (:load-before-compile "graphics-recording"))
 
-   ;; ;; Input editing
-   ;; ("interactive-protocol" (:load-before-compile "clim-defs"))
-   ;; "input-editor-commands"
+   ;; Input editing
+   ("interactive-protocol" (:load-before-compile "clim-defs"))
+   "input-editor-commands"
 
-   ;; ;; only compile with non-ICS if no fasl file exist
-   ;; ;; always compile with ICS in case it was previously compiled by
-   ;; ;; non-ICS
-   ;; ;; #-acl86win32
-   ;; ;; ("japanese-input-editor" (:module-class #-ics compile-once
-   ;; ;; 					   #+ics compile-always))
+   ;; only compile with non-ICS if no fasl file exist
+   ;; always compile with ICS in case it was previously compiled by
+   ;; non-ICS
+   ;; #-acl86win32
+   ;; ("japanese-input-editor" (:module-class #-ics compile-once
+   ;; 					   #+ics compile-always))
 
-   ;; ;; Incremental redisplay
-   ;; ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
+   ;; Incremental redisplay
+   ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
 
-   ;; ;; Windows
-   ;; "coordinate-sorted-set"
-   ;; "r-tree"
-   ;; "window-stream"
-   ;; "pixmap-streams"
+   ;; Windows
+   "coordinate-sorted-set"
+   "r-tree"
+   "window-stream"
+   "pixmap-streams"
 
-   ;; ;; Presentation types
-   ;; ("ptypes1" (:load-before-compile "clim-defs"))
-   ;; ("completer" (:load-before-compile "ptypes1"))
-   ;; ("presentations" (:load-before-compile "ptypes1"))
-   ;; ("translators" (:load-before-compile "presentations"))
-   ;; ("histories" (:load-before-compile "presentations"))
-   ;; ("ptypes2" (:load-before-compile "translators"))
-   ;; ("standard-types" (:load-before-compile "ptypes2"))
-   ;; #+allegro ("excl-presentations" (:load-before-compile "presentations"))
+   ;; Presentation types
+   ("ptypes1" (:load-before-compile "clim-defs"))
+   ("completer" (:load-before-compile "ptypes1"))
+   ("presentations" (:load-before-compile "ptypes1"))
+   ("translators" (:load-before-compile "presentations"))
+   ("histories" (:load-before-compile "presentations"))
+   ("ptypes2" (:load-before-compile "translators"))
+   ("standard-types" (:load-before-compile "ptypes2"))
+   #+allegro ("excl-presentations" (:load-before-compile "presentations"))
 
-   ;; ;; Formatted output
-   ;; ("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ;; ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ;; ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ;; ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; Formatted output
+   ("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
 
-   ;; ;; Pointer tracking
-   ;; "tracking-pointer"
-   ;; ("dragging-output" (:load-before-compile "tracking-pointer"))
+   ;; Pointer tracking
+   "tracking-pointer"
+   ("dragging-output" (:load-before-compile "tracking-pointer"))
 
-   ;; ;; Gadgets
-   ;; "db-stream"
-   ;; "gadget-output"
+   ;; Gadgets
+   "db-stream"
+   "gadget-output"
 
-   ;; ;; Application building substrate
-   ;; ("accept" (:load-before-compile "clim-defs" "ptypes2"))
-   ;; ("present" (:load-before-compile "clim-defs" "ptypes2"))
-   ;; ("command" (:load-before-compile "clim-defs" "ptypes2"))
-   ;; ("command-processor" (:load-before-compile "clim-defs" "command"))
-   ;; ("basic-translators" (:load-before-compile "ptypes2" "command"))
-   ;; ("frames" (:load-before-compile "clim-defs" "command-processor"))
+   ;; Application building substrate
+   ("accept" (:load-before-compile "clim-defs" "ptypes2"))
+   ("present" (:load-before-compile "clim-defs" "ptypes2"))
+   ("command" (:load-before-compile "clim-defs" "ptypes2"))
+   ("command-processor" (:load-before-compile "clim-defs" "command"))
+   ("basic-translators" (:load-before-compile "ptypes2" "command"))
+   ("frames" (:load-before-compile "clim-defs" "command-processor"))
    ;; ("panes" (:load-before-compile "frames"))
    ;; ("default-frame" (:load-before-compile "frames"))
    ;; ("activities" (:load-before-compile "frames"))
-   ;; ("db-menu" (:load-before-compile "frames"))
+   ("db-menu" (:load-before-compile "frames"))
    ;; #+acl86win32 ("db-list" (:load-before-compile "db-menu"))
    ;; #+acl86win32 ("db-text" (:load-before-compile "frames"))
    ;; ("noting-progress" (:load-before-compile "frames"))
