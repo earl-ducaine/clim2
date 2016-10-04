@@ -22,6 +22,29 @@
      (:file "xlib/pkg")
 
 
+
+     (:file "clim/completer")
+     ;; (:file "clim/presentations")
+     ;;(:file "clim/translators")
+     (:file "clim/histories")
+     ;;(:file "clim/ptypes2")
+     (:file "clim/excl-presentations")
+     (:file "clim/standard-types")
+     (:file "clim/table-formatting")
+
+
+     (:file "clim/graph-formatting")
+     (:file "clim/surround-output")
+     (:file "clim/text-formatting")
+     (:file "clim/tracking-pointer")
+     (:file "clim/dragging-output")
+     (:file "clim/db-stream")
+     ;; (:file "clim/command")
+     ;; (:file "clim/command-processor")
+     (:file "clim/gadget-output")
+     (:file "clim/accept")
+     (:file "clim/present")
+     (:file "clim/basic-translators")
      (:file "clim/panes")
      (:file "clim/default-frame")
      (:file "clim/activities")

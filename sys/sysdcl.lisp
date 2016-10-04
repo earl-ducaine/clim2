@@ -244,34 +244,34 @@
 
    ;; Presentation types
    ("ptypes1" (:load-before-compile "clim-defs"))
-   ("completer" (:load-before-compile "ptypes1"))
+   ;; ("completer" (:load-before-compile "ptypes1"))
    ("presentations" (:load-before-compile "ptypes1"))
    ("translators" (:load-before-compile "presentations"))
-   ("histories" (:load-before-compile "presentations"))
+   ;;("histories" (:load-before-compile "presentations"))
    ("ptypes2" (:load-before-compile "translators"))
-   ("standard-types" (:load-before-compile "ptypes2"))
-   #+allegro ("excl-presentations" (:load-before-compile "presentations"))
+   ;;("standard-types" (:load-before-compile "ptypes2"))
+   ;;#+allegro ("excl-presentations" (:load-before-compile "presentations"))
 
    ;; Formatted output
-   ("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;;("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
 
    ;; Pointer tracking
-   "tracking-pointer"
-   ("dragging-output" (:load-before-compile "tracking-pointer"))
+   ;; "tracking-pointer"
+   ;;("dragging-output" (:load-before-compile "tracking-pointer"))
 
    ;; Gadgets
-   "db-stream"
-   "gadget-output"
+   ;; "db-stream"
+   ;; "gadget-output"
 
    ;; Application building substrate
-   ("accept" (:load-before-compile "clim-defs" "ptypes2"))
-   ("present" (:load-before-compile "clim-defs" "ptypes2"))
+   ;; ("accept" (:load-before-compile "clim-defs" "ptypes2"))
+   ;; ("present" (:load-before-compile "clim-defs" "ptypes2"))
    ("command" (:load-before-compile "clim-defs" "ptypes2"))
    ("command-processor" (:load-before-compile "clim-defs" "command"))
-   ("basic-translators" (:load-before-compile "ptypes2" "command"))
+   ;;("basic-translators" (:load-before-compile "ptypes2" "command"))
    ("frames" (:load-before-compile "clim-defs" "command-processor"))
    ;; ("panes" (:load-before-compile "frames"))
    ;; ("default-frame" (:load-before-compile "frames"))
