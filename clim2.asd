@@ -20,6 +20,7 @@
      (:file "xlib/pkg")
 
 
+     (:file "clim/basic-translators")
      (:file "clim/panes")
      (:file "clim/default-frame")
      (:file "clim/activities")
