@@ -19,7 +19,11 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
-
+     (:file "clim/gadget-output")
+     (:file "clim/accept")
+     ;;(:file "clim/command")
+     ;;(:file "clim/command-processor")
+     (:file "clim/present")
      (:file "clim/basic-translators")
      (:file "clim/panes")
      (:file "clim/default-frame")
