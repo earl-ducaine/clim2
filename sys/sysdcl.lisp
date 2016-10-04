@@ -259,16 +259,16 @@
    ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
 
    ;; Pointer tracking
-   "tracking-pointer"
-   ("dragging-output" (:load-before-compile "tracking-pointer"))
+   ;; "tracking-pointer"
+   ;;("dragging-output" (:load-before-compile "tracking-pointer"))
 
    ;; Gadgets
-   "db-stream"
+   ;; "db-stream"
    ;; "gadget-output"
 
    ;; Application building substrate
    ;; ("accept" (:load-before-compile "clim-defs" "ptypes2"))
-   ;;("present" (:load-before-compile "clim-defs" "ptypes2"))
+   ;; ("present" (:load-before-compile "clim-defs" "ptypes2"))
    ("command" (:load-before-compile "clim-defs" "ptypes2"))
    ("command-processor" (:load-before-compile "clim-defs" "command"))
    ;;("basic-translators" (:load-before-compile "ptypes2" "command"))

@@ -19,10 +19,14 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
+     (:file "clim/tracking-pointer")
+     (:file "clim/dragging-output")
+     (:file "clim/db-stream")
+     ;; (:file "clim/command")
+     ;; (:file "clim/command-processor")
+
      (:file "clim/gadget-output")
      (:file "clim/accept")
-     ;;(:file "clim/command")
-     ;;(:file "clim/command-processor")
      (:file "clim/present")
      (:file "clim/basic-translators")
      (:file "clim/panes")
