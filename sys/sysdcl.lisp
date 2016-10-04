@@ -254,9 +254,9 @@
 
    ;; Formatted output
    ("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
-   ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;; ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
 
    ;; Pointer tracking
    ;; "tracking-pointer"
