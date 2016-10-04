@@ -244,16 +244,16 @@
 
    ;; Presentation types
    ("ptypes1" (:load-before-compile "clim-defs"))
-   ("completer" (:load-before-compile "ptypes1"))
+   ;; ("completer" (:load-before-compile "ptypes1"))
    ("presentations" (:load-before-compile "ptypes1"))
    ("translators" (:load-before-compile "presentations"))
-   ("histories" (:load-before-compile "presentations"))
+   ;;("histories" (:load-before-compile "presentations"))
    ("ptypes2" (:load-before-compile "translators"))
-   ("standard-types" (:load-before-compile "ptypes2"))
-   #+allegro ("excl-presentations" (:load-before-compile "presentations"))
+   ;;("standard-types" (:load-before-compile "ptypes2"))
+   ;;#+allegro ("excl-presentations" (:load-before-compile "presentations"))
 
    ;; Formatted output
-   ("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
+   ;;("table-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
    ;; ("graph-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))
    ;; ("surround-output" (:load-before-compile "clim-defs" "incremental-redisplay"))
    ;; ("text-formatting" (:load-before-compile "clim-defs" "incremental-redisplay"))

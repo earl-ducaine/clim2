@@ -20,10 +20,20 @@
      (:file "xlib/pkg")
 
 
+
+     (:file "clim/completer")
+     ;; (:file "clim/presentations")
+     ;;(:file "clim/translators")
+     (:file "clim/histories")
+     ;;(:file "clim/ptypes2")
+     (:file "clim/excl-presentations")
+     (:file "clim/standard-types")
+     (:file "clim/table-formatting")
+
+
      (:file "clim/graph-formatting")
      (:file "clim/surround-output")
      (:file "clim/text-formatting")
-
      (:file "clim/tracking-pointer")
      (:file "clim/dragging-output")
      (:file "clim/db-stream")
