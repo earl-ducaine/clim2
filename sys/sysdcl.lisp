@@ -276,7 +276,7 @@
    ;; ("panes" (:load-before-compile "frames"))
    ;; ("default-frame" (:load-before-compile "frames"))
    ;; ("activities" (:load-before-compile "frames"))
-   ("db-menu" (:load-before-compile "frames"))
+   ;; ("db-menu" (:load-before-compile "frames"))
    ;; #+acl86win32 ("db-list" (:load-before-compile "db-menu"))
    ;; #+acl86win32 ("db-text" (:load-before-compile "frames"))
    ;; ("noting-progress" (:load-before-compile "frames"))

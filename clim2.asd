@@ -19,6 +19,10 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
+     (:file "clim/db-menu")
+     ;; "clim/db-list.fasl"
+     ;; "clim/db-text.fasl"
+
      (:file "clim/incremental-redisplay")
      (:file "clim/r-tree")
      (:file "clim/window-stream")
