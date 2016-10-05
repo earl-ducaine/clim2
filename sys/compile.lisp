@@ -215,8 +215,8 @@
 		  ;; "clim/gadget-output.fasl"
 		  ;; "clim/accept.fasl"
 		  ;; "clim/present.fasl"
-		  "clim/command.fasl"
-		  "clim/command-processor.fasl"
+		  ;;"clim/command.fasl"
+		  ;; "clim/command-processor.fasl"
 		  ;;"clim/basic-translators.fasl"
 		  ;;"clim/frames.fasl"
 		  ;; "clim/panes.fasl"
@@ -230,7 +230,7 @@
 		  ;; "clim/accept-values.fasl"
 		  ;; "clim/drag-and-drop.fasl"
 		  ;; "clim/item-list-manager.fasl"
-		  "postscript/pkgdcl.fasl"
+		  ;;"postscript/pkgdcl.fasl"
 		  ;; "clim/stream-trampolines.fasl"
 		  )
 		"climg.fasl"))

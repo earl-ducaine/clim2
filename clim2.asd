@@ -19,7 +19,14 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
+
+     (:file "clim/command")
+     (:file "clim/command-processor")
+
+     ;;(:file "postscript/pkgdcl")`
      (:file "clim/frames")
+     ;;(:file "postscript/postscript-s")
+
      ;;(:file "clim/recording-protocol")
      (:file "clim/recording-defs")
      (:file "clim/text-recording")
