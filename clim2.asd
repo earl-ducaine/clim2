@@ -19,8 +19,8 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
-
-     (:file "clim/recording-protocol")
+     (:file "clim/frames")
+     ;;(:file "clim/recording-protocol")
      (:file "clim/recording-defs")
      (:file "clim/text-recording")
      (:file "clim/graphics-recording")

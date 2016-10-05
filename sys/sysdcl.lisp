@@ -216,14 +216,14 @@
 
    ;; Output recording
    ("recording-defs" (:load-before-compile "clim-defs"))
-   "formatted-output-defs"
+   ;;"formatted-output-defs"
    ("recording-protocol" (:load-before-compile "recording-defs"))
-   ("text-recording" (:load-before-compile "recording-protocol"))
-   ("graphics-recording" (:load-before-compile "recording-protocol"))
-   ("design-recording" (:load-before-compile "graphics-recording"))
+   ;; ("text-recording" (:load-before-compile "recording-protocol"))
+   ;;("graphics-recording" (:load-before-compile "recording-protocol"))
+   ;;("design-recording" (:load-before-compile "graphics-recording"))
 
    ;; Input editing
-   ("interactive-protocol" (:load-before-compile "clim-defs"))
+   ;; ("interactive-protocol" (:load-before-compile "clim-defs"))
    ;;"input-editor-commands"
 
    ;; only compile with non-ICS if no fasl file exist
@@ -272,7 +272,7 @@
    ("command" (:load-before-compile "clim-defs" "ptypes2"))
    ("command-processor" (:load-before-compile "clim-defs" "command"))
    ;;("basic-translators" (:load-before-compile "ptypes2" "command"))
-   ("frames" (:load-before-compile "clim-defs" "command-processor"))
+   ;;("frames" (:load-before-compile "clim-defs" "command-processor"))
    ;; ("panes" (:load-before-compile "frames"))
    ;; ("default-frame" (:load-before-compile "frames"))
    ;; ("activities" (:load-before-compile "frames"))

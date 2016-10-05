@@ -17,7 +17,7 @@ cat: compile
 	(eval '$(SET_LIBRARY_PATH)'; bash runlisp.sh cat.tmp)
 
 clean:
-	rm -rf ~/.cache/common-lisp
+#	rm -rf ~/.cache/common-lisp
 	find . -name '*.fasl' -print | xargs rm -f
 	rm -f *.dxl
 
