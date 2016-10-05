@@ -234,13 +234,13 @@
    ;; 					   #+ics compile-always))
 
    ;; Incremental redisplay
-   ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
+   ;; ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
 
    ;; Windows
-   "coordinate-sorted-set"
-   "r-tree"
-   "window-stream"
-   "pixmap-streams"
+   ;; "coordinate-sorted-set"
+   ;; "r-tree"
+   ;; "window-stream"
+   ;; "pixmap-streams"
 
    ;; Presentation types
    ("ptypes1" (:load-before-compile "clim-defs"))

@@ -19,7 +19,11 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
-
+     (:file "clim/incremental-redisplay")
+     (:file "clim/r-tree")
+     (:file "clim/window-stream")
+     (:file "clim/pixmap-streams")
+     ;; (:file "clim/ptypes1")
 
      (:file "clim/completer")
      ;; (:file "clim/presentations")
@@ -29,7 +33,6 @@
      (:file "clim/excl-presentations")
      (:file "clim/standard-types")
      (:file "clim/table-formatting")
-
 
      (:file "clim/graph-formatting")
      (:file "clim/surround-output")
