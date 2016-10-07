@@ -19,7 +19,7 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
-
+     (:file "clim/frames")
      (:file "clim/text-recording")
      (:file "clim/graphics-recording")
      (:file "clim/design-recording")
