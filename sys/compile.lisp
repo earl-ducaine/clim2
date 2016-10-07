@@ -184,7 +184,7 @@
 		  "clim/input-defs.fasl"
 		  "clim/input-protocol.fasl"
 		  "clim/output-protocol.fasl"
-		  "clim/recording-protocol.fasl"
+		  ;; "clim/recording-protocol.fasl"
 		  "clim/recording-defs.fasl"
 		  ;; "clim/text-recording.fasl"
 		  ;; "clim/graphics-recording.fasl"
