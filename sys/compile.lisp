@@ -187,7 +187,7 @@
 		  "clim/recording-protocol.fasl"
 		  "clim/recording-defs.fasl"
 		  "clim/text-recording.fasl"
-		  "clim/graphics-recording.fasl"
+		  ;; "clim/graphics-recording.fasl"
 		  ;; "clim/design-recording.fasl"
 		  ;; "clim/interactive-protocol.fasl"
 		  ;; "clim/input-editor-commands.fasl"

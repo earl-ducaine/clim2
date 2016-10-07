@@ -219,7 +219,7 @@
    "formatted-output-defs"
    ("recording-protocol" (:load-before-compile "recording-defs"))
    ("text-recording" (:load-before-compile "recording-protocol"))
-   ("graphics-recording" (:load-before-compile "recording-protocol"))
+   ;; ("graphics-recording" (:load-before-compile "recording-protocol"))
    ;; ("design-recording" (:load-before-compile "graphics-recording"))
 
    ;; Input editing

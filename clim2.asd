@@ -20,6 +20,7 @@
      (:file "xlib/pkg")
 
 
+     (:file "clim/graphics-recording")
      (:file "clim/design-recording")
      (:file "clim/interactive-protocol")
      (:file "clim/input-editor-commands")
