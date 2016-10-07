@@ -192,7 +192,7 @@
 		  "clim/interactive-protocol.fasl"
 		  "clim/input-editor-commands.fasl"
 		  "clim/formatted-output-defs.fasl"
-		  "clim/incremental-redisplay.fasl"
+		  ;; "clim/incremental-redisplay.fasl"
 		  ;; "clim/coordinate-sorted-set.fasl"
 		  ;; "clim/r-tree.fasl"
 		  ;; "clim/window-stream.fasl"
