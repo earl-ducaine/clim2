@@ -20,6 +20,7 @@
      (:file "xlib/pkg")
 
 
+     (:file "clim/interactive-protocol")
      (:file "clim/input-editor-commands")
      ;; (:file "clim/formatted-output-defs")
      (:file "clim/db-menu")

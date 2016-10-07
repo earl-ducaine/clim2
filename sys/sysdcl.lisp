@@ -223,7 +223,7 @@
    ("design-recording" (:load-before-compile "graphics-recording"))
 
    ;; Input editing
-   ("interactive-protocol" (:load-before-compile "clim-defs"))
+   ;; ("interactive-protocol" (:load-before-compile "clim-defs"))
    ;; "input-editor-commands"
 
    ;; only compile with non-ICS if no fasl file exist
