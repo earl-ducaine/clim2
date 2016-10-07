@@ -224,7 +224,7 @@
 
    ;; Input editing
    ("interactive-protocol" (:load-before-compile "clim-defs"))
-   "input-editor-commands"
+   ;; "input-editor-commands"
 
    ;; only compile with non-ICS if no fasl file exist
    ;; always compile with ICS in case it was previously compiled by

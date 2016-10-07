@@ -190,7 +190,7 @@
 		  "clim/graphics-recording.fasl"
 		  "clim/design-recording.fasl"
 		  "clim/interactive-protocol.fasl"
-		  "clim/input-editor-commands.fasl"
+		  ;;"clim/input-editor-commands.fasl"
 		  "clim/formatted-output-defs.fasl"
 		  ;; "clim/incremental-redisplay.fasl"
 		  ;; "clim/coordinate-sorted-set.fasl"

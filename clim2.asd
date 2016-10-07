@@ -19,6 +19,9 @@
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
+
+     (:file "clim/input-editor-commands")
+     ;; (:file "clim/formatted-output-defs")
      (:file "clim/db-menu")
      ;; "clim/db-list.fasl"
      ;; "clim/db-text.fasl"
