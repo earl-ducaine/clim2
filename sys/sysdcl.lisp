@@ -246,7 +246,7 @@
    ("ptypes1" (:load-before-compile "clim-defs"))
    ;; ("completer" (:load-before-compile "ptypes1"))
    ("presentations" (:load-before-compile "ptypes1"))
-   ("translators" (:load-before-compile "presentations"))
+   ;; ("translators" (:load-before-compile "presentations"))
    ;;("histories" (:load-before-compile "presentations"))
    ;; ("ptypes2" (:load-before-compile "translators"))
    ;;("standard-types" (:load-before-compile "ptypes2"))
