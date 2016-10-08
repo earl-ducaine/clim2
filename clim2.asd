@@ -34,13 +34,11 @@
      (:file "clim/db-menu")
      ;; "clim/db-list.fasl"
      ;; "clim/db-text.fasl"
-
      (:file "clim/incremental-redisplay")
      (:file "clim/r-tree")
      (:file "clim/window-stream")
      (:file "clim/pixmap-streams")
      ;; (:file "clim/ptypes1")
-
      (:file "clim/completer")
      ;; (:file "clim/presentations")
      ;;(:file "clim/translators")
@@ -49,7 +47,6 @@
      (:file "clim/excl-presentations")
      (:file "clim/standard-types")
      (:file "clim/table-formatting")
-
      (:file "clim/graph-formatting")
      (:file "clim/surround-output")
      (:file "clim/text-formatting")
@@ -65,7 +62,6 @@
      (:file "clim/panes")
      (:file "clim/default-frame")
      (:file "clim/activities")
-     ;;     (:file "clim/db-menu")
      (:file "clim/noting-progress")
      (:file "clim/menus")
      (:file "clim/accept-values")

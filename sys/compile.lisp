@@ -230,7 +230,7 @@
 		  ;; "clim/accept-values.fasl"
 		  ;; "clim/drag-and-drop.fasl"
 		  ;; "clim/item-list-manager.fasl"
-		  "postscript/pkgdcl.fasl"
+		  ;;"postscript/pkgdcl.fasl"
 		  ;; "clim/stream-trampolines.fasl"
 		  )
 		"climg.fasl"))
