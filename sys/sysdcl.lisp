@@ -248,7 +248,7 @@
    ("presentations" (:load-before-compile "ptypes1"))
    ("translators" (:load-before-compile "presentations"))
    ;;("histories" (:load-before-compile "presentations"))
-   ("ptypes2" (:load-before-compile "translators"))
+   ;; ("ptypes2" (:load-before-compile "translators"))
    ;;("standard-types" (:load-before-compile "ptypes2"))
    ;;#+allegro ("excl-presentations" (:load-before-compile "presentations"))
 

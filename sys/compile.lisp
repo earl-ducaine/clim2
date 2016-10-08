@@ -202,7 +202,7 @@
 		  "clim/presentations.fasl"
 		  "clim/translators.fasl"
 		  ;; "clim/histories.fasl"
-		  "clim/ptypes2.fasl"
+		  ;; "clim/ptypes2.fasl"
 		  ;; "clim/excl-presentations.fasl"
 		  ;; "clim/standard-types.fasl"
 		  ;; "clim/table-formatting.fasl"
