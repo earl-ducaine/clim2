@@ -269,7 +269,7 @@
    ;; Application building substrate
    ;; ("accept" (:load-before-compile "clim-defs" "ptypes2"))
    ;; ("present" (:load-before-compile "clim-defs" "ptypes2"))
-   ("command" (:load-before-compile "clim-defs" "ptypes2"))
+   ;; ("command" (:load-before-compile "clim-defs" "ptypes2"))
    ;; ("command-processor" (:load-before-compile "clim-defs" "command"))
    ;; ("basic-translators" (:load-before-compile "ptypes2" "command"))
    ;; ("frames" (:load-before-compile "clim-defs" "command-processor"))
