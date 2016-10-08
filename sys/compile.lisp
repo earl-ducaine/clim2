@@ -198,7 +198,7 @@
 		  ;; "clim/window-stream.fasl"
 		  ;; "clim/pixmap-streams.fasl"
 		  "clim/ptypes1.fasl"
-		  ;;"clim/completer.fasl"
+		  ;; "clim/completer.fasl"
 		  "clim/presentations.fasl"
 		  ;; "clim/translators.fasl"
 		  ;; "clim/histories.fasl"
