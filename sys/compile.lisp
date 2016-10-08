@@ -216,7 +216,7 @@
 		  ;; "clim/accept.fasl"
 		  ;; "clim/present.fasl"
 		  "clim/command.fasl"
-		  "clim/command-processor.fasl"
+		  ;; "clim/command-processor.fasl"
 		  ;;"clim/basic-translators.fasl"
 		  ;; "clim/frames.fasl"
 		  ;; "clim/panes.fasl"
