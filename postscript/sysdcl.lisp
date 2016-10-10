@@ -10,8 +10,9 @@
     ;; needed.
     (:default-pathname "clim2:;postscript;")
   (:serial
-   "pkgdcl"
-   #+allegro "postscript-s"))
+   ;; "pkgdcl"
+   ;; #+allegro "postscript-s"
+   ))
 
 ;; (defsystem postscript-clim
 ;;     (:default-pathname "clim2:;postscript;")

@@ -1,0 +1,64 @@
+
+;   Loading /home/rett/quicklisp/setup.lisp
+;   Loading /home/rett/dev/clim2/sys/sysdcl.lisp
+;   Loading /home/rett/dev/clim2/postscript/sysdcl.lisp
+;   Loading /home/rett/dev/clim2/hpgl/sysdcl.lisp
+;   Loading /home/rett/dev/clim2/demo/sysdcl.lisp
+;   Loading /home/rett/dev/clim2/test/testdcl.lisp
+
+
+;;; Compiling file /home/rett/dev/clim2/utils/defun-utilities.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/reader.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/clos-patches.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/clos.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/utilities.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/lisp-utilities.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/processes.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/queue.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/timers.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/protocols.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/clim-streams.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/excl-streams.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/clim-macros.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/transformations.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/regions.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/region-arithmetic.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/extended-regions.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/base-designs.lisp
+;;; Compiling file /home/rett/dev/clim2/utils/designs.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/macros.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/classes.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/text-style.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/sheet.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/mirror.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/event.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/port.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/medium.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/framem.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/graphics.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/pixmaps.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/std-sheet.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/layout.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/db-layout.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/db-box.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/db-table.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/gadgets.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/db-border.lisp
+;;; Compiling file /home/rett/dev/clim2/silica/db-scroll.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/gestures.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/defprotocol.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/stream-defprotocols.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/defresource.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/temp-strings.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/clim-defs.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/stream-class-defs.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/interactive-defs.lisp
+
+;;; Compiling file /home/rett/dev/clim2/clim/recording-defs.lisp
+;;; Compiling file /home/rett/dev/clim2/clim/formatted-output-defs.lisp
+
+;;; Compiling file /home/rett/dev/clim2/clim/ptypes1.lisp
+
+;;; Compiling file /home/rett/dev/clim2/tk/load-xm.lisp
+;;; Compiling file /home/rett/dev/clim2/tk-silica/pkg.lisp
+

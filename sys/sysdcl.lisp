@@ -116,40 +116,40 @@
   ;; These files establish a uniform Lisp environment
   (:serial
 ;;   "excl-verification"
-   ("packages" (:module-class compile-always))
-   "defun-utilities" ;; extract-declarations and friends
+   ;; ("packages" (:module-class compile-always))
+   ;; "defun-utilities" ;; extract-declarations and friends
    #+(or Genera (not ansi-90)) "defun"
-   "reader"
-   "clos-patches"
-   "clos"
+   ;; "reader"
+   ;; "clos-patches"
+   ;; "clos"
    #+CLIM-conditions "condpat" ;get the define-condition macro
 
    ;; General Lisp extensions
-   "utilities"
-   "lisp-utilities"
-   "processes"
-   "queue"
-   ("timers" (:load-before-compile "queue" "processes"))
-   "protocols"
+   ;; "utilities"
+   ;; "lisp-utilities"
+   ;; "processes"
+   ;; "queue"
+   ;; ("timers" (:load-before-compile "queue" "processes"))
+   ;; "protocols"
 
    ;; Establish a uniform stream model
-   "clim-streams"
+   ;; "clim-streams"
    #-clim-uses-lisp-stream-classes "cl-stream-classes"
    #+Minima "minima-stream-classes"
    #+(and (not clim-uses-lisp-stream-functions) (not Lucid)) "cl-stream-functions"
    #+Lucid "lucid-stream-functions"
    #+Genera "genera-streams"
-   #+allegro "excl-streams"
+   ;; #+allegro "excl-streams"
    #+CCL-2 "ccl-streams"
 
    ;; Basic utilities for Silica and CLIM
-   "clim-macros"
-   ("transformations" #+CLIM-conditions (:load-before-compile "condpat"))
-   "regions"
-   "region-arithmetic"
-   "extended-regions"
-   "base-designs"
-   "designs"
+   ;; "clim-macros"
+   ;; ("transformations" #+CLIM-conditions (:load-before-compile "condpat"))
+   ;; "regions"
+   ;; "region-arithmetic"
+   ;; "extended-regions"
+   ;; "base-designs"
+   ;; "designs"
    ))
 
 (defsystem clim-silica
@@ -158,35 +158,36 @@
    clim-utils
 
    ;; "Silica"
-   "macros"
-   "classes"
-   "text-style"
-   "sheet"
-   "mirror"
-   "event"
-   "port"
-   "medium"
-   "framem"
-   "graphics"
-   "pixmaps"
-   "std-sheet"
+   ;; "macros"
+   ;; "classes"
+   ;; "text-style"
+   ;; "sheet"
+   ;; "mirror"
+   ;; "event"
+   ;; "port"
+   ;; "medium"
+   ;; "framem"
+
+   ;; "graphics"
+   ;; "pixmaps"
+   ;; "std-sheet"
 
    ;; "Windshield", aka "DashBoard"
    ;; First the layout gadgets
-   "layout"
-   "db-layout"
-   "db-box"
-   "db-table"
+   ;; "layout"
+   ;; "db-layout"
+   ;; "db-box"
+   ;; "db-table"
 
    ;; Then the "physical" gadgets
-   "gadgets"
-   "db-border"
-   "db-scroll"
+   ;; "gadgets"
+   ;; "db-border"
+   ;; "db-scroll"
    ;; ?? scroll-pane
    #+(and ignore acl86win32) "scroll-pane"
-   #+acl86win32 "db-button"
-   #+acl86win32 "db-label"
-   #+acl86win32 ("db-slider" (:load-before-compile "db-border"))
+   ;; #+acl86win32 "db-button"
+   ;; #+acl86win32 "db-label"
+   ;; #+acl86win32 ("db-slider" (:load-before-compile "db-border"))
    ))
 
 (defsystem clim-standalone
@@ -197,34 +198,34 @@
    clim-silica
 
    ;; Basic tools
-   "gestures"
-   "defprotocol"
-   "stream-defprotocols"
-   "defresource"
-   "temp-strings"
+   ;; "gestures"
+   ;; "defprotocol"
+   ;; "stream-defprotocols"
+   ;; "defresource"
+   ;; "temp-strings"
    #+CCL-2 "coral-defs"
-   "clim-defs"
+   ;; "clim-defs"
 
    ;; Definitions and protocols
-   "stream-class-defs"
-   "interactive-defs"
-   "cursor"
-   "view-defs"
-   "input-defs"
-   "input-protocol"
-   "output-protocol"
+   ;; "stream-class-defs"
+   ;; "interactive-defs"
+   ;; "cursor"
+   ;; "view-defs"
+   ;; "input-defs"
+   ;; "input-protocol"
+   ;; "output-protocol"
 
    ;; Output recording
-   ("recording-defs" (:load-before-compile "clim-defs"))
-   "formatted-output-defs"
-   ("recording-protocol" (:load-before-compile "recording-defs"))
-   ("text-recording" (:load-before-compile "recording-protocol"))
-   ("graphics-recording" (:load-before-compile "recording-protocol"))
-   ("design-recording" (:load-before-compile "graphics-recording"))
+   ;; ("recording-defs" (:load-before-compile "clim-defs"))
+   ;; "formatted-output-defs"
+   ;; ("recording-protocol" (:load-before-compile "recording-defs"))
+   ;; ("text-recording" (:load-before-compile "recording-protocol"))
+   ;; ("graphics-recording" (:load-before-compile "recording-protocol"))
+   ;; ("design-recording" (:load-before-compile "graphics-recording"))
 
    ;; Input editing
-   ("interactive-protocol" (:load-before-compile "clim-defs"))
-   "input-editor-commands"
+   ;; ("interactive-protocol" (:load-before-compile "clim-defs"))
+   ;; "input-editor-commands"
 
    ;; only compile with non-ICS if no fasl file exist
    ;; always compile with ICS in case it was previously compiled by
@@ -234,21 +235,21 @@
    ;; 					   #+ics compile-always))
 
    ;; Incremental redisplay
-   ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
+   ;; ("incremental-redisplay" (:load-before-compile "clim-defs" "recording-protocol"))
 
    ;; Windows
-   "coordinate-sorted-set"
-   "r-tree"
-   "window-stream"
-   "pixmap-streams"
+   ;; "coordinate-sorted-set"
+   ;; "r-tree"
+   ;; "window-stream"
+   ;; "pixmap-streams"
 
    ;; Presentation types
-   ("ptypes1" (:load-before-compile "clim-defs"))
+   ;; ("ptypes1" (:load-before-compile "clim-defs"))
    ;; ("completer" (:load-before-compile "ptypes1"))
-   ("presentations" (:load-before-compile "ptypes1"))
-   ("translators" (:load-before-compile "presentations"))
+   ;; ("presentations" (:load-before-compile "ptypes1"))
+   ;; ("translators" (:load-before-compile "presentations"))
    ;;("histories" (:load-before-compile "presentations"))
-   ("ptypes2" (:load-before-compile "translators"))
+   ;; ("ptypes2" (:load-before-compile "translators"))
    ;;("standard-types" (:load-before-compile "ptypes2"))
    ;;#+allegro ("excl-presentations" (:load-before-compile "presentations"))
 
@@ -269,14 +270,14 @@
    ;; Application building substrate
    ;; ("accept" (:load-before-compile "clim-defs" "ptypes2"))
    ;; ("present" (:load-before-compile "clim-defs" "ptypes2"))
-   ("command" (:load-before-compile "clim-defs" "ptypes2"))
-   ("command-processor" (:load-before-compile "clim-defs" "command"))
-   ;;("basic-translators" (:load-before-compile "ptypes2" "command"))
-   ("frames" (:load-before-compile "clim-defs" "command-processor"))
+   ;; ("command" (:load-before-compile "clim-defs" "ptypes2"))
+   ;; ("command-processor" (:load-before-compile "clim-defs" "command"))
+   ;; ("basic-translators" (:load-before-compile "ptypes2" "command"))
+   ;; ("frames" (:load-before-compile "clim-defs" "command-processor"))
    ;; ("panes" (:load-before-compile "frames"))
    ;; ("default-frame" (:load-before-compile "frames"))
    ;; ("activities" (:load-before-compile "frames"))
-   ("db-menu" (:load-before-compile "frames"))
+   ;; ("db-menu" (:load-before-compile "frames"))
    ;; #+acl86win32 ("db-list" (:load-before-compile "db-menu"))
    ;; #+acl86win32 ("db-text" (:load-before-compile "frames"))
    ;; ("noting-progress" (:load-before-compile "frames"))
@@ -294,24 +295,23 @@
 (defsystem clim-homegrown
     (:default-pathname "clim2:;homegrown;")
   (:serial
-   ;; clim-standalone
-   ;; clim-silica
-   ;; "scroll-pane"
-   ;; "db-button"
-   ;; "db-label"
-   ;; "db-slider"
-   ;; "db-menu"
-   ;; ("db-list" (:load-before-compile "db-menu"))
-   ;; "db-text"
-   ;; "last"
-   ))
+   clim-standalone
+   clim-silica
+   "scroll-pane"
+   "db-button"
+   "db-label"
+   "db-slider"
+   "db-menu"
+   ("db-list" (:load-before-compile "db-menu"))
+   "db-text"
+   "last"))
 
 
 #+(and allegro (not acl86win32))
 (defsystem xlib
     (:default-pathname "clim2:;xlib;")
   (:serial
-;;   clim-standalone
+   clim-standalone
    ;; "pkg"
    ;; "ffi"
    ;; ("load-xlib")
@@ -342,7 +342,7 @@
 	       `(defsystem ,name
 		    (:default-pathname "clim2:;tk;")
 		  (:serial
-;;;		   xlib
+		   xlib
 		   (,file)
 		   ;; ("pkg")
 		   ;; ("macros")

@@ -57,30 +57,3 @@
    3. (load "clim-example")
 
    
-** Todo
-
-*** DONE Setup mailing lists: dev, help, announcement
-
-*** TODO Setup IRC channel
-
-*** TODO Setup project website
-
-*** TODO Setup twitter feed
-
-*** TODO Setup JIRA project
-
-*** TODO Setup Confluence Project wiki
-
-*** TODO Setup FreeBSD/ccl
-    Running, but 
-
-*** DONE CLIM2 running working with Allegro
-
-*** TODO CLIM2 migrated to ASDF
-
-*** CLIM2 running on ccl
-
-
-** News
-   
-*** <2016-10-04 Tue> Setup mailing lists

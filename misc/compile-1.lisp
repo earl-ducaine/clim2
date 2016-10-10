@@ -200,7 +200,7 @@
     ;; cattable motif-clim, see clim2:;sys;sysdcl
     (:default-pathname "clim2:;tk-silica;")
     (:serial
-;;     xm-tk-cat
+     xm-tk-cat
      ;; ("pkg")
      ;; ("xt-silica")
      ;; ("xt-stipples")
@@ -280,8 +280,8 @@
      (concatenate-system 'motif-clim-cat "clim2:;climxm.fasl")
      (concatenate-system 'empty-cat "clim2:;clim-debugxm.fasl")))
   ;; these are the basic things that we get
-  (concatenate-system 'climg "clim2:;climg.fasl")
-  (concatenate-system 'climdemo "clim2:;climdemo.fasl")
+  ;; (concatenate-system 'climg "clim2:;climg.fasl")
+  ;; (concatenate-system 'climdemo "clim2:;climdemo.fasl")
   ;; (concatenate-system 'postscript-clim "clim2:;climps.fasl")
   ;; The wnn system depends on ics.  The debug system is just there
   ;; for backwards compatibility
