@@ -129,10 +129,5 @@
 ;;; is only one possible top-level system per platform, unless by some
 ;;; miracle the openlook stuff still built!
 (defun compile-it (sys)
-  (flet ((cl (s)
-	   (let ((ignore-if-unknown nil))
-	     (ignore-errors (excl:find-system s)
-			    (excl:compile-system s :include-components t)))))
-    (with-compilation-unit ()
-      (cl sys)
-      )))
+  (with-compilation-unit ()
+		   (excl:compile-system sys :include-components t)))
