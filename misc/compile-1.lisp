@@ -130,12 +130,10 @@
 ;;; miracle the openlook stuff still built!
 (defun compile-it (sys)
   (flet ((cl (s)
-	   (let ((include-components t)
-		 (ignore-if-unknown nil)
+	   (let ((ignore-if-unknown nil)
 		 (load-too nil))
 	   (cond ((ignore-errors (excl:find-system s))
-		  (excl:compile-system s
-				       :include-components include-components)
+		  (excl:compile-system s :include-components t)
 		  (when load-too
 		    (excl:tenuring
 		     (excl:load-system s))))
@@ -144,5 +142,4 @@
 		 (t nil)))))
     (with-compilation-unit ()
       (cl sys)
-      (cl 'clim-toys)
       )))
