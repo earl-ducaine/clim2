@@ -3,10 +3,6 @@
 
 Running the CLIM demos:
 
-1. Load the demos with:
-
-	(require :climdemo)
-
-2. To start, evaluate:
+- To start, evaluate:
 	
 	(clim-demo:start-demo)

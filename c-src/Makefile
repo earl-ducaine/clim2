@@ -59,12 +59,6 @@ OLC_UNDEFS=misc/undefinedsymbols.colit
 # This has to be kept consistent with wnn/jl-funs.lisp
 WNN_UNDEFS=misc/undefinedsymbols.wnn
 
-# These are the fasls and the .o that form the product
-
-PRODUCT-GENERIC-FASLS = \
-	climg.fasl climdemo.fasl clim-debug.fasl climps.fasl \
-	climhpgl.fasl # climgg.fasl
-
 PRODUCT-XM-FASLS = climxm.fasl clim-debugxm.fasl
 PRODUCT-OL-FASLS = climol.fasl clim-debugol.fasl
 
