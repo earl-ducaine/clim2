@@ -11,7 +11,4 @@
                                           "/opt/local/lib/" "/sw/lib/"))
 
 (unless (ff:get-entry-point (ff:convert-foreign-name "XmCreateMyDrawingArea"))
-    (load (merge-pathnames (make-pathname
-			    :type (or (car excl::*load-foreign-types*)
-				      (error "Don't know foreign extension.")))
-			   "clim2:;climxm")))
+    (load "./climxm.so"))
