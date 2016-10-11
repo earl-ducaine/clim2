@@ -72,20 +72,8 @@
     (:serial
      )))
 
-(defsystem xm-tk-cat
-  (:default-pathname #p"clim2:;tk;")
-  (:serial
-   ("load-xm")
-   xlib-cat))
-
-;; (eval-when (compile load eval)
-;;   (define-xt-cat-system xm-tk-cat "load-xm"
-;;     ))
-
-(eval-when (compile load eval)
-  (defsystem motif-clim-cat
-    ;; cattable motif-clim, see clim2:;sys;sysdcl
-    (:default-pathname "clim2:;tk-silica;")
+(defsystem motif-clim-cat
+    (:default-pathname #p"clim2:;tk;")
     (:serial
-     xm-tk-cat
-     )))
+     ("load-xm")
+     ))
