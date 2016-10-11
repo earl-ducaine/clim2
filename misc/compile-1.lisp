@@ -119,14 +119,3 @@
     (:serial
      xm-tk-cat
      )))
-
-
-;;; Compiling a system.
-;;;
-;;; This is just hard-wired -- the makefile says (compile-it
-;;; <something>), which determines which top-level system to build,
-;;; but all the other systems are wired in here.  And currently there
-;;; is only one possible top-level system per platform, unless by some
-;;; miracle the openlook stuff still built!
-(defun compile-it (sys)
-		   (excl:compile-system sys :include-components t))
