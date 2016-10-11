@@ -29,9 +29,3 @@
 
 (eval-when (compile load eval)
   (load "sys/sysdcl.lisp"))
-
-;; (defsystem motif-clim-cat
-;;     (:default-pathname #p"clim2:;tk;")
-;;     (:serial
-;; ;;;     ("load-xm")
-;;      ))
