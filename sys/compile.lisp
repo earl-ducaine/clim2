@@ -234,5 +234,4 @@
 		  ;; "postscript/pkgdcl.fasl"
 		  ;; "clim/stream-trampolines.fasl"
 		  )
-;;		"climg.fasl"
 		))
