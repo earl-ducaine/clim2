@@ -19,11 +19,3 @@
   ("genera-frames")
   ("genera-activities")
   ("genera-prefill"))
-
-#+Genera
-(clim-defsys:import-into-sct 'genera-clim
-  :pretty-name "Genera CLIM"
-  :default-pathname "SYS:CLIM;REL-2;GENERA;"
-  :required-systems '(clim)
-  :bug-reports "Bug-CLIM"
-  :patches-reviewed "Bug-CLIM-Doc")

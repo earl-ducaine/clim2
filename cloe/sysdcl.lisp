@@ -23,8 +23,3 @@
   ("cloe-menus")
   ("cloe-activities")
   ("cloe-streams"))
-
-#+Genera
-(clim-defsys:import-into-sct 'cloe-clim
-  :pretty-name "Cloe CLIM"
-  :default-pathname "SYS:CLIM;REL-2;CLOE;")
