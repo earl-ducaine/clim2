@@ -19,5 +19,5 @@
 (setq excl:*record-xref-info* t)
 (setq excl:*load-xref-info* t)
 (setf (sys:gsgc-switch :print) t)
-(compile-it (quote motif-clim))
+(compile-it 'motif-clim))
 (exit 0)
