@@ -6,7 +6,6 @@
  '(
    #-mswindows :climxm
    #+mswindows :climnt
-   ;;:climg ;; ...require'd by the above, but listed for completeness.
    )
  :autoload-warning nil
  :runtime nil

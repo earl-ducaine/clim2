@@ -4,8 +4,6 @@
 
 (in-package :user)
 
-(require :climg)
-
 #+dlfcn
 (progn
   (defvar sys::*toolkit-shared* nil)

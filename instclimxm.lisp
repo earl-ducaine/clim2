@@ -11,7 +11,7 @@
 
 (in-package :system)
 
-(load-application (require :climxm) :devel system::*devel*)
+;;;(load-application (require :climxm) :devel system::*devel*)
 
 #+ics
 (load-application (require :climwnn) :devel system::*devel*)

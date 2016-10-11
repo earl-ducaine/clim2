@@ -16,17 +16,11 @@
 
 ;; Invite everybody to the party.
 (eval-when (compile load eval)
-  (require :climg)
-  ;; [rfe4951]: not needed anymore:
-  ;; (require :ffcompat)
   (require :aclwffi)			; for ctypes (CT) package
-  ;;(require :for)			; for FOR macro
   (require :winapi)
   (require :winapi-dev)
-  ;; Kevin: (FEATUREP (:VERSION>= 5 (0 1) :PRE-BETA2)) throws an error
   (or (ignore-errors (load "user32.dll" :system-library t))
       (load "user32.dll"))
-  ;; Turn this off as long as clim-utils is a locked package.
   (setq excl:*enable-package-locked-errors* nil)
   )
 
@@ -47,8 +41,7 @@
   (:export
    #:make-windows-font-named		;make a windows font from a name
    ))
- 
+
 (eval-when (compile load eval)
   (pushnew :aclmerge *features*)
   (pushnew :os-threads *features*))
-

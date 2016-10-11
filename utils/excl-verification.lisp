@@ -9,4 +9,3 @@
   (pushnew :ansi-90 *features*))
 
 (provide :clim)
-(provide :climg)
