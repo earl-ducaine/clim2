@@ -84,10 +84,8 @@ STATIC-WNN-OBJS=stub-wnn.o $(WNNLIB)
 
 SYSTEM=		motif-clim
 
-PRODUCT-FASLS=  $(PRODUCT-GENERIC-FASLS) $(PRODUCT-XM-FASLS)
 PRODUCT-OBJS=	$(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
 
-ICS-PRODUCT-FASLS= $(PRODUCT-WNN-FASLS)
 ICS-PRODUCT-OBJS=  $(STATIC-WNN-OBJS)
 
 XINCLUDES ?= /usr/include
@@ -123,9 +121,6 @@ compile_depends = wnn.$(SHARED_EXT)
 compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
 	ls .
 
-
-$(PRODUCT-FASLS) $(ICS-PRODUCT_FASLS): cat
-
 # Misc
 clean:
 	rm -rf ~/.cache/common-lisp
@@ -160,9 +155,6 @@ makeclimobjs: $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS)
 
 install_obj:
 	cp $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(DEST)
-
-install_clim: install_obj
-	cp $(PRODUCT-FASLS) $(ICS-PRODUCT-FASLS) $(DEST)
 
 echo_src_files:
 	@echo $(PRODUCT_SRC_FILES)
