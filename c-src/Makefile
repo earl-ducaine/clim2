@@ -4,15 +4,7 @@
 CLIM		= clim.dxl
 
 SHARED_EXT = so
-
 LISP	= alisp
-CL	= $(LISP) -I ~/dev/acl100express/alisp.dxl
-CLOPTS	= -qq -batch -backtrace-on-error -locale japan.euc
-RM	= rm
-CAT	= cat
-ECHO	= echo
-TAGS	= etags
-SHELL	= sh
 
 # Lisp optimization for compiling
 SPEED	?= 3
@@ -24,21 +16,10 @@ DEBUG   ?= 1
 TRAIN_TIMES=1
 # view, file, print
 PSVIEW=:file
-HPGLVIEW=:file
-TRAIN_COMPILE=t
-TRAIN_PROFILEP=t
-TRAIN_BM=t
 FRAME_TESTS=t
 
 CFLAGS	= -O -D_NO_PROTO -DSTRINGS_ALIGNED -DNO_REGEX -DNO_ISDIR \
 	 	-DUSE_RE_COMP -DUSER_GETWD
-
-# Used for tags
-ALL_SRC = *.lisp */*.lisp *.cl */*.cl *.c */*.c *.h */*.h
-
-# These are the files that make up the source code product.
-PRODUCT_SRC_FILES = sys/*.lisp utils/*.lisp  silica/*.lisp clim/*.lisp \
-	demo/*.lisp test/test-suite.lisp
 
 # This has to be kept consistent with xlib/xlib-funs.lisp
 UNDEFS=misc/undefinedsymbols
@@ -123,16 +104,6 @@ clean:
 	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c stub-wnn.c
 	rm -f *.dxl
 
-clean-notes:
-	cd notes; find . -name '*.lisp' -print | xargs rm -f
-
-tags:	FORCE
-	rm -f TAGS
-	find . -name '*.lisp' -print | xargs $(TAGS) -a
-
-wc:
-	wc $(ALL_SRC)
-
 echo_XTLIB:
 	@echo $(XTLIB)
 
@@ -149,9 +120,6 @@ makeclimobjs: $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS)
 
 install_obj:
 	cp $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(DEST)
-
-echo_src_files:
-	@echo $(PRODUCT_SRC_FILES)
 
 #
 #  Makefile.cobj for CLIM 2.0
@@ -201,8 +169,6 @@ xtsupport.o : misc/xtsupport.c
 xlibsupport.o : xlib/xlibsupport.c
 	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
 		 -o xlibsupport.o xlib/xlibsupport.c
-
-# .so's made from above support files (for dynamic loading)
 
 climxm.$(SHARED_EXT): xlibsupport.o xtsupport.o xmsupport.o $(IMPORTS)
 	(eval '$(SET_LIBRARY_PATH)' ; \
