@@ -1,10 +1,6 @@
 #  Makefile.defs for CLIM 2.0
 
-# where to dump the CLIM images
-CLIM		= clim.dxl
-
 SHARED_EXT = so
-LISP	= alisp
 
 # Lisp optimization for compiling
 SPEED	?= 3
@@ -98,34 +94,10 @@ compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
 
 # Misc
 clean:
-	rm -rf ~/.cache/common-lisp
 	find . -name '*.fasl' -print | xargs rm -f
 	rm -f *.o *.$(SHARED_EXT) *.a \
 	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c stub-wnn.c
 	rm -f *.dxl
-
-echo_XTLIB:
-	@echo $(XTLIB)
-
-echo_XLIB:
-	@echo $(XLIB)
-
-echo_TKLIB:
-	@echo $(TKLIB)
-
-echo_WNNLIB:
-	@echo $(WNNLIB)
-
-makeclimobjs: $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS)
-
-install_obj:
-	cp $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(DEST)
-
-#
-#  Makefile.cobj for CLIM 2.0
-#
-
-# stub files - identify the required definitions from Xm,Ol,Xt,X11
 
 stub-motif.c: $(XMC_UNDEFS) $(XM_UNDEFS) misc/make-stub-file misc/make-stub-file1
 	sh misc/make-stub-file "void ___lisp_load_motif_stub ()"  \

@@ -30,12 +30,6 @@
    1. cd ~/clim2/c-src
    2. make
 
-** Build  clim2 
-   You may need to run this multiple times.  Allegro Express has a
-   garbage collection limit that cause the build to abend.
-   1. cd ~/clim2
-   2. ./make.sh  
-
 ** Install quicklisp
    The easiest way to load things is by quicklisp.  First install
    quicklisp from the quicklisp website, configuring it for you
@@ -46,11 +40,11 @@
    3. rm system-index.txt
    4. cd ~/clim2
    5. alist
-   6. (ql:quickload :clim2-pre-compile-1)
-   7. (ql:quickload :clim2)
-   8. (clim-demo:start-demo)
+   6. (ql:quickload :clim2)
+   7. (clim-demo:start-demo)
 
 ** Testing
+   (not currently operable.)
    1. start up alegro, e.g.
       alisp
    2. (load "load-clim")
