@@ -27,37 +27,27 @@
 			      (butlast (pathname-directory
 					*load-pathname*)))))))))
 
-;;;; system definitions we need
-
-;;; Basic clim and also all the X stuff
 (eval-when (compile load eval)
   (load "clim2:;sys;sysdcl"))
 
-;;; postscript stuff
 (eval-when (compile load eval)
   (load "clim2:;postscript;sysdcl"))
 
-;;; HPGL, only for Unix
 (eval-when (compile load eval)
   (load "clim2:;hpgl;sysdcl"))
 
-;;; demo stuff
 (eval-when (compile load eval)
   (load "clim2:;demo;sysdcl"))
 
-;;; testing stuff (this is really a serious mess)
 (eval-when (compile load eval)
   (load "clim2:;test;testdcl"))
 
-;;; climtoys.  I think this is never there, but just to be compatible.
 (eval-when (compile load eval)
   (when (probe-file "clim2:;climtoys;sysdcl.lisp")
     (load "clim2:;climtoys;sysdcl")))
 
 (eval-when (compile load eval)
   (defsystem climg
-    ;; climg is generic clim and ends up as climg.fasl.  This is
-    ;; clim-standalone + the PS stubs.
     ()
     (:serial
      clim-standalone			;from sys;sysdcl
@@ -65,9 +55,6 @@
 
 (eval-when (compile load eval)
   (defsystem climdemo
-    ;; climdemo.fasl.  This is a hack becuse files used by the system
-    ;; in test;sysdcl have nasties in, other than that we could
-    ;; probably make this be just clim-demo + clim-tests.
     ()
     (:serial
      )))
@@ -99,17 +86,6 @@
 
 (eval-when (compile load eval)
   (define-xt-cat-system xm-tk-cat "load-xm"
-    ;; cattable xm-tk, see clim2:;sys;sysdcl
-    ;; ("xm-defs")
-    ;; ("xm-funs")
-    ;; ("xm-classes")
-    ;; ("xm-callbacks")
-    ;; ("xm-init")
-    ;; ("xm-widgets")
-    ;; ("xm-font-list")
-    ;; ("xm-protocols")
-    ;; ("convenience")
-    ;; ("make-widget")
     ))
 
 (eval-when (compile load eval)
