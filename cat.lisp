@@ -1,8 +1,5 @@
 
 
-(load "misc/compile-1.lisp")
-
-
 (pushnew :ansi-90 *features*)
 
 (setq comp:declared-fixnums-remain-fixnums-switch
