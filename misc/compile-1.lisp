@@ -28,7 +28,7 @@
 					*load-pathname*)))))))))
 
 (eval-when (compile load eval)
-  (load "clim2:;sys;sysdcl"))
+  (load "sys/sysdcl.lisp"))
 
 (defsystem motif-clim-cat
     (:default-pathname #p"clim2:;tk;")
