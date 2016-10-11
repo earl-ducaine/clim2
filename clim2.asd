@@ -10,7 +10,9 @@
     :depends-on (:clim2-pre-compile-1)
     :serial t
     :components
-    ((:file "cat")
+    (
+     (:file "misc/compile-1")
+     (:file "cat")
      (:file "utils/excl-verification")
      (:file "package")
      (:file "utils/packages")
