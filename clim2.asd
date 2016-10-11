@@ -185,7 +185,8 @@
      (:file "tk-silica/xt-pixmaps")
      (:file "tk-silica/gc-cursor")
      (:file "clim/japanese-input-editor")
-     ;;;(:file "test/test-pkg")
+
+     ;; system: testing
      (:file "test/test-driver")
      (:file "test/test-clim-tests")
      (:file "test/test-clim")

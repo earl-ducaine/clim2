@@ -40,24 +40,8 @@
   (load "clim2:;demo;sysdcl"))
 
 (eval-when (compile load eval)
-  (load "clim2:;test;testdcl"))
+  (load "test/testdcl"))
 
-(eval-when (compile load eval)
-  (when (probe-file "clim2:;climtoys;sysdcl.lisp")
-    (load "clim2:;climtoys;sysdcl")))
-
-(eval-when (compile load eval)
-  (defsystem climg
-    ()
-    (:serial
-     clim-standalone			;from sys;sysdcl
-     )))
-
-(eval-when (compile load eval)
-  (defsystem climdemo
-    ()
-    (:serial
-     )))
 
 (defsystem motif-clim-cat
     (:default-pathname #p"clim2:;tk;")

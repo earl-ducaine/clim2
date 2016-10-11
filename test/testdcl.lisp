@@ -7,9 +7,9 @@
 (defsystem testing
     (:default-pathname "clim2:;test;")
   (:serial
-   ("test-pkg")
-   ("test-driver" (:load-before-compile "test-pkg"))
-   ("test-clim-tests" (:load-before-compile "test-driver"))
-   ("test-clim" (:load-before-compile "test-driver"))
-   ("test-demos" (:load-before-compile "test-driver"))
+   ;; ("test-pkg")
+   ;; ("test-driver" (:load-before-compile "test-pkg"))
+   ;; ("test-clim-tests" (:load-before-compile "test-driver"))
+   ;; ("test-clim" (:load-before-compile "test-driver"))
+   ;; ("test-demos" (:load-before-compile "test-driver"))
    ))
