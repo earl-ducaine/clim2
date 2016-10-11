@@ -273,22 +273,6 @@
 ;;; pathnames to dump systems under.  Again, SYS is just the top-level
 ;;; system (it should agree with the one we gave to COMPILE-IT above.
 (defun concatenate-it (sys)
-  (ecase sys
-    ((aclnt-clim)
-     (concatenate-system 'aclnt-clim-cat "clim2:;climnt.fasl"))
-    ((motif-clim)
-     (concatenate-system 'motif-clim-cat "clim2:;climxm.fasl")
-     (concatenate-system 'empty-cat "clim2:;clim-debugxm.fasl")))
-  ;; these are the basic things that we get
-  ;; (concatenate-system 'climg "clim2:;climg.fasl")
-  ;; (concatenate-system 'climdemo "clim2:;climdemo.fasl")
-  ;; (concatenate-system 'postscript-clim "clim2:;climps.fasl")
-  ;; The wnn system depends on ics.  The debug system is just there
-  ;; for backwards compatibility
-  ;;;(concatenate-system 'wnn-cat "clim2:;climwnn.fasl")
-  ;;;(concatenate-system 'empty-cat "clim2:;clim-debugwnn.fasl")
-  ;; hpgl only on unix
-  ;;;;(concatenate-system 'hpgl-clim-cat "clim2:;climhpgl.fasl")
-  ;; formerly the bogusly-named system with X debugging stuff in, now
-  ;; exists only for backwards compatibility.
+  (concatenate-system 'motif-clim-cat "clim2:;climxm.fasl")
+  (concatenate-system 'empty-cat "clim2:;clim-debugxm.fasl")
   (concatenate-system 'empty-cat "clim2:;clim-debug.fasl"))

@@ -11,7 +11,6 @@
     :serial t
     :components
     (
-;;     (:file "misc/compile-1")
      (:file "cat")
      (:file "utils/excl-verification")
      (:file "package")
