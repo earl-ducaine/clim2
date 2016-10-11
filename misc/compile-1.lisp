@@ -130,16 +130,9 @@
 ;;; miracle the openlook stuff still built!
 (defun compile-it (sys)
   (flet ((cl (s)
-	   (let ((ignore-if-unknown nil)
-		 (load-too nil))
-	   (cond ((ignore-errors (excl:find-system s))
-		  (excl:compile-system s :include-components t)
-		  (when load-too
-		    (excl:tenuring
-		     (excl:load-system s))))
-		 ((not ignore-if-unknown)
-		  (error "System ~S not known" s))
-		 (t nil)))))
+	   (let ((ignore-if-unknown nil))
+	     (ignore-errors (excl:find-system s)
+			    (excl:compile-system s :include-components t)))))
     (with-compilation-unit ()
       (cl sys)
       )))
