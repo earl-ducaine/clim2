@@ -3,11 +3,8 @@
 ;;; accordance with the licence specified in the LICENSE file or the
 ;;; MIT license.
 
-
-(load "misc/compile-1.lisp")
-
 (asdf:defsystem :clim2
-    :depends-on (:clim2-pre-compile-1)
+    :depends-on ()
     :serial t
     :components
     (
