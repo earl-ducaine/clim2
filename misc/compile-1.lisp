@@ -129,5 +129,4 @@
 ;;; is only one possible top-level system per platform, unless by some
 ;;; miracle the openlook stuff still built!
 (defun compile-it (sys)
-  (with-compilation-unit ()
-		   (excl:compile-system sys :include-components t)))
+		   (excl:compile-system sys :include-components t))
