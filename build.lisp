@@ -20,10 +20,3 @@
 (setf (sys:gsgc-switch :print) t)
 (compile-it (quote motif-clim))
 (exit 0)
-
-
-;;; cat.tmp code
-;;;(load "misc/compile-1.lisp")
-;;(setf (sys:gsgc-switch :print) t)
-;;(concatenate-it (quote motif-clim))
-;;;(exit 0)

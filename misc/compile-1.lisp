@@ -72,21 +72,15 @@
     (:serial
      )))
 
-(defmacro define-xt-cat-system (name file &rest modules)
-  ;; this is like define-xt-system but uses xlib-cat, not xlib.  See
-  ;; clim2:;sys;sysdcl.  The `special' file comes before the xlib
-  ;; system because it can do various require-type things: I'm not
-  ;; sure this is right.
-  `(defsystem ,name
-       (:default-pathname #p"clim2:;tk;")
-     (:serial
-      (,file)
-      xlib-cat
-      ,@modules)))
+(defsystem xm-tk-cat
+  (:default-pathname #p"clim2:;tk;")
+  (:serial
+   ("load-xm")
+   xlib-cat))
 
-(eval-when (compile load eval)
-  (define-xt-cat-system xm-tk-cat "load-xm"
-    ))
+;; (eval-when (compile load eval)
+;;   (define-xt-cat-system xm-tk-cat "load-xm"
+;;     ))
 
 (eval-when (compile load eval)
   (defsystem motif-clim-cat
