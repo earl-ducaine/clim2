@@ -30,19 +30,6 @@
 (eval-when (compile load eval)
   (load "clim2:;sys;sysdcl"))
 
-(eval-when (compile load eval)
-  (load "clim2:;postscript;sysdcl"))
-
-(eval-when (compile load eval)
-  (load "clim2:;hpgl;sysdcl"))
-
-(eval-when (compile load eval)
-  (load "clim2:;demo;sysdcl"))
-
-(eval-when (compile load eval)
-  (load "test/testdcl"))
-
-
 (defsystem motif-clim-cat
     (:default-pathname #p"clim2:;tk;")
     (:serial
