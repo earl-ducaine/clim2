@@ -129,9 +129,10 @@
 ;;; is only one possible top-level system per platform, unless by some
 ;;; miracle the openlook stuff still built!
 (defun compile-it (sys)
-  (flet ((cl (s &key (include-components t)
-		     (ignore-if-unknown nil)
-		     (load-too nil))
+  (flet ((cl (s)
+	   (let ((include-components t)
+		 (ignore-if-unknown nil)
+		 (load-too nil))
 	   (cond ((ignore-errors (excl:find-system s))
 		  (excl:compile-system s
 				       :include-components include-components)
@@ -140,22 +141,8 @@
 		     (excl:load-system s))))
 		 ((not ignore-if-unknown)
 		  (error "System ~S not known" s))
-		 (t nil))))
+		 (t nil)))))
     (with-compilation-unit ()
       (cl sys)
-      ;; OK, now we randomly compile some other systems in a very
-      ;; hacky way.  Several of these are just because that's the way
-      ;; it was done before.  As well as platform conditionalisation,
-      ;; the clim-homegrown and the clim-compatibility (from
-      ;; compatibility;sysdcl) systems were not being bult on any
-      ;; platform.
-      ;; I am not sure if this is the right test...
-      ;;;(cl 'wnn)
-      ;; (cl 'postscript-clim)
-      ;; (cl 'climdemo)
-      ;; This currently does not build on windows but I think it
-      ;; should do in future
-      ;;(cl 'testing)
-      (cl 'clim-toys :ignore-if-unknown t)
-      ;;(cl 'hpgl-clim)
+      (cl 'clim-toys)
       )))
