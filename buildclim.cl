@@ -7,13 +7,6 @@
    #-mswindows :climxm
    #+mswindows :climnt
    :climg ;; ...require'd by the above, but listed for completeness.
-;;;; The rest of the modules are optional.  Include them or not according
-;;;; to your needs:
-;;;   #-mswindows :clim-debug
-;;;   #-mswindows :clim-debugxm
-;;;   :climps
-;;;   #-mswindows :climhpgl
-;;;   :climdemo
    )
  :autoload-warning nil
  :runtime nil

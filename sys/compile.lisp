@@ -126,7 +126,6 @@
   ;; 		  "demo/demo-activity.fasl"
   ;; 		  "test/test-suite.fasl"
   ;; 		  "demo/demo-last.fasl")
-  ;; 		"climdemo.fasl")
   (append-files '(
 ;;		  "utils/excl-verification.fasl"
 		  ;; "utils/packages.fasl"

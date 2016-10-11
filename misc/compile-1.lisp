@@ -59,19 +59,6 @@
     (:serial
      )))
 
-(eval-when (compile load eval)
-  (defsystem empty-cat
-    ;; so we can make empty fasls trivially
-    ()
-    (:serial)))
-
-(eval-when (compile load eval)
-  (defsystem xlib-cat
-    ;; a cattable xlib, see clim2:;sys;sysdcl
-    (:default-pathname "clim2:;xlib;")
-    (:serial
-     )))
-
 (defsystem motif-clim-cat
     (:default-pathname #p"clim2:;tk;")
     (:serial
