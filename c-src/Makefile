@@ -1,19 +1,5 @@
 #  Makefile.defs for CLIM 2.0
 
-SHARED_EXT = so
-
-# Lisp optimization for compiling
-SPEED	?= 3
-SAFETY	?= 1
-# This next should be set to 1 for distribution
-DEBUG   ?= 1
-
-# Training
-TRAIN_TIMES=1
-# view, file, print
-PSVIEW=:file
-FRAME_TESTS=t
-
 CFLAGS	= -O -D_NO_PROTO -DSTRINGS_ALIGNED -DNO_REGEX -DNO_ISDIR \
 	 	-DUSE_RE_COMP -DUSER_GETWD
 
@@ -45,10 +31,10 @@ PRODUCT-GENERIC-OBJS= \
 	stub-xt.o stub-x.o xtsupport.o xlibsupport.o
 
 STATIC-XM-OBJS= stub-motif.o xmsupport.o
-SHARED-XM-OBJS= climxm.$(SHARED_EXT)
+SHARED-XM-OBJS= climxm.so
 
 STATIC-OL-OBJS= stub-olit.o olsupport.o
-SHARED-OL-OBJS= climol.$(SHARED_EXT)
+SHARED-OL-OBJS= climol.so
 
 WNNLIB = libwnn.a
 STATIC-WNN-OBJS=stub-wnn.o $(WNNLIB)
@@ -86,16 +72,15 @@ AR = ar cq
 
 all: compile
 
-compile_depends = wnn.$(SHARED_EXT)
+compile_depends = wnn.so
 
 
 compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
 	ls .
 
-# Misc
 clean:
 	find . -name '*.fasl' -print | xargs rm -f
-	rm -f *.o *.$(SHARED_EXT) *.a \
+	rm -f *.o *.so *.a \
 	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c stub-wnn.c
 	rm -f *.dxl
 
@@ -123,8 +108,6 @@ stub-wnn.c: $(WNN_UNDEFS) misc/make-stub-file
 	sh misc/make-stub-file "void ___lisp_load_wnn_stub ()" \
 		$(WNN_UNDEFS) > stub-wnn.c
 
-# support files - CLIM's C source files
-
 xmsupport.o : misc/xmsupport.c misc/climgccursor.c \
 		misc/MyDrawingA.c misc/MyDrawingA.h misc/MyDrawingAP.h
 	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
@@ -142,15 +125,15 @@ xlibsupport.o : xlib/xlibsupport.c
 	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
 		 -o xlibsupport.o xlib/xlibsupport.c
 
-climxm.$(SHARED_EXT): xlibsupport.o xtsupport.o xmsupport.o $(IMPORTS)
+climxm.so: xlibsupport.o xtsupport.o xmsupport.o $(IMPORTS)
 	(eval '$(SET_LIBRARY_PATH)' ; \
-	$(MAKE_SHARED) $(SHAREFLAGS) -o climxm.$(SHARED_EXT) \
+	$(MAKE_SHARED) $(SHAREFLAGS) -o climxm.so \
 		xlibsupport.o xtsupport.o xmsupport.o $(THREADLIB) \
 		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB) $(MOTIFXTRAS))
 
-climol.$(SHARED_EXT): xlibsupport.o xtsupport.o olsupport.o $(IMPORTS)
+climol.so: xlibsupport.o xtsupport.o olsupport.o $(IMPORTS)
 	(eval '$(SET_LIBRARY_PATH)' ; \
-	$(MAKE_SHARED) $(SHAREFLAGS) -o climol.$(SHARED_EXT) \
+	$(MAKE_SHARED) $(SHAREFLAGS) -o climol.so \
 		xlibsupport.o xtsupport.o olsupport.o \
 		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB))
 
@@ -227,8 +210,8 @@ rk_vars.o : wnn/rk_vars.c
 libwnn.a: $(WNN_OBJS)
 	$(AR) $@ $(WNN_OBJS)
 
-wnn.$(SHARED_EXT): $(WNN_OBJS)
-	$(MAKE_SHARED) $(SHAREFLAGS) -o wnn.$(SHARED_EXT) $(WNN_OBJS) \
+wnn.so: $(WNN_OBJS)
+	$(MAKE_SHARED) $(SHAREFLAGS) -o wnn.so $(WNN_OBJS) \
 		$(REDHATLIBS) $(THREADLIB)
 
 FORCE:
