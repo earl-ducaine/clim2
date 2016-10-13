@@ -76,7 +76,7 @@ all: compile
 compile_depends = wnn.so
 
 
-compile: FORCE $(PRODUCT-OBJS) $(ICS-PRODUCT-OBJS) $(compile_depends)
+compile: FORCE $(PRODUCT-OBJS)  $(compile_depends)
 	ls .
 
 clean:
