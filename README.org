@@ -4,15 +4,16 @@
 ** Description
    The contents of this repo are known to compile and work with the
    latest version of Allegro Express.  The short term goal is to get
-   thing to work with SBCL.
+   thing to work with CCL, then on other ANSI complient Common Lisps.
 
    See the file LICENSE for information on the license for this source
-   code.  Note that newer files may also copywrited under the MIT
-   copywrite.  Those files are noted specifically in the file header.
+   code.  Note that newer files may also copyrighted under the MIT
+   copyright.  Those files are noted specifically in the file header.
 
 ** Compilation Dependancies: Express Allegro and Ubuntu x86-32
-   Install Expresss Allegro on Ubuntu x86-32 12.04.  Add alisp to the
-   path using something like the following:
+   Install Expresss Allegro on Ubuntu x86-32 (It's know to work on
+   Ubuntu 12.04 - 16.04).  Add alisp to the path using something like
+   the following:
 
    1. cd ~/bin
    2. ln -s ~/acl100express/bin/alist .
@@ -20,20 +21,22 @@
 
 ** Install Motif
    You'll also need to install the motif toolkit and build essentials.
-   Something like:
+   Something like the following on APT based systems:
 
    1. sudo apt-get install libmotif-dev
    2. sudo apt-get libxt-dev
    3. sudo apt-get install build-essential
 
-** Build motif wraper
+** Build motif wraper and copy library
    1. cd ~/clim2/c-src
    2. make
+   3. cd ..
+   4. ./cp-files.sh 
 
 ** Install quicklisp
    The easiest way to load things is by quicklisp.  First install
    quicklisp from the quicklisp website, configuring it for you
-   Allegro Express configuraiton.  Then link clim2
+   Allegro Express installation.  Then link clim2
 
    1. cd ~/quickload/local-projects
    2. ln -s ~/clim2 .

@@ -48,7 +48,8 @@ ICS-PRODUCT-OBJS=  $(STATIC-WNN-OBJS)
 XINCLUDES ?= /usr/include
 XLIBDIR   ?= /usr/lib
 
-TKLIB=-lXm -lXpm -lXext -lXp
+# TKLIB=-lXm -lXpm -lXext -lXp
+TKLIB=-lXm -lXpm -lXext
 XTLIB=-lXt
 XLIB=-lX11
 
