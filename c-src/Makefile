@@ -1,4 +1,3 @@
-#  Makefile.defs for CLIM 2.0
 
 CFLAGS	= -O -D_NO_PROTO -DSTRINGS_ALIGNED -DNO_REGEX -DNO_ISDIR \
 	 	-DUSE_RE_COMP -DUSER_GETWD
@@ -20,7 +19,7 @@ OL_UNDEFS=misc/undefinedsymbols.olit
 OLC_UNDEFS=misc/undefinedsymbols.colit
 
 # This has to be kept consistent with wnn/jl-funs.lisp
-WNN_UNDEFS=misc/undefinedsymbols.wnn
+# WNN_UNDEFS=misc/undefinedsymbols.wnn
 
 PRODUCT-XM-FASLS = climxm.fasl clim-debugxm.fasl
 PRODUCT-OL-FASLS = climol.fasl clim-debugol.fasl
@@ -36,14 +35,14 @@ SHARED-XM-OBJS= climxm.so
 STATIC-OL-OBJS= stub-olit.o olsupport.o
 SHARED-OL-OBJS= climol.so
 
-WNNLIB = libwnn.a
-STATIC-WNN-OBJS=stub-wnn.o $(WNNLIB)
+# WNNLIB = libwnn.a
+# STATIC-WNN-OBJS=stub-wnn.o $(WNNLIB)
 
 SYSTEM=		motif-clim
 
 PRODUCT-OBJS=	$(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
 
-ICS-PRODUCT-OBJS=  $(STATIC-WNN-OBJS)
+# ICS-PRODUCT-OBJS=  $(STATIC-WNN-OBJS)
 
 XINCLUDES ?= /usr/include
 XLIBDIR   ?= /usr/lib
@@ -69,11 +68,10 @@ MAKE_SHARED = ld -shared -L$(XLIBDIR)
 STD_DEFINES = -DSVR4 -DSYSV
 AR = ar cq
 
-#  Makefile.generic for CLIM 2.0
 
 all: compile
 
-compile_depends = wnn.so
+# compile_depends = wnn.so
 
 
 compile: FORCE $(PRODUCT-OBJS)  $(compile_depends)
@@ -82,7 +80,7 @@ compile: FORCE $(PRODUCT-OBJS)  $(compile_depends)
 clean:
 	find . -name '*.fasl' -print | xargs rm -f
 	rm -f *.o *.so *.a \
-	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c stub-wnn.c
+	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c
 	rm -f *.dxl
 
 stub-motif.c: $(XMC_UNDEFS) $(XM_UNDEFS) misc/make-stub-file misc/make-stub-file1
@@ -105,9 +103,9 @@ stub-x.c: $(UNDEFS) misc/make-stub-file
 	sh misc/make-stub-file "void ___lisp_load_x_stub ()"  \
 		$(UNDEFS) > stub-x.c
 
-stub-wnn.c: $(WNN_UNDEFS) misc/make-stub-file
-	sh misc/make-stub-file "void ___lisp_load_wnn_stub ()" \
-		$(WNN_UNDEFS) > stub-wnn.c
+# stub-wnn.c: $(WNN_UNDEFS) misc/make-stub-file
+# 	sh misc/make-stub-file "void ___lisp_load_wnn_stub ()" \
+# 		$(WNN_UNDEFS) > stub-wnn.c
 
 xmsupport.o : misc/xmsupport.c misc/climgccursor.c \
 		misc/MyDrawingA.c misc/MyDrawingA.h misc/MyDrawingAP.h
@@ -148,9 +146,9 @@ makemainxm: $(ACL_MAIN_OBJ) $(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
 WNNFLAGS = -DJAPANESE -DCHINESE -DKOREAN -DLATIN -DWRITE_CHECK -DWNNDEFAULT \
 	$(PICFLAGS)
 
-WNN_OBJS= js.o wnnerrmsg.o jl.o \
-	msg.o yincoding.o py_table.o zy_table.o strings.o bcopy.o \
-	rk_bltinfn.o rk_main.o rk_modread.o rk_read.o rk_vars.o
+# WNN_OBJS= js.o wnnerrmsg.o jl.o \
+# 	msg.o yincoding.o py_table.o zy_table.o strings.o bcopy.o \
+# 	rk_bltinfn.o rk_main.o rk_modread.o rk_read.o rk_vars.o
 
 js.o: wnn/js.c wnn/bdic.c wnn/pwd.c
 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
@@ -196,23 +194,23 @@ rk_main.o : wnn/rk_main.c
 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
 		-o rk_main.o wnn/rk_main.c
 
-rk_modread.o : wnn/rk_modread.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o rk_modread.o wnn/rk_modread.c
+# rk_modread.o : wnn/rk_modread.c
+# 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
+# 		-o rk_modread.o wnn/rk_modread.c
 
-rk_read.o : wnn/rk_read.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o rk_read.o wnn/rk_read.c
+# rk_read.o : wnn/rk_read.c
+# 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
+# 		-o rk_read.o wnn/rk_read.c
 
-rk_vars.o : wnn/rk_vars.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o rk_vars.o wnn/rk_vars.c
+# rk_vars.o : wnn/rk_vars.c
+# 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
+# 		-o rk_vars.o wnn/rk_vars.c
 
-libwnn.a: $(WNN_OBJS)
-	$(AR) $@ $(WNN_OBJS)
+# libwnn.a: $(WNN_OBJS)
+# 	$(AR) $@ $(WNN_OBJS)
 
-wnn.so: $(WNN_OBJS)
-	$(MAKE_SHARED) $(SHAREFLAGS) -o wnn.so $(WNN_OBJS) \
-		$(REDHATLIBS) $(THREADLIB)
+# wnn.so: $(WNN_OBJS)
+# 	$(MAKE_SHARED) $(SHAREFLAGS) -o wnn.so $(WNN_OBJS) \
+# 		$(REDHATLIBS) $(THREADLIB)
 
 FORCE:
