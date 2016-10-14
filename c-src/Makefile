@@ -18,9 +18,6 @@ OL_UNDEFS=misc/undefinedsymbols.olit
 # This has to be kept consistent with tk/ol-classes.lisp
 OLC_UNDEFS=misc/undefinedsymbols.colit
 
-# This has to be kept consistent with wnn/jl-funs.lisp
-# WNN_UNDEFS=misc/undefinedsymbols.wnn
-
 PRODUCT-XM-FASLS = climxm.fasl clim-debugxm.fasl
 PRODUCT-OL-FASLS = climol.fasl clim-debugol.fasl
 
@@ -31,23 +28,11 @@ PRODUCT-GENERIC-OBJS= \
 
 STATIC-XM-OBJS= stub-motif.o xmsupport.o
 SHARED-XM-OBJS= climxm.so
-
-STATIC-OL-OBJS= stub-olit.o olsupport.o
-SHARED-OL-OBJS= climol.so
-
-# WNNLIB = libwnn.a
-# STATIC-WNN-OBJS=stub-wnn.o $(WNNLIB)
-
 SYSTEM=		motif-clim
-
 PRODUCT-OBJS=	$(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
-
-# ICS-PRODUCT-OBJS=  $(STATIC-WNN-OBJS)
-
 XINCLUDES ?= /usr/include
 XLIBDIR   ?= /usr/lib
 
-# TKLIB=-lXm -lXpm -lXext -lXp
 TKLIB=-lXm -lXpm -lXext
 XTLIB=-lXt
 XLIB=-lX11
@@ -60,7 +45,6 @@ THREADLIB = -lpthread
 endif
 
 SET_LIBRARY_PATH = LD_RUN_PATH=$(XLIBDIR):/lib:/usr/lib; export LD_RUN_PATH
-
 PRODUCT-OBJS= $(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS) $(SHARED-XM-OBJS)
 
 SHAREFLAGS =
@@ -68,11 +52,7 @@ MAKE_SHARED = ld -shared -L$(XLIBDIR)
 STD_DEFINES = -DSVR4 -DSYSV
 AR = ar cq
 
-
 all: compile
-
-# compile_depends = wnn.so
-
 
 compile: FORCE $(PRODUCT-OBJS)  $(compile_depends)
 	ls .
@@ -80,7 +60,7 @@ compile: FORCE $(PRODUCT-OBJS)  $(compile_depends)
 clean:
 	find . -name '*.fasl' -print | xargs rm -f
 	rm -f *.o *.so *.a \
-	  	stub-motif.c stub-olit.c stub-xt.c stub-x.c
+	  	stub-motif.c  stub-xt.c stub-x.c
 	rm -f *.dxl
 
 stub-motif.c: $(XMC_UNDEFS) $(XM_UNDEFS) misc/make-stub-file misc/make-stub-file1
@@ -88,12 +68,6 @@ stub-motif.c: $(XMC_UNDEFS) $(XM_UNDEFS) misc/make-stub-file misc/make-stub-file
 		$(XM_UNDEFS) > stub-motif.c
 	sh misc/make-stub-file1 "void ___lisp_load_motif_stub_vars ()" \
 		$(XMC_UNDEFS) >> stub-motif.c
-
-stub-olit.c: $(OLC_UNDEFS) $(OL_UNDEFS) misc/make-stub-file misc/make-stub-file1
-	sh misc/make-stub-file "void ___lisp_load_olit_stub ()"  \
-		$(OL_UNDEFS) > stub-olit.c
-	sh misc/make-stub-file1 "void ___lisp_load_olit_stub_vars ()" \
-		$(OLC_UNDEFS) >> stub-olit.c
 
 stub-xt.c: $(XT_UNDEFS) misc/make-stub-file
 	sh misc/make-stub-file "void ___lisp_load_xt_stub ()" \
@@ -103,18 +77,10 @@ stub-x.c: $(UNDEFS) misc/make-stub-file
 	sh misc/make-stub-file "void ___lisp_load_x_stub ()"  \
 		$(UNDEFS) > stub-x.c
 
-# stub-wnn.c: $(WNN_UNDEFS) misc/make-stub-file
-# 	sh misc/make-stub-file "void ___lisp_load_wnn_stub ()" \
-# 		$(WNN_UNDEFS) > stub-wnn.c
-
 xmsupport.o : misc/xmsupport.c misc/climgccursor.c \
 		misc/MyDrawingA.c misc/MyDrawingA.h misc/MyDrawingAP.h
 	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
 		-o xmsupport.o misc/xmsupport.c
-
-olsupport.o: misc/olsupport.c misc/climgccursor.c
-	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
-		-o olsupport.o misc/olsupport.c
 
 xtsupport.o : misc/xtsupport.c
 	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
@@ -129,88 +95,5 @@ climxm.so: xlibsupport.o xtsupport.o xmsupport.o $(IMPORTS)
 	$(MAKE_SHARED) $(SHAREFLAGS) -o climxm.so \
 		xlibsupport.o xtsupport.o xmsupport.o $(THREADLIB) \
 		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB) $(MOTIFXTRAS))
-
-climol.so: xlibsupport.o xtsupport.o olsupport.o $(IMPORTS)
-	(eval '$(SET_LIBRARY_PATH)' ; \
-	$(MAKE_SHARED) $(SHAREFLAGS) -o climol.so \
-		xlibsupport.o xtsupport.o olsupport.o \
-		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB))
-
-makemainxm: $(ACL_MAIN_OBJ) $(PRODUCT-GENERIC-OBJS) $(STATIC-XM-OBJS)
-	(eval '$(SET_LIBRARY_PATH)' ; \
-	ld -r $(LDFLAGS) -o $(MAIN_OBJ) \
-		$(ACL_MAIN_OBJ) \
-		stub-xt.o stub-x.o stub-motif.o \
-		$(TKLIB) $(XTLIB) $(XLIB) $(MOTIFXTRAS))
-
-WNNFLAGS = -DJAPANESE -DCHINESE -DKOREAN -DLATIN -DWRITE_CHECK -DWNNDEFAULT \
-	$(PICFLAGS)
-
-# WNN_OBJS= js.o wnnerrmsg.o jl.o \
-# 	msg.o yincoding.o py_table.o zy_table.o strings.o bcopy.o \
-# 	rk_bltinfn.o rk_main.o rk_modread.o rk_read.o rk_vars.o
-
-js.o: wnn/js.c wnn/bdic.c wnn/pwd.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o js.o wnn/js.c
-
-wnnerrmsg.o : wnn/wnnerrmsg.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o wnnerrmsg.o wnn/wnnerrmsg.c
-
-jl.o : wnn/jl.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o jl.o wnn/jl.c
-
-msg.o : wnn/msg.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o msg.o wnn/msg.c
-
-yincoding.o : wnn/yincoding.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o yincoding.o wnn/yincoding.c
-
-py_table.o : wnn/py_table.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o py_table.o wnn/py_table.c
-
-zy_table.o : wnn/zy_table.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o zy_table.o wnn/zy_table.c
-
-strings.o : wnn/strings.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o strings.o wnn/strings.c
-
-bcopy.o : wnn/bcopy.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o bcopy.o wnn/bcopy.c
-
-rk_bltinfn.o : wnn/rk_bltinfn.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o rk_bltinfn.o wnn/rk_bltinfn.c
-
-rk_main.o : wnn/rk_main.c
-	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-		-o rk_main.o wnn/rk_main.c
-
-# rk_modread.o : wnn/rk_modread.c
-# 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-# 		-o rk_modread.o wnn/rk_modread.c
-
-# rk_read.o : wnn/rk_read.c
-# 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-# 		-o rk_read.o wnn/rk_read.c
-
-# rk_vars.o : wnn/rk_vars.c
-# 	$(CC) -c $(WNNFLAGS) $(STD_DEFINES) $(CFLAGS) \
-# 		-o rk_vars.o wnn/rk_vars.c
-
-# libwnn.a: $(WNN_OBJS)
-# 	$(AR) $@ $(WNN_OBJS)
-
-# wnn.so: $(WNN_OBJS)
-# 	$(MAKE_SHARED) $(SHAREFLAGS) -o wnn.so $(WNN_OBJS) \
-# 		$(REDHATLIBS) $(THREADLIB)
 
 FORCE:
