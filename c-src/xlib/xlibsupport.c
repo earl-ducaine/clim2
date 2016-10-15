@@ -9,14 +9,14 @@
 
 #include <X11/Xlib.h>
 
-lisp_XDrawString(dpy, d, gc, x, y, string, start, end)
-    register Display *dpy;
-    Drawable d;
-    GC gc;
-    int x, y;
-    register char *string;
-    register int start, end;
-{
+lisp_XDrawString(register Display *dpy,
+		 Drawable d,
+		 GC gc,
+		 int x,
+		 int y,
+		 register char *string,
+		 register int start,
+		 register int end) {
     XDrawString(dpy, d, gc, x, y, &string[start], end - start);
 }
 

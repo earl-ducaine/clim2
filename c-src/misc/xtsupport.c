@@ -122,13 +122,11 @@ unsigned long XtAppIntervalNextTimer(app)
 	TIMEDELTA (wait_time, app->timerQueue->te_timer_value, cur_time);
 	return (wait_time.tv_sec*1000+wait_time.tv_usec/1000);
     }
-    else 
+    else
 	return -1;
 }
 
 
-xt_widget_num_popups (w)
-Widget w;
-{
+int xt_widget_num_popups (Widget w) {
     return (w->core.num_popups);
 }

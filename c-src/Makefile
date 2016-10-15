@@ -30,33 +30,22 @@ compile: FORCE $(PRODUCT-OBJS)  $(compile_depends)
 
 clean:
 	find . -name '*.fasl' -print | xargs rm -f
-	rm -f *.o *.so *.a \
-	  	stub-motif.c
+	rm -f *.o *.so *.a
 	rm -f *.dxl
 
-stub-motif.c: $(XMC_UNDEFS) $(XM_UNDEFS) misc/make-stub-file misc/make-stub-file1
-	sh misc/make-stub-file "void ___lisp_load_motif_stub ()"  \
-		$(XM_UNDEFS) > stub-motif.c
-	sh misc/make-stub-file1 "void ___lisp_load_motif_stub_vars ()" \
-		$(XMC_UNDEFS) >> stub-motif.c
-
-xmsupport.o : misc/xmsupport.c misc/climgccursor.c \
-		misc/MyDrawingA.c misc/MyDrawingA.h misc/MyDrawingAP.h
-	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
-		-o xmsupport.o misc/xmsupport.c
+xmsupport.o : misc/xmsupport.c misc/climgccursor.c misc/MyDrawingA.c misc/MyDrawingA.h misc/MyDrawingAP.h
+	gcc -c $(PICFLAGS) $(CFLAGS) -o xmsupport.o misc/xmsupport.c
 
 xtsupport.o : misc/xtsupport.c
-	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
-		-o xtsupport.o misc/xtsupport.c
+	gcc -c $(PICFLAGS) $(CFLAGS) -o xtsupport.o misc/xtsupport.c
 
 xlibsupport.o : xlib/xlibsupport.c
-	$(CC) -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) \
-		 -o xlibsupport.o xlib/xlibsupport.c
+	gcc -c $(PICFLAGS) $(CFLAGS) $(XINCLUDES) -o xlibsupport.o xlib/xlibsupport.c
 
-climxm.so: xlibsupport.o xtsupport.o xmsupport.o $(IMPORTS)
+climxm.so: xlibsupport.o xtsupport.o xmsupport.o
 	(eval '$(SET_LIBRARY_PATH)' ; \
 	$(MAKE_SHARED) $(SHAREFLAGS) -o climxm.so \
 		xlibsupport.o xtsupport.o xmsupport.o $(THREADLIB) \
-		$(IMPORTS) $(TKLIB) $(XTLIB) $(XLIB) $(MOTIFXTRAS))
+		$(TKLIB) $(XTLIB) $(XLIB) $(MOTIFXTRAS))
 
 FORCE:
