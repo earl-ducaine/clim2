@@ -1,1 +1,1 @@
-cp c-src/climxm.so .
+cp c-src/liblib_motif_wrapper.so .
