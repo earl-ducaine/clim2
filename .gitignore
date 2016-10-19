@@ -4,5 +4,4 @@
 *.fasl
 *.so
 *.dylib
-stub-*.c
 *.dylib

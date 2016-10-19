@@ -17,7 +17,7 @@
 
 static int (*querygeometryfunction) () = 0;
 
-static QueryGeometry (da, intended, desired)
+static XtGeometryResult QueryGeometry (da, intended, desired)
             XmDrawingAreaWidget da ;
             XtWidgetGeometry * intended ;
             XtWidgetGeometry * desired ;
@@ -26,10 +26,10 @@ static QueryGeometry (da, intended, desired)
     if (querygeometryfunction)
 	return ((*querygeometryfunction)(da, intended, desired));
     else
-	return (XtGeometryYes);
+	return XtGeometryYes;
 }
 
-InitializeMyDrawingAreaQueryGeometry(fn)
+int InitializeMyDrawingAreaQueryGeometry(fn)
     int (*fn)();
 {
     querygeometryfunction = fn;
@@ -84,12 +84,12 @@ externaldef( xmmydrawingareaclassrec) XmMyDrawingAreaClassRec
    },
 
    {		/* constraint_class fields */
-      NULL,					/* resource list        */   
-      0,					/* num resources        */   
-      0,					/* constraint size      */   
-      NULL,					/* init proc            */   
-      NULL,					/* destroy proc         */   
-      NULL,					/* set values proc      */   
+      NULL,					/* resource list        */
+      0,					/* num resources        */
+      0,					/* constraint size      */
+      NULL,					/* init proc            */
+      NULL,					/* destroy proc         */
+      NULL,					/* set values proc      */
       NULL,                                     /* extension            */
    },
 
@@ -100,16 +100,16 @@ externaldef( xmmydrawingareaclassrec) XmMyDrawingAreaClassRec
       NULL,					/* syn_cont_resources     */
       0,					/* num_get_cont_resources */
       XmInheritParentProcess,                   /* parent_process         */
-      NULL,					/* extension           */    
+      NULL,					/* extension           */
    },
 
-   {		/* drawingArea class - none */     
+   {		/* drawingArea class - none */
       0						/* mumble */
    },
 
-   {		/* mydrawingArea class - none */     
+   {		/* mydrawingArea class - none */
       0						/* mumble */
-   }	
+   }
 };
 
 externaldef( xmmydrawingareawidgetclass) WidgetClass xmMyDrawingAreaWidgetClass
@@ -118,7 +118,7 @@ externaldef( xmmydrawingareawidgetclass) WidgetClass xmMyDrawingAreaWidgetClass
 /****************************************************************
  * This convenience function creates and returns a MyDrawingArea widget.
  ****************/
-Widget 
+Widget
 #ifdef _NO_PROTO
 XmCreateMyDrawingArea( p, name, args, n )
         Widget p ;
