@@ -73,12 +73,12 @@
 
 
 ;; rfe5546 - evaluate the from-end argument at run-time
-;;   This is a deviation from the old definition which evaluated from-end 
+;;   This is a deviation from the old definition which evaluated from-end
 ;;   (twice) at compile-time.
-;;   All CLIM uses are compile-time constants. 
+;;   All CLIM uses are compile-time constants.
 ;;   Any non-contant usage would have generaed a compiler error or very
 ;;   incorrect code.
-(defmacro dovector ((var vector &key (start 0) end from-end simple-p) 
+(defmacro dovector ((var vector &key (start 0) end from-end simple-p)
 		    &body body)
   (unless (constantp simple-p)
     (setq simple-p nil)
@@ -96,8 +96,8 @@
     `(block nil
        (let* ((,fvector ,vector)
 	      (,startd ,start)
-	      (,endd ,(if simple-p 
-			  `,end 
+	      (,endd ,(if simple-p
+			  `,end
 			`(or ,end (length ,fvector))))
 	      (,fromend ,from-end)
 	      (,index (if ,fromend (1- ,endd) ,startd))
@@ -1698,7 +1698,7 @@
           (assert (equal re-char-ed string)
                   (re-char-ed string)
                   "string isn't equal to re-chared octets~%~S~%~S!" string re-char-ed))))
-  
+
   #+clim-utils::extra-careful(let ((re-lisped (excl:native-to-string address)))
     (assert (equal re-lisped string)
             (re-lisped string)

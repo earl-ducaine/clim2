@@ -4,7 +4,7 @@
 ;;; MIT license.
 
 (asdf:defsystem :clim2
-    :depends-on ()
+    :depends-on (:cffi)
     :serial t
     :components
     (
@@ -193,7 +193,7 @@
      (:file "test/test-demos")
 
      (:file "wnn/pkg")
-     (:file "wnn/load-wnn")
+;;     (:file "wnn/load-wnn")
      (:file "wnn/jl-defs")
      (:file "wnn/jl-funs")
      (:file "wnn/jserver")

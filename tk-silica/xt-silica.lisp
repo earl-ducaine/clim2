@@ -35,6 +35,10 @@
   (:documentation "The port for X intrinsics based ports"))
 
 (defun make-xcomposestatus ()
+  (cffi:foreign-alloc '(:pointer (:struct x11::xcomposestatus))))
+
+
+(defun make-xcomposestatus-bak ()
   (clim-utils::allocate-cstruct 'x11::xcomposestatus :initialize t))
 
 (defmethod port-type ((port xt-port))

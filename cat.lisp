@@ -2,11 +2,11 @@
 
 (pushnew :ansi-90 *features*)
 
-(setq comp:declared-fixnums-remain-fixnums-switch
-      (named-function |(> speed 2)|
-		      (lambda (safety size speed debug compilation-speed)
-			(declare (ignore safety size debug compilation-speed))
-			(> speed 2))))
+;; (setq comp:declared-fixnums-remain-fixnums-switch
+;;       (named-function |(> speed 2)|
+;; 		      (lambda (safety size speed debug compilation-speed)
+;; 			(declare (ignore safety size debug compilation-speed))
+;; 			(> speed 2))))
 
 (setf (logical-pathname-translations "clim2")
       (list (list ";**;*.*"
@@ -38,16 +38,26 @@
 ;; (eval-when (compile load eval)
 ;;   (load "sys/sysdcl.lisp"))
 
-(setf (sys:gsgc-switch :print) t)
+;; (setf (sys:gsgc-switch :print) t)
 
-(defvar sys::*clim-library-search-path*
-  '("/usr/X11/lib/"
-    "/usr/X11R6/lib/"
-    "/usr/local/lib/"
-    "/opt/local/lib/"
-    "/sw/lib/"))
+;; (defvar sys::*clim-library-search-path*
+;;   '("/usr/X11/lib/"
+;;     "/usr/X11R6/lib/"
+;;     "/usr/local/lib/"
+;;     "/opt/local/lib/"
+;;     "/sw/lib/"))
 
-(cl:in-package #:user)
+
+(defpackage :cffi-user
+    (:use :common-lisp :cffi))
+
+  (in-package :cffi-user)
+
+(define-foreign-library libcurl
+    (:darwin (:or "libcurl.3.dylib" "libcurl.dylib"))
+    (:unix (:or "./liblib_motif_wrapper.so"))
+    (t (:default "libcurl")))
+
 
 (unless (ff:get-entry-point (ff:convert-foreign-name "XmCreateMyDrawingArea"))
   (load "./liblib_motif_wrapper.so"))

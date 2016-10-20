@@ -1517,7 +1517,14 @@ typedef union { Display *display;
 (def-exported-foreign-synonym-type xcontext int)
 
 
-(def-exported-foreign-struct xcomposestatus
+;; (cffi:foreign-alloc '(:pointer (:struct xcomposestatus-cffi)))
+
+(cffi:defcstruct xcomposestatus
+    "Xcomposestatus structure."
+    (compose-ptr (:pointer :char))
+    (chars-matched :int))
+
+(def-exported-foreign-struct xcomposestatus-ffi
   (compose-ptr :type (:pointer char))
   (chars-matched :type int))
 
