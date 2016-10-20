@@ -3,28 +3,19 @@
 
 (in-package :cl-user)
 
-;; this defines a number of symbols and functions allowing the
-;; successful compilation of CLIM in a non-ICS lisp (cim 2/26/96)
-#+ignore (require :ics)
-
 (eval-when (compile load eval)
 
 ;;; Tell the world that we're here
 ;;;--- These need to be in the CLIM.fasl also.
 ;;;--- Currently they're in EXCL-VERIFICATION but that does not seem the best place.
-(pushnew :clim *features*)
-(pushnew :clim-2 *features*)
-(pushnew :clim-2.1 *features*)
-(pushnew :silica *features*)
-
-)
-
-#+(or aclpc acl86win32)
-(progn
-  ; (pushnew :use-fixnum-coordinates *features*)
-  ;;mm: to suppress many compiler warnings.
-  (declaim (declaration values arglist))
-  )
+  (pushnew :clim *features*)
+  (pushnew :clim-2 *features*)
+  (pushnew :clim-2.1 *features*)
+  (pushnew :silica *features*)
+  (pushnew :clim-uses-lisp-stream-classes *features*)
+  (pushnew :clim-uses-lisp-stream-functions *features*)
+  (pushnew :clim-ansi-conditions *features*)
+  (pushnew :allegro-v4.0-constructors *features*))
 
 (declaim (declaration non-dynamic-extent))
 
@@ -46,51 +37,38 @@
 ;;; our own trampolines which will call our generic function, and then write default
 ;;; methods which will invoke the COMMON-LISP package equivalents.
 
-(eval-when (compile load eval)
-  (pushnew :clim-uses-lisp-stream-classes *features*)
-  (pushnew :clim-uses-lisp-stream-functions *features*)
-  (pushnew :clim-ansi-conditions *features*)
-  (pushnew :allegro-v4.0-constructors *features*))
+;; (eval-when (compile load eval)
+;; )
 
-(defclass compile-always (defsystem:lisp-module)
-  ())
+;; (defclass compile-always (defsystem:lisp-module)
+;;   ())
 
-(defvar *compiled-modules* nil)
+;; (defvar *compiled-modules* nil)
 
-(defmethod defsystem:product-newer-than-source ((module compile-always))
-  (member module *compiled-modules*))
+;; (defmethod defsystem:product-newer-than-source ((module compile-always))
+;;   (member module *compiled-modules*))
 
-(defmethod defsystem:compile-module :after ((module compile-always) &key)
-  (pushnew module *compiled-modules*))
+;; (defmethod defsystem:compile-module :after ((module compile-always) &key)
+;;   (pushnew module *compiled-modules*))
 
-(defclass compile-once (defsystem:lisp-module)
-  ())
+;; (defclass compile-once (defsystem:lisp-module)
+;;   ())
 
-(defmethod defsystem:product-newer-than-source ((module compile-once))
-  (probe-file (defsystem:product-pathname module)))
+;; (defmethod defsystem:product-newer-than-source ((module compile-once))
+;;   (probe-file (defsystem:product-pathname module)))
 
-(defsystem clim-utils
-    (:default-pathname "clim2:;utils;")
-  ;; These files establish a uniform Lisp environment
-  (:serial
-   ))
+;; (defsystem clim-utils
+;;   (:default-pathname "clim2:;utils;")
+;;   ;; These files establish a uniform Lisp environment
+;;   (:serial
+;;    ))
 
-(defsystem clim-silica
-    (:default-pathname "clim2:;silica;")
-  (:serial
-   ))
+;; (defsystem xlib
+;;   (:default-pathname "clim2:;xlib;")
+;;   (:serial
+;;    clim-standalone
+;;    ))
 
-(defsystem clim-standalone
-  (:default-pathname "clim2:;clim;")
-  (:serial
-   ))
-
-(defsystem xlib
-    (:default-pathname "clim2:;xlib;")
-  (:serial
-   clim-standalone
-   ))
-
-(defsystem last
-  (:default-pathname "clim2/utils")
-  (:serial ("last")))
+;; (defsystem last
+;;   (:default-pathname "clim2/utils")
+;;   (:serial ("last")))
