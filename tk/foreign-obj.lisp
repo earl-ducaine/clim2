@@ -8,12 +8,17 @@
 
 (defclass display (ff:foreign-pointer)
   ((context :initarg :context :reader display-context)
-   (xid->object-mapping :initform (make-hash-table :test #'equal)
+   (xid->object-mapping :initform (make-hash-table :test #'equal) :accessor xid->object-mapping-accessor
 			excl::fixed-index 0)))
 
 (defmacro display-xid->object-mapping (object)
   `(locally (declare (optimize (speed 3) (safety 0)))
      (excl::slot-value-using-class-name 'display ,object 'xid->object-mapping)))
+
+
+(defmacro display-xid->object-mapping-alt (object)
+  `(xid->object-mapping-accessor ,object))
+
 
 (defun find-object-from-xid (handle display &optional (errorp t))
   (find-object-from-handle handle (display-xid->object-mapping display) errorp))
@@ -87,5 +92,3 @@
 		     :foreign-address handle
 		     initargs))
 	    t)))))
-
-

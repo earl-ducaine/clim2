@@ -35,7 +35,7 @@
   (:documentation "The port for X intrinsics based ports"))
 
 (defun make-xcomposestatus ()
-  (cffi:foreign-alloc '(:pointer (:struct x11::xcomposestatus))))
+  (clim-utils::allocate-cstruct-cffi 'x11::xcomposestatus :initialize t))
 
 
 (defun make-xcomposestatus-bak ()

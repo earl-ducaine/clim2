@@ -4,7 +4,7 @@
 ;;; MIT license.
 
 (asdf:defsystem :clim2
-    :depends-on (:cffi)
+    :depends-on (:cffi :alexandria)
     :serial t
     :components
     (

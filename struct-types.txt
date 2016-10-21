@@ -1,0 +1,90 @@
+:type (:array (:pointer :pointer) (128))
+:type (:array char (20))
+:type (:array char (32))
+:type (:array long (24))
+:type (:array long (5))
+:type (:array short (10))
+:type (:pointer :pointer)
+:type (:pointer :pointer))
+:type (:pointer :pointer)))
+:type (:pointer _xextension)
+:type (:pointer _xrmhashbucketrec)
+:type (:pointer _xsqevent)
+:type (:pointer char)
+:type (:pointer depth)
+:type (:pointer display)
+:type (:pointer keycode)
+:type (:pointer keysym)
+:type (:pointer screen)
+:type (:pointer screenformat)
+:type (:pointer visual)
+:type (:pointer xchar2b)
+:type (:pointer xcharstruct)
+:type (:pointer xextdata)
+:type (:pointer xfontprop)
+:type (:pointer xkeytrans)
+:type (:pointer xmodifierkeymap)
+:type XrmOptionKind
+:type atom
+:type bsl-union
+:type caddr-t
+:type char
+:type colormap
+:type cursor
+:type drawable)
+:type font
+:type funcs
+:type gc
+:type gcontext
+:type int
+:type keysym
+:type long
+:type long)
+:type pixmap
+:type short
+:type time
+:type unsigned
+:type unsigned-char
+:type unsigned-char
+:type unsigned-int
+:type unsigned-long
+:type unsigned-short
+:type visualid
+:type window
+:type window
+:type xanyevent
+:type xbuttonevent
+:type xcharstruct
+:type xcirculateevent
+:type xcirculaterequestevent
+:type xclientmessageevent
+:type xcolormapevent
+:type xconfigureevent
+:type xconfigurerequestevent
+:type xcreatewindowevent
+:type xcrossingevent
+:type xdestroywindowevent
+:type xerrorevent
+:type xevent
+:type xexposeevent
+:type xextcodes
+:type xfocuschangeevent
+:type xgcvalues
+:type xgraphicsexposeevent
+:type xgravityevent
+:type xid
+:type xkeyevent
+:type xkeymapevent
+:type xmapevent
+:type xmappingevent
+:type xmaprequestevent
+:type xmotionevent
+:type xnoexposeevent
+:type xpropertyevent
+:type xreparentevent
+:type xresizerequestevent
+:type xselectionclearevent
+:type xselectionevent
+:type xselectionrequestevent
+:type xunmapevent
+:type xvisibilityevent

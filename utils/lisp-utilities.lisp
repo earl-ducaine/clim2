@@ -1646,14 +1646,24 @@
 
 ;;; ALLOCATE-CSTRUCT was adapted from ff:make-cstruct.
 ;;; We aren't using ff:make-cstruct because it uses excl:aclmalloc.
-#-mswindows
+
+(defun allocate-cstruct-cffi (name &key
+			      (number 1)
+			      (initialize
+			       (ff::cstruct-property-initialize
+				(ff::cstruct-prop name))))
+  (declare (optimize (speed 3)))
+;;  (break)
+  (cffi:foreign-alloc `(:pointer (:struct ,name))))
+
 (defun allocate-cstruct (name &key
 			      (number 1)
 			      (initialize
 			       (ff::cstruct-property-initialize
 				(ff::cstruct-prop name)))
-			      )
+				)
   (declare (optimize (speed 3)))
+;;  (break)
   (let* ((prop (ff::cstruct-prop name))
 	 (size (* number (ff::cstruct-property-length prop))))
     (when initialize (setq initialize 0))
