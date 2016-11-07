@@ -593,21 +593,21 @@
 (def-exported-constant xa-last-predefined 68)         ;; #define XA_LAST_PREDEFINED ((Atom) 68)
 
 
-(def-exported-foreign-synonym-type xid unsigned-long)
-(def-exported-foreign-synonym-type window xid)
-(def-exported-foreign-synonym-type drawable xid)
-(def-exported-foreign-synonym-type font xid)
-(def-exported-foreign-synonym-type pixmap xid)
-(def-exported-foreign-synonym-type cursor xid)
-(def-exported-foreign-synonym-type colormap xid)
-(def-exported-foreign-synonym-type gcontext xid)
-(def-exported-foreign-synonym-type keysym
+(def-exported-foreign-synonym-type-cffi xid unsigned-long)
+(def-exported-foreign-synonym-type-cffi window xid)
+(def-exported-foreign-synonym-type-cffi drawable xid)
+(def-exported-foreign-synonym-type-cffi font xid)
+(def-exported-foreign-synonym-type-cffi pixmap xid)
+(def-exported-foreign-synonym-type-cffi cursor xid)
+(def-exported-foreign-synonym-type-cffi colormap xid)
+(def-exported-foreign-synonym-type-cffi gcontext xid)
+(def-exported-foreign-synonym-type-cffi keysym
     #+alpha unsigned-int
     #-alpha xid)
-(def-exported-foreign-synonym-type mask unsigned-long)
-(def-exported-foreign-synonym-type atom unsigned-long)
-(def-exported-foreign-synonym-type visualid unsigned-long)
-(def-exported-foreign-synonym-type time
+(def-exported-foreign-synonym-type-cffi mask unsigned-long)
+(def-exported-foreign-synonym-type-cffi atom unsigned-long)
+(def-exported-foreign-synonym-type-cffi visualid unsigned-long)
+(def-exported-foreign-synonym-type-cffi time
     #+alpha unsigned-int
     #-alpha unsigned-long)
 (def-exported-foreign-synonym-type keycode unsigned-char)
@@ -620,20 +620,19 @@
 
 (def-exported-foreign-synonym-type callback-function-addr :signed-32bit)
 
-
-(def-exported-foreign-struct xextdata
+(def-exported-foreign-struct-cffi xextdata
   (number :type int)
   (next :type (:pointer xextdata))
   (free-private :type (:pointer :pointer))
   (private-data :type (:pointer char)))
 
-(def-exported-foreign-struct xextcodes
+(def-exported-foreign-struct-cffi xextcodes
   (extension :type int)
   (major-opcode :type int)
   (first-event :type int)
   (first-error :type int))
 
-(def-exported-foreign-struct _xextension
+(def-exported-foreign-struct-cffi _xextension
   (next :type (:pointer _xextension))
   (codes :type xextcodes)
   (create-gc :type (:pointer :pointer))
@@ -646,7 +645,7 @@
   (error :type (:pointer :pointer))
   (error-string :type (:pointer :pointer)))
 
-(def-exported-foreign-struct xgcvalues
+(def-exported-foreign-struct-cffi xgcvalues
   (function :type int)
   (plane-mask :type unsigned-long)
   (foreground :type unsigned-long)
@@ -671,16 +670,17 @@
   (dash-offset :type int)
   (dashes :type char))
 
-(def-exported-foreign-struct _xgc
+(def-exported-foreign-struct-cffi _xgc
   (ext-data :type (:pointer xextdata))
   (gid :type gcontext)
   (rects :type int)
   (dashes :type int)
   (dirty :type unsigned-long)
   (values :type xgcvalues))
-(def-exported-foreign-synonym-type gc (:pointer _xgc))
 
-(def-exported-foreign-struct visual
+(def-exported-foreign-synonym-type-cffi gc (:pointer _xgc))
+
+(def-exported-foreign-struct-cffi visual
   (ext-data :type (:pointer xextdata))
   (visualid :type visualid)
   (class :type int)
@@ -690,12 +690,12 @@
   (bits-per-rgb :type int)
   (map-entries :type int))
 
-(def-exported-foreign-struct depth
+(def-exported-foreign-struct-cffi depth
   (depth :type int)
   (nvisuals :type int)
   (visuals :type (:pointer visual)))
 
-(def-exported-foreign-struct screen
+(def-exported-foreign-struct-cffi screen
   (ext-data :type (:pointer xextdata))
   (display :type (:pointer display))
   (root :type window)
@@ -717,13 +717,13 @@
   (save-unders :type int)
   (root-input-mask :type long))
 
-(def-exported-foreign-struct screenformat
+(def-exported-foreign-struct-cffi screenformat
   (ext-data :type (:pointer xextdata))
   (depth :type int)
   (bits-per-pixel :type int)
   (scanline-pad :type int))
 
-(def-exported-foreign-struct xsetwindowattributes
+(def-exported-foreign-struct-cffi xsetwindowattributes
   (background-pixmap :type pixmap)
   (background-pixel :type unsigned-long)
   (border-pixmap :type pixmap)
@@ -740,7 +740,7 @@
   (colormap :type colormap)
   (cursor :type cursor))
 
-(def-exported-foreign-struct xwindowattributes
+(def-exported-foreign-struct-cffi xwindowattributes
   (x :type int)
   (y :type int)
   (width :type int)
@@ -1530,59 +1530,56 @@ typedef union { Display *display;
 
 
 ;;; Untranslated C preprocessor #define statements
-#|
-
-#define MinCmapsOfScreen(s) ((s)->min_maps)
-#define DoesSaveUnders(s) ((s)->save_unders)
-#define EventMaskOfScreen(s) ((s)->root_input_mask)
-#define ScreenCount(dpy) 	((dpy)->nscreens)
-#define HeightOfScreen(s) ((s)->height)
-#define RootWindowOfScreen(s) ((s)->root)
-#define BitmapUnit(dpy) 	((dpy)->bitmap_unit)
-#define MaxCmapsOfScreen(s) ((s)->max_maps)
-#define ProtocolVersion(dpy) 	((dpy)->proto_major_version)
-#define DoesBackingStore(s) ((s)->backing_store)
-#define WhitePixel(dpy, scr) 	(((dpy)->screens[(scr)]).white_pixel)
-#define PlanesOfScreen(s) ((s)->root_depth)
-#define DefaultGC(dpy, scr) 	(((dpy)->screens[(scr)]).default_gc)
-#define DefaultScreen(dpy) 	((dpy)->default_screen)
-#define DisplayHeightMM(dpy, scr) (((dpy)->screens[(scr)]).mheight)
-#define WidthMMOfScreen(s) ((s)->mwidth)
-#define DisplayWidthMM(dpy, scr) (((dpy)->screens[(scr)]).mwidth)
-#define ConnectionNumber(dpy) 	((dpy)->fd)
-#define ProtocolRevision(dpy) 	((dpy)->proto_minor_version)
-#define RootWindow(dpy, scr) 	(((dpy)->screens[(scr)]).root)
-#define DefaultScreenOfDisplay(dpy) (&((dpy)->screens[(dpy)->default_screen]))
-#define ScreenOfDisplay(dpy, scr) (&((dpy)->screens[(scr)]))
-#define XAllocID(dpy) ((*(dpy)->resource_alloc)((dpy)))
-#define BitmapPad(dpy) 		((dpy)->bitmap_pad)
-#define VendorRelease(dpy) 	((dpy)->release)
-#define DefaultDepth(dpy, scr) 	(((dpy)->screens[(scr)]).root_depth)
-#define ServerVendor(dpy) 	((dpy)->vendor)
-#define DefaultDepthOfScreen(s) ((s)->root_depth)
-#define DisplayPlanes(dpy, scr) (((dpy)->screens[(scr)]).root_depth)
-#define DisplayWidth(dpy, scr) 	(((dpy)->screens[(scr)]).width)
-#define DisplayOfScreen(s) ((s)->display)
-#define DefaultColormap(dpy, scr) (((dpy)->screens[(scr)]).cmap)
-#define BlackPixel(dpy, scr) 	(((dpy)->screens[(scr)]).black_pixel)
-#define HeightMMOfScreen(s) ((s)->mheight)
-#define DefaultVisualOfScreen(s) ((s)->root_visual)
-#define BitmapBitOrder(dpy) 	((dpy)->bitmap_bit_order)
-#define LastKnownRequestProcessed(dpy) ((dpy)->last_request_read)
-#define DisplayHeight(dpy, scr) (((dpy)->screens[(scr)]).height)
-#define NextRequest(dpy) ((dpy)->request + 1)
-#define DefaultVisual(dpy, scr) (((dpy)->screens[(scr)]).root_visual)
-#define BlackPixelOfScreen(s) ((s)->black_pixel)
-#define ImageByteOrder(dpy) 	((dpy)->byte_order)
-#define DisplayCells(dpy, scr) 	(DefaultVisual((dpy), (scr))->map_entries)
-#define DefaultColormapOfScreen(s) ((s)->cmap)
-#define CellsOfScreen(s) (DefaultVisualOfScreen((s))->map_entries)
-#define WidthOfScreen(s) ((s)->width)
-#define DefaultGCOfScreen(s) ((s)->default_gc)
-#define DefaultRootWindow(dpy) 	(((dpy)->screens[(dpy)->default_screen]).root)
-#define AllPlanes 		(~0)
-#define DisplayString(dpy) 	((dpy)->display_name)
-#define QLength(dpy) 		((dpy)->qlen)
-#define WhitePixelOfScreen(s) ((s)->white_pixel)
-
-|#
+;;
+;; #define MinCmapsOfScreen(s) ((s)->min_maps)
+;; #define DoesSaveUnders(s) ((s)->save_unders)
+;; #define EventMaskOfScreen(s) ((s)->root_input_mask)
+;; #define ScreenCount(dpy) 	((dpy)->nscreens)
+;; #define HeightOfScreen(s) ((s)->height)
+;; #define RootWindowOfScreen(s) ((s)->root)
+;; #define BitmapUnit(dpy) 	((dpy)->bitmap_unit)
+;; #define MaxCmapsOfScreen(s) ((s)->max_maps)
+;; #define ProtocolVersion(dpy) 	((dpy)->proto_major_version)
+;; #define DoesBackingStore(s) ((s)->backing_store)
+;; #define WhitePixel(dpy, scr) 	(((dpy)->screens[(scr)]).white_pixel)
+;; #define PlanesOfScreen(s) ((s)->root_depth)
+;; #define DefaultGC(dpy, scr) 	(((dpy)->screens[(scr)]).default_gc)
+;; #define DefaultScreen(dpy) 	((dpy)->default_screen)
+;; #define DisplayHeightMM(dpy, scr) (((dpy)->screens[(scr)]).mheight)
+;; #define WidthMMOfScreen(s) ((s)->mwidth)
+;; #define DisplayWidthMM(dpy, scr) (((dpy)->screens[(scr)]).mwidth)
+;; #define ConnectionNumber(dpy) 	((dpy)->fd)
+;; #define ProtocolRevision(dpy) 	((dpy)->proto_minor_version)
+;; #define RootWindow(dpy, scr) 	(((dpy)->screens[(scr)]).root)
+;; #define DefaultScreenOfDisplay(dpy) (&((dpy)->screens[(dpy)->default_screen]))
+;; #define ScreenOfDisplay(dpy, scr) (&((dpy)->screens[(scr)]))
+;; #define XAllocID(dpy) ((*(dpy)->resource_alloc)((dpy)))
+;; #define BitmapPad(dpy) 		((dpy)->bitmap_pad)
+;; #define VendorRelease(dpy) 	((dpy)->release)
+;; #define DefaultDepth(dpy, scr) 	(((dpy)->screens[(scr)]).root_depth)
+;; #define ServerVendor(dpy) 	((dpy)->vendor)
+;; #define DefaultDepthOfScreen(s) ((s)->root_depth)
+;; #define DisplayPlanes(dpy, scr) (((dpy)->screens[(scr)]).root_depth)
+;; #define DisplayWidth(dpy, scr) 	(((dpy)->screens[(scr)]).width)
+;; #define DisplayOfScreen(s) ((s)->display)
+;; #define DefaultColormap(dpy, scr) (((dpy)->screens[(scr)]).cmap)
+;; #define BlackPixel(dpy, scr) 	(((dpy)->screens[(scr)]).black_pixel)
+;; #define HeightMMOfScreen(s) ((s)->mheight)
+;; #define DefaultVisualOfScreen(s) ((s)->root_visual)
+;; #define BitmapBitOrder(dpy) 	((dpy)->bitmap_bit_order)
+;; #define LastKnownRequestProcessed(dpy) ((dpy)->last_request_read)
+;; #define DisplayHeight(dpy, scr) (((dpy)->screens[(scr)]).height)
+;; #define NextRequest(dpy) ((dpy)->request + 1)
+;; #define DefaultVisual(dpy, scr) (((dpy)->screens[(scr)]).root_visual)
+;; #define BlackPixelOfScreen(s) ((s)->black_pixel)
+;; #define ImageByteOrder(dpy) 	((dpy)->byte_order)
+;; #define DisplayCells(dpy, scr) 	(DefaultVisual((dpy), (scr))->map_entries)
+;; #define DefaultColormapOfScreen(s) ((s)->cmap)
+;; #define CellsOfScreen(s) (DefaultVisualOfScreen((s))->map_entries)
+;; #define WidthOfScreen(s) ((s)->width)
+;; #define DefaultGCOfScreen(s) ((s)->default_gc)
+;; #define DefaultRootWindow(dpy) 	(((dpy)->screens[(dpy)->default_screen]).root)
+;; #define AllPlanes 		(~0)
+;; #define DisplayString(dpy) 	((dpy)->display_name)
+;; #define QLength(dpy) 		((dpy)->qlen)
+;; #define WhitePixelOfScreen(s) ((s)->white_pixel)

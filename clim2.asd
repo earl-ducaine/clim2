@@ -134,6 +134,7 @@
 
      (:file "xlib/ffi")
      (:file "xlib/load-xlib")
+     (:file "xlib/def-exported-foreign-struct-cffi")
      (:file "xlib/xlib-defs")
      (:file "xlib/xlib-funs")
      (:file "xlib/x11-keysyms")

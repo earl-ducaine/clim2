@@ -1,3 +1,101 @@
+(in-package :x11)
+
+;; In the xlib-defs.lisp file the following provides definitions clim2
+;; needs to access the c interface to motif. def-exported-constant is
+;; already portable, being just a wrapper around export and
+;; defconstant.  def-exported-foreign-struct, and
+;; def-exported-foreign-synonym-type need to be reimplemented in cffi
+;; to be made portable.
+
+
+
+
+
+
+(defparameter *builtin-ctypes*
+  '(char unsigned-char short unsigned-short int unsigned-int long unsigned-long
+    long-long unsigned-long-long uchar ushort uint ulong llong llong ullong
+    int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double long-double
+    pointer void))
+
+
+(defun convert-builtin-ctypes-to-keyword (symbol)
+  (if (member symbol *builtin-ctypes*)
+      (alexandria:make-keyword (string-upcase (symbol-name symbol)))
+      symbol))
+
+;; Old way of creating interface to xcomposestatus.
+(def-exported-foreign-struct-cffi xcomposestatus-ffi
+    "Xcomposestatus structure."
+  (compose-ptr :type (:pointer char))
+  (chars-matched :type int))
+
+;; New way of creating interface to xcomposestatus.
+(cffi:defcstruct xcomposestatus-lab
+    "Xcomposestatus structure."
+    (compose-ptr (:pointer :char))
+    (chars-matched :int))
+
+;; So, def-exported-foreign-struct-cffi has to render the old to the new.
+
+(defun compute-cffi-style-cstruct-type (type)
+  (cond ((listp type) (if (eq (car type) :pointer)
+			  :pointer
+			  (mapcar (lambda (symbol)
+				    (convert-builtin-ctypes-to-keyword symbol))
+				  type)))
+	(t (convert-builtin-ctypes-to-keyword type))))
+
+
+(defun compute-cffi-style-cstruct-slot (slot)
+  (destructuring-bind (slot-name &key type overlays)
+      slot
+    (list slot-name (compute-cffi-style-cstruct-type type))))
+
+(defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
+  (let ((cffi-slots
+	 (reverse
+	  (reduce
+	   (lambda (slots slot)
+	     (cond  ((stringp slot)
+		     ;; documentation string
+		     (cons slot slots))
+		    ((or (listp slot)
+			 (symbolp slot)
+			 (keywordp slot))
+		     (cons (compute-cffi-style-cstruct-slot slot) slots))
+		    (t (error "unexpected slot type"))))
+	   slots
+	   :initial-value '()))))
+    `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
+
+(def-exported-foreign-struct-cffi xextdata-cffi
+  (number :type int)
+  (next :type (:pointer xextdata))
+  (free-private :type (:pointer :pointer))
+  (private-data :type (:pointer char)))
+
+
+
+
+
+
+
+(defmacro def-exported-constant-cffi ()
+  was-called-above 0)
+
+(defmacro def-exported-constant (name value)
+  ;; define the constant and export it from :x11
+  `(progn
+     (eval-when (eval load compile)
+       (export ',name))
+     (defconstant ,name ,value)))
+
+
+
+
+;;(def-exported-constant was-called-above 0)
+
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
   (let ((cffi-cstruct-slots (compute-cffi-style-cstruct-slots slots))
@@ -77,16 +175,7 @@
 (destructuring-bind ((a &optional (b 'bee)) one two three)
     `((alpha) ,@(iota 3))
 
-  (defun compute-cffi-style-cstruct-slot (slot)
-    (destructuring-bind (slot-name &key type overlays)
-	slot
-      (cond
-	((member type '(char int keysym long long short unsigned
-			unsigned-char unsigned-int unsigned-long
-			unsigned-short))
-	 (list slot-name (alexandria:make-keyword (string-upcase (symbol-name type)))))
-	((atom type)
-	 (list slot-name (list :struct (alexandria:make-keyword (string-upcase (symbol-name type)))))))))
+
 
 
 
