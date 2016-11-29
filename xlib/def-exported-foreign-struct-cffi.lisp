@@ -42,10 +42,21 @@
 	(t (convert-builtin-ctypes-to-keyword type)
 	   )))
 
-(defun compute-cffi-style-cstruct-slot (slot)
+(defun generate-slote-accessor (cstruct-name slot)
+  `(defun foreign-slot-value ptr ’point ’x)
+
+
+(defun compute-cffi-style-cstruct-slot (cstruct-name slot)
   (destructuring-bind (slot-name &key type overlays)
       slot
+    (generate-slote-accessor cstruct-name slot)
     (list slot-name (compute-cffi-style-cstruct-type type))))
+
+(defun ensure-list (list)
+  "If LIST is a list, it is returned. Otherwise returns the list designated by LIST."
+  (if (listp list)
+      list
+      (list list)))
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
   (let ((cffi-slots
@@ -58,7 +69,10 @@
 		    ((or (listp slot)
 			 (symbolp slot)
 			 (keywordp slot))
-		     (cons (compute-cffi-style-cstruct-slot slot) slots))
+		     (destructuring-bind (cstruct-name . options)
+			 (ensure-list name-and-options)
+		       (cons (compute-cffi-style-cstruct-slot cstruct-name slot)
+			     slots)))
 		    (t (error "unexpected slot type"))))
 	   slots
 	   :initial-value '()))))

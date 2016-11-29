@@ -593,21 +593,21 @@
 (def-exported-constant xa-last-predefined 68)         ;; #define XA_LAST_PREDEFINED ((Atom) 68)
 
 
-(def-exported-foreign-synonym-type-cffi xid unsigned-long)
-(def-exported-foreign-synonym-type-cffi window xid)
-(def-exported-foreign-synonym-type-cffi drawable xid)
-(def-exported-foreign-synonym-type-cffi font xid)
-(def-exported-foreign-synonym-type-cffi pixmap xid)
-(def-exported-foreign-synonym-type-cffi cursor xid)
-(def-exported-foreign-synonym-type-cffi colormap xid)
-(def-exported-foreign-synonym-type-cffi gcontext xid)
-(def-exported-foreign-synonym-type-cffi keysym
+(def-exported-foreign-synonym-type xid unsigned-long)
+(def-exported-foreign-synonym-type window xid)
+(def-exported-foreign-synonym-type drawable xid)
+(def-exported-foreign-synonym-type font xid)
+(def-exported-foreign-synonym-type pixmap xid)
+(def-exported-foreign-synonym-type cursor xid)
+(def-exported-foreign-synonym-type colormap xid)
+(def-exported-foreign-synonym-type gcontext xid)
+(def-exported-foreign-synonym-type keysym
     #+alpha unsigned-int
     #-alpha xid)
 (def-exported-foreign-synonym-type-cffi mask unsigned-long)
-(def-exported-foreign-synonym-type-cffi atom unsigned-long)
-(def-exported-foreign-synonym-type-cffi visualid unsigned-long)
-(def-exported-foreign-synonym-type-cffi time
+(def-exported-foreign-synonym-type atom unsigned-long)
+(def-exported-foreign-synonym-type visualid unsigned-long)
+(def-exported-foreign-synonym-type time
     #+alpha unsigned-int
     #-alpha unsigned-long)
 (def-exported-foreign-synonym-type keycode unsigned-char)
@@ -645,7 +645,7 @@
   (error :type (:pointer :pointer))
   (error-string :type (:pointer :pointer)))
 
-(def-exported-foreign-struct-cffi xgcvalues
+(def-exported-foreign-struct xgcvalues
   (function :type int)
   (plane-mask :type unsigned-long)
   (foreground :type unsigned-long)
@@ -670,7 +670,7 @@
   (dash-offset :type int)
   (dashes :type char))
 
-(def-exported-foreign-struct-cffi _xgc
+(def-exported-foreign-struct _xgc
   (ext-data :type (:pointer xextdata))
   (gid :type gcontext)
   (rects :type int)
@@ -678,9 +678,9 @@
   (dirty :type unsigned-long)
   (values :type xgcvalues))
 
-(def-exported-foreign-synonym-type-cffi gc (:pointer _xgc))
+(def-exported-foreign-synonym-type gc (:pointer _xgc))
 
-(def-exported-foreign-struct-cffi visual
+(def-exported-foreign-struct visual
   (ext-data :type (:pointer xextdata))
   (visualid :type visualid)
   (class :type int)
@@ -690,12 +690,12 @@
   (bits-per-rgb :type int)
   (map-entries :type int))
 
-(def-exported-foreign-struct-cffi depth
+(def-exported-foreign-struct depth
   (depth :type int)
   (nvisuals :type int)
   (visuals :type (:pointer visual)))
 
-(def-exported-foreign-struct-cffi screen
+(def-exported-foreign-struct screen
   (ext-data :type (:pointer xextdata))
   (display :type (:pointer display))
   (root :type window)
@@ -717,13 +717,13 @@
   (save-unders :type int)
   (root-input-mask :type long))
 
-(def-exported-foreign-struct-cffi screenformat
+(def-exported-foreign-struct screenformat
   (ext-data :type (:pointer xextdata))
   (depth :type int)
   (bits-per-pixel :type int)
   (scanline-pad :type int))
 
-(def-exported-foreign-struct-cffi xsetwindowattributes
+(def-exported-foreign-struct xsetwindowattributes
   (background-pixmap :type pixmap)
   (background-pixel :type unsigned-long)
   (border-pixmap :type pixmap)
@@ -740,7 +740,7 @@
   (colormap :type colormap)
   (cursor :type cursor))
 
-(def-exported-foreign-struct-cffi xwindowattributes
+(def-exported-foreign-struct xwindowattributes
   (x :type int)
   (y :type int)
   (width :type int)
@@ -1479,7 +1479,7 @@ typedef union { Display *display;
 (def-exported-constant ZoomState 2)          ;; #define ZoomState 2
 (def-exported-constant InactiveState 4)      ;; #define InactiveState 4
 
-(def-exported-foreign-struct xsizehints
+(def-exported-foreign-struct-cffi xsizehints
   (flags :type long)
   (x :type int)				; Obsolete
   (y :type int)				; Obsolete
@@ -1513,18 +1513,17 @@ typedef union { Display *display;
 (def-exported-constant xcsuccess 0)  ;; #define XCSUCCESS 0
 (def-exported-constant xcnomem   1)  ;; #define XCNOMEM   1
 (def-exported-constant xcnoent   2)  ;; #define XCNOENT   2
-
-(def-exported-foreign-synonym-type xcontext int)
+(def-exported-foreign-synonym-type-cffi xcontext int)
 
 
 ;; (cffi:foreign-alloc '(:pointer (:struct xcomposestatus-cffi)))
 
-(cffi:defcstruct xcomposestatus
-    "Xcomposestatus structure."
-    (compose-ptr (:pointer :char))
-    (chars-matched :int))
+;; (cffi:defcstruct xcomposestatus
+;;     "Xcomposestatus structure."
+;;     (compose-ptr (:pointer :char))
+;;     (chars-matched :int))
 
-(def-exported-foreign-struct xcomposestatus-ffi
+(def-exported-foreign-struct-cffi xcomposestatus
   (compose-ptr :type (:pointer char))
   (chars-matched :type int))
 
