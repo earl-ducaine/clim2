@@ -42,8 +42,26 @@
 	(t (convert-builtin-ctypes-to-keyword type)
 	   )))
 
-(defun generate-slote-accessor (cstruct-name slot)
-  `(defun foreign-slot-value ptr ’point ’x)
+
+
+(defparameter package-name "x11")
+(defparameter package (find-package (string-upcase package-name)))
+(defparameter cstruct-name "xsizehints-flags")
+(defparameter cstruct-symbol (intern (string-upcase cstruct-name)))
+(defparameter slot-name "flags")
+(defparameter accessor-symbol (intern (string-upcase cstruct-name)
+					      package))
+
+
+(defun generate-slote-accessor (package-name cstruct-name slot-name)
+  (let ((cstruct-symbol (make-symbol (string-upcase cstruct-name)))
+	(slot-symbol (make-symbol (string-upcase slot-name)))
+	(package (find-package (string-upcase package-name)))
+	(accessor-symbol (intern (string-upcase (concatenate 'string cstruct-name "-" slot-name)))))
+    `(defun ,accessor-symbol (struct)
+       (foreign-slot-value struct cstruct-symbol slot-symbol))
+    (export accessor-symbol package)
+    (list cstruct-symbol slot-symbol package accessor-symbol)))
 
 
 (defun compute-cffi-style-cstruct-slot (cstruct-name slot)
