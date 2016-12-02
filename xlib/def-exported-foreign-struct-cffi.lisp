@@ -100,9 +100,8 @@
       list
       (list list)))
 
-(defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
-  (let ((cffi-slots
-	 (reverse
+(defun compute-cffi-style-cstruct-slots (name-and-options &rest slots)
+  (reverse
 	  (reduce
 	   (lambda (slots slot)
 	     (cond  ((stringp slot)
@@ -122,7 +121,11 @@
 			     slots)))
 		    (t (error "unexpected slot type"))))
 	   slots
-	   :initial-value '()))))
+	   :initial-value '())))
+
+
+(defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
+  (let ((cffi-slots (compute-cffi-style-cstruct-slots name-and-options slots)))
     `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
 
 
