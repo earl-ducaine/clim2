@@ -49,26 +49,50 @@
 (defparameter cstruct-name "xsizehints-flags")
 (defparameter cstruct-symbol (intern (string-upcase cstruct-name)))
 (defparameter slot-name "flags")
-(defparameter accessor-symbol (intern (string-upcase cstruct-name)
-					      package))
+(defparameter accessor-symbol (intern (string-upcase cstruct-name)))
+
+;; create a string of the proper case to generate the accessor symbol
+(defun generate-slot-accessor-name (cstruct-name slot-name)
+  (let* ((cstruct-name (string-upcase cstruct-name))
+	 (slot-name (string-upcase slot-name))
+	 (slot-accessor-name (concatenate 'string cstruct-name "-" slot-name)))
+    slot-accessor-name))
 
 
-(defun generate-slote-accessor (package-name cstruct-name slot-name)
-  (let ((cstruct-symbol (make-symbol (string-upcase cstruct-name)))
-	(slot-symbol (make-symbol (string-upcase slot-name)))
-	(package (find-package (string-upcase package-name)))
-	(accessor-symbol (intern (string-upcase (concatenate 'string cstruct-name "-" slot-name)))))
-    `(defun ,accessor-symbol (struct)
-       (foreign-slot-value struct cstruct-symbol slot-symbol))
+;; Create and configure slot accessor symbol that we'll attach to the
+;; correct function defination.
+(defun create-slot-accessor-symbol (package-name cstruct-name slot-name)
+  (let* ((accessor-name (generate-slot-accessor-name cstruct-name slot-name))
+	 (package (find-package (string-upcase package-name)))
+	 (accessor-symbol (intern accessor-symbol package)))
     (export accessor-symbol package)
-    (list cstruct-symbol slot-symbol package accessor-symbol)))
+    accessor-symbol))
 
 
-(defun compute-cffi-style-cstruct-slot (cstruct-name slot)
-  (destructuring-bind (slot-name &key type overlays)
+(defun make-upcase-symbol (symbol-name)
+  (symbol (string-upcase symbol-name)))
+
+
+
+
+(defun compute-cffi-style-cstruct-slot (package-name cstruct-name slot)
+  (destructuring-bind (slot-id &key type overlays)
       slot
-    (generate-slote-accessor cstruct-name slot)
-    (list slot-name (compute-cffi-style-cstruct-type type))))
+    (generate-slot-accessor package-name cstruct-name
+			    (if (stringp slot-id)
+				slot-id
+				;; asume it's a symbol
+				(symbol-name slot-id)))))
+
+;; Create a slot accessor function exported in the specified package.
+(defun generate-slot-accessor (package-name cstruct-name slot-name)
+  (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name)))
+    (setf (symbol-function symbol) (lambda (struct)
+				     (foreign-slot-value struct
+							 (make-upcase-symbol cstruct-name)
+							 (make-upcase-symbol slot-name))))))
+
+;; (generate-slot-accessor "x11" "xextdata" "number")
 
 (defun ensure-list (list)
   "If LIST is a list, it is returned. Otherwise returns the list designated by LIST."
@@ -87,9 +111,14 @@
 		    ((or (listp slot)
 			 (symbolp slot)
 			 (keywordp slot))
-		     (destructuring-bind (cstruct-name . options)
+		     (destructuring-bind (cstruct . options)
 			 (ensure-list name-and-options)
-		       (cons (compute-cffi-style-cstruct-slot cstruct-name slot)
+		       (cons (compute-cffi-style-cstruct-slot "x11"
+							      (if (stringp cstruct)
+								  cstruct
+								  ;; asume it's a symbol
+								  (symbol-name cstruct))
+							      slot)
 			     slots)))
 		    (t (error "unexpected slot type"))))
 	   slots

@@ -620,19 +620,19 @@
 
 (def-exported-foreign-synonym-type callback-function-addr :signed-32bit)
 
-(def-exported-foreign-struct-cffi xextdata
+(def-exported-foreign-struct xextdata
   (number :type int)
   (next :type (:pointer xextdata))
   (free-private :type (:pointer :pointer))
   (private-data :type (:pointer char)))
 
-(def-exported-foreign-struct-cffi xextcodes
+(def-exported-foreign-struct xextcodes
   (extension :type int)
   (major-opcode :type int)
   (first-event :type int)
   (first-error :type int))
 
-(def-exported-foreign-struct-cffi _xextension
+(def-exported-foreign-struct _xextension
   (next :type (:pointer _xextension))
   (codes :type xextcodes)
   (create-gc :type (:pointer :pointer))
