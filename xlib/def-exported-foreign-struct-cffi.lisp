@@ -42,14 +42,10 @@
 	(t (convert-builtin-ctypes-to-keyword type)
 	   )))
 
-
-
-(defparameter package-name "x11")
-(defparameter package (find-package (string-upcase package-name)))
-(defparameter cstruct-name "xsizehints-flags")
-(defparameter cstruct-symbol (intern (string-upcase cstruct-name)))
-(defparameter slot-name "flags")
-(defparameter accessor-symbol (intern (string-upcase cstruct-name)))
+(defun compute-cffi-style-cstruct-slot-old (package-name cstruct-name slot)
+  (destructuring-bind (slot-name &key type overlays)
+      slot
+    (list slot-name (compute-cffi-style-cstruct-type type))))
 
 ;; create a string of the proper case to generate the accessor symbol
 (defun generate-slot-accessor-name (cstruct-name slot-name)
@@ -58,20 +54,65 @@
 	 (slot-accessor-name (concatenate 'string cstruct-name "-" slot-name)))
     slot-accessor-name))
 
-
 ;; Create and configure slot accessor symbol that we'll attach to the
 ;; correct function defination.
 (defun create-slot-accessor-symbol (package-name cstruct-name slot-name)
   (let* ((accessor-name (generate-slot-accessor-name cstruct-name slot-name))
 	 (package (find-package (string-upcase package-name)))
-	 (accessor-symbol (intern accessor-symbol package)))
+	 (accessor-symbol (intern accessor-name package)))
     (export accessor-symbol package)
     accessor-symbol))
 
-
 (defun make-upcase-symbol (symbol-name)
-  (symbol (string-upcase symbol-name)))
+  (make-symbol (string-upcase symbol-name)))
 
+;; Create a slot accessor function exported in the specified package.
+(defun generate-slot-accessor (package-name cstruct-name slot-name)
+  (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name)))
+    (format t "symbol ~s, (type-of symbol) ~s~%" symbol (type-of symbol))
+    (setf (symbol-function symbol) (function (lambda (struct)
+				     (cffi:foreign-slot-value struct
+							      (find-symbol (string-upcase cstruct-name) :x11)
+							      (find-symbol (string-upcase slot-name) :x11)))))))
+
+
+
+
+
+
+
+
+
+
+
+;;  (define-setf-expander ldb (bytespec int &environment env)
+;;    (multiple-value-bind (temps vals stores
+;;                           store-form access-form)
+;;        (get-setf-expansion int env);Get setf expansion for int.
+;;      (let ((btemp (gensym))     ;Temp var for byte specifier.
+;;            (store (gensym))     ;Temp var for byte to store.
+;;            (stemp (first stores))) ;Temp var for int to store.
+;;        (if (cdr stores) (error "Can't expand this."))
+;; ;;; Return the setf expansion for LDB as five values.
+;;        (values (cons btemp temps)       ;Temporary variables.
+;;                (cons bytespec vals)     ;Value forms.
+;;                (list store)             ;Store variables.
+;;                `(let ((,stemp (dpb ,store ,btemp ,access-form)))
+;;                   ,store-form
+;;                   ,store)               ;Storing form.
+;;                `(ldb ,btemp ,access-form) ;Accessing form.
+;;               ))))
+
+(define-setf-expander lastguy (x &environment env)
+   "Set the last element in a list to the given value."
+   (multiple-value-bind (dummies vals newval setter getter)
+       (get-setf-expansion x env)
+     (let ((store (gensym)))
+       (values dummies
+               vals
+               `(,store)
+               `(progn (rplaca (last ,getter) ,store) ,store)
+               `(lastguy ,getter)))))
 
 
 
@@ -82,17 +123,9 @@
 			    (if (stringp slot-id)
 				slot-id
 				;; asume it's a symbol
-				(symbol-name slot-id)))))
+				(symbol-name slot-id)))
+    (list slot-id (compute-cffi-style-cstruct-type type))))
 
-;; Create a slot accessor function exported in the specified package.
-(defun generate-slot-accessor (package-name cstruct-name slot-name)
-  (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name)))
-    (setf (symbol-function symbol) (lambda (struct)
-				     (foreign-slot-value struct
-							 (make-upcase-symbol cstruct-name)
-							 (make-upcase-symbol slot-name))))))
-
-;; (generate-slot-accessor "x11" "xextdata" "number")
 
 (defun ensure-list (list)
   "If LIST is a list, it is returned. Otherwise returns the list designated by LIST."
@@ -100,37 +133,33 @@
       list
       (list list)))
 
-(defun compute-cffi-style-cstruct-slots (name-and-options &rest slots)
-  (reverse
-	  (reduce
-	   (lambda (slots slot)
-	     (cond  ((stringp slot)
-		     ;; documentation string
-		     (cons slot slots))
-		    ((or (listp slot)
-			 (symbolp slot)
-			 (keywordp slot))
-		     (destructuring-bind (cstruct . options)
-			 (ensure-list name-and-options)
-		       (cons (compute-cffi-style-cstruct-slot "x11"
-							      (if (stringp cstruct)
-								  cstruct
-								  ;; asume it's a symbol
-								  (symbol-name cstruct))
-							      slot)
-			     slots)))
-		    (t (error "unexpected slot type"))))
-	   slots
-	   :initial-value '())))
+(defun reformat-and-push-slot (name-and-options slots slot)
+    (cond  ((stringp slot)
+	    ;; documentation string
+	    (cons slot slots))
+	   ((or (listp slot)
+		(symbolp slot)
+		(keywordp slot))
+	    (destructuring-bind (cstruct . options)
+		(ensure-list name-and-options)
+	      (cons (compute-cffi-style-cstruct-slot "x11"
+						     (if (stringp cstruct)
+							 cstruct
+							 ;; asume it's a symbol
+							 (symbol-name cstruct))
+						     slot)
+		    slots)))
+	    (t (error "unexpected slot type"))))
 
+(defun compute-cffi-style-cstruct-slots (name-and-options slots)
+  (reverse (reduce (lambda (slots slot)
+		     (reformat-and-push-slot name-and-options slots slot))
+		   slots :initial-value '())))
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
   (let ((cffi-slots (compute-cffi-style-cstruct-slots name-and-options slots)))
+    (format t "cffi-slots ~s~%" cffi-slots)
     `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
-
-
-
-
 
 (defmacro def-exported-foreign-synonym-type-cffi (new-name old-name)
   `(progn
