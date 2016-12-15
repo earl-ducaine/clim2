@@ -1967,9 +1967,9 @@
   (display (:pointer display))
   (window window))
 
-(def-exported-foreign-function (xallocsizehints
-				(:name "XAllocSizeHints")
-				(:return-type (:pointer xsizehints))))
+(def-exported-foreign-function-cffi (xallocsizehints
+				     (:name "XAllocSizeHints")
+				     (:return-type (:pointer xsizehints))))
 
 (def-exported-foreign-function (xsetwmnormalhints (:return-type void)
 						  (:name "XSetWMNormalHints"))

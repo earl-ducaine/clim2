@@ -9,8 +9,202 @@
 
 
 
+(defparameter size-hints (x11::xallocsizehints))
+(defparameter flags (x11::xsizehints-flags size-hints))
 
 
+
+
+
+;; clim2 format:
+;;
+;; (def-exported-foreign-function
+;;     (xallocsizehints
+;;      (:name "XAllocSizeHints")
+;;      (:return-type (:pointer xsizehints))))
+;;
+;; alegro ff format:
+;;
+;; (foreign-functions:def-foreign-call
+;;     (xallocsizehints "XAllocSizeHints") (:void)
+;;   :returning :foreign-address
+;;   :call-direct t
+;;   :arg-checking nil)))
+;;
+;; cffi format:
+;; (cffi:defcfun (xallocsizehints "XAllocSizeHints") :pointer)
+;;
+;; Original -cffi format
+(def-exported-foreign-function-cffi
+    (xallocsizehints
+     (:name "XAllocSizeHints")
+     (:return-type (:pointer xsizehints))))
+
+;; original ff
+
+(cffi:defcfun "strlen" :int
+  (n :string))
+
+
+;; Should generate a function that looks something like:
+;;
+;; (foreign-funcall "curl_easy_setopt"
+;;     :pointer *easy-handle*
+;;     curl-option :nosignal :long 1 curl-code)
+(defmacro def-exported-foreign-function ((name &rest options) &rest args)
+  `(progn
+     (eval-when (eval load compile)
+       (export ',name))
+     (eval-when (compile eval load)
+       ,(let ((c-name (second (assoc :name options)))
+	      (return-type (or (second (assoc :return-type options))
+			       'void)))
+	  `(ff:def-foreign-call (,name ,c-name)
+	       ,(or (mapcar #'trans-arg-type args) '(:void))
+	     :returning ,(trans-return-type return-type)
+	     :call-direct t
+	     :arg-checking nil)))))
+
+;; (defcfun "strlen" :int
+;;   "Calculate the length of a string"
+;;   (n :string
+
+
+(defun run-define-setf-expander-lastguy ()
+(defun run-define-setf-expander-lastguy ()
+  (define-setf-expander lastguy (x &environment env)
+    "Set the last element in a list to the given value."
+    (multiple-value-bind (dummies vals newval setter getter)
+	(get-setf-expansion x env)
+      (let ((store (gensym)))
+	(values dummies
+		vals
+		`(,store)
+		`(progn (rplaca (last ,getter) ,store) ,store)
+		`(lastguy ,getter))))))
+)
+
+
+
+(defun run-set-foreign-slot-value ()
+  (set-foreign-slot-value size-hints 'xsizehints 'flags 1))
+
+
+(defun set-foreign-slot-value (object struct slot value)
+  (setf (cffi:foreign-slot-value object struct slot)  value)
+  value)
+
+(defun access-foreign-slot-value (object struct slot)
+  (cffi:foreign-slot-value object struct slot)  value)
+
+(defun set-xsizehints-flags (cstruct value)
+  (setf (cffi:foreign-slot-value object struct slot) value))
+
+(defsetf xsizehints-flags set-xsizehints-flags)
+
+
+
+
+(multiple-value-bind (dummies vals newval setter getter)
+    (get-setf-expansion size-hints)
+  (list dummies vals newval setter getter))
+
+
+(defun run-define-setf-expander-lastguy ()
+  (define-setf-expander lastguy (x &environment env)
+    "Set the last element in a list to the given value."
+    (multiple-value-bind (dummies vals newval setter getter)
+	(get-setf-expansion x env)
+      (let ((store (gensym)))
+	(values dummies
+		vals
+		`(,store)
+		`(progn (rplaca (last ,getter) ,store) ,store)
+		`(lastguy ,getter))))))
+)
+
+(define-setf-expander foreign-slot-value-cffi (x &environment env)
+  (multiple-value-bind (dummies vals newval setter getter)
+	(get-setf-expansion x env)
+      (let ((store (gensym)))
+	(values dummies
+		vals
+		`(,store)
+		`(progn (setf (cffi:foreign-slot-value size-hints 'xsizehints 'flags)
+			      ,store))
+		`,getter))))
+
+
+
+
+
+
+
+
+
+
+
+(defvar a)
+(defvar b)
+(defvar c)
+
+(defun cffi-test (cstruct)
+  (cffi:foreign-slot-value
+   (:pointer (:struct struct))
+   (find-symbol (string-upcase "xsizehints") :x11)
+   (find-symbol (string-upcase "flags") :x11)))
+
+(defun run-cffi-test ()
+  (let ((size-hints (x11::xallocsizehints)))
+
+
+(defun reset-lastguy ()
+  (setf a (list 'a 'b 'c 'd))
+  (setf b (list 'x))
+  (setf c (list 1 2 3 (list 4 5 6))))
+
+(defun run-define-setf-expander-lastguy ()
+  (define-setf-expander lastguy (x &environment env)
+    "Set the last element in a list to the given value."
+    (multiple-value-bind (dummies vals newval setter getter)
+	(get-setf-expansion x env)
+      (let ((store (gensym)))
+	(values dummies
+		vals
+		`(,store)
+		`(progn (rplaca (last ,getter) ,store) ,store)
+		`(lastguy ,getter))))))
+
+(defun run-setf-lastguy ()
+  (setf (lastguy a) 3)
+  (setf (lastguy b) 7))
+
+(defvar a)
+(defvar b)
+(defvar c)
+
+(defun lastguy (x) (car (last x)))
+
+(defun reset-lastguy ()
+  (setf a (list 'a 'b 'c 'd))
+  (setf b (list 'x))
+  (setf c (list 1 2 3 (list 4 5 6))))
+
+(defun run-define-setf-expander-lastguy ()
+  (define-setf-expander lastguy (x &environment env)
+    "Set the last element in a list to the given value."
+    (multiple-value-bind (dummies vals newval setter getter)
+	(get-setf-expansion x env)
+      (let ((store (gensym)))
+	(values dummies
+		vals
+		`(,store)
+		`(progn (rplaca (last ,getter) ,store) ,store)
+		`(lastguy ,getter))))))
+
+(defun run-setf-lastguy ()
+  (setf (lastguy a) 3)
+  (setf (lastguy b) 7))
 
 (defparameter *builtin-ctypes*
   '(char unsigned-char short unsigned-short int unsigned-int long unsigned-long
