@@ -63,23 +63,28 @@
     (export accessor-symbol package)
     accessor-symbol))
 
+(defun create-slot-setter-symbol (package-name cstruct-name slot-name)
+  (let* ((accessor-name (generate-slot-accessor-name cstruct-name slot-name))
+	 (package (find-package (string-upcase package-name)))
+	 (accessor-symbol (intern accessor-name package)))
+    (export accessor-symbol package)
+    accessor-symbol))
+
 (defun make-upcase-symbol (symbol-name)
   (make-symbol (string-upcase symbol-name)))
 
 ;; Create a slot accessor function exported in the specified package.
 (defun generate-slot-accessor (package-name cstruct-name slot-name)
-  (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name)))
+  (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name))
+	 (setter-symbol (create-slot-setter-symbol package-name cstruct-name slot-name)))
     (format t "symbol ~s, (type-of symbol) ~s~%" symbol (type-of symbol))
+    (defun set-xsizehints-flags (cstruct value)
+      (setf (cffi:foreign-slot-value object struct slot) value))
+    (defsetf xsizehints-flags set-xsizehints-flags)
     (setf (symbol-function symbol) (function (lambda (struct)
 				     (cffi:foreign-slot-value struct
 							      (find-symbol (string-upcase cstruct-name) :x11)
 							      (find-symbol (string-upcase slot-name) :x11)))))))
-
-
-
-
-
-
 
 
 
@@ -157,9 +162,10 @@
 		   slots :initial-value '())))
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
-  (let ((cffi-slots (compute-cffi-style-cstruct-slots name-and-options slots)))
-    (format t "cffi-slots ~s~%" cffi-slots)
-    `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
+  (eval-when (:compile-toplevel :execute :load-toplevel)
+    (let ((cffi-slots (compute-cffi-style-cstruct-slots name-and-options slots)))
+      (format t "cffi-slots ~s~%" cffi-slots)
+    `(cffi:defcstruct ,name-and-options ,@cffi-slots))))
 
 (defmacro def-exported-foreign-synonym-type-cffi (new-name old-name)
   `(progn
