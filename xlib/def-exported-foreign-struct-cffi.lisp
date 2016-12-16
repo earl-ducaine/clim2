@@ -73,8 +73,31 @@
 (defun make-upcase-symbol (symbol-name)
   (make-symbol (string-upcase symbol-name)))
 
+
+
+
 ;; Create a slot accessor function exported in the specified package.
 (defun generate-slot-accessor (package-name cstruct-name slot-name)
+  (let* ((cstruct-symbol (intern (string-upcase cstruct-name)))
+	 (slot-symbol (intern (string-upcase slot-name)))
+	 (symbol (create-slot-accessor-symbol package-name cstruct-name slot-name)))
+    (format t "symbol ~s, (type-of symbol) ~s~%" symbol (type-of symbol))
+    (format t "debuging slot: ~s~%" `(defun  ,symbol (cstruct)
+	     (cffi:foreign-slot-value cstruct ,cstruct-symbol ',slot-symbol)))
+    (eval `(defun  ,symbol (cstruct)
+	     (cffi:foreign-slot-value cstruct ',cstruct-symbol ',slot-symbol)))
+    (eval `(defun (setf ,symbol) (value cstruct)
+	     (setf (cffi:foreign-slot-value cstruct ',cstruct-symbol ',slot-symbol) value)))))
+
+(defun generate-setf-function4 ()
+  (let ((function-symbol 'setfable-value4))
+    (eval
+     `(defun ,function-symbol () 'a))
+    (eval
+     `(defun (setf ,function-symbol) (value) value))))
+
+;; Create a slot accessor function exported in the specified package.
+(defun generate-slot-accessor-old (package-name cstruct-name slot-name)
   (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name))
 	 (setter-symbol (create-slot-setter-symbol package-name cstruct-name slot-name)))
     (format t "symbol ~s, (type-of symbol) ~s~%" symbol (type-of symbol))
