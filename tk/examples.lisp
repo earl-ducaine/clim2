@@ -251,14 +251,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; something like
 (defun try-it ()
-  (setq app (app-create-shell :display display :widget-class 'application-shell))
-  (setq main (create-widget 'xm-main-window "foo" app))
-  (setq label (create-widget 'xm-push-button "foo" main))
-  (add-callback label :activate-callback 'push-button-activate)
-  (manage-child label)
-  (manage-child main)
-  (realize-widget app))
+  (multiple-value-bind (app display shell) (initialize-toolkit)
+    (setq app (app-create-shell :display display :widget-class 'application-shell))
+    ;; (setq main (create-widget 'xm-main-window "foo" app))
+    ;; (setq label (create-widget 'xm-push-button "foo" main))
+    ;; (add-callback label :activate-callback 'push-button-activate)
+    ;; (manage-child label)
+    ;; (manage-child main)
+    (realize-widget app)))
 
 (defun push-button-activate (&rest x) (format t "callback invoked with ~S~%" x))
 
@@ -410,10 +412,3 @@ xlib:(defun try-drawing (display window string)
 				    :foreground white
 				    :font font)))
     (draw-glyphs window gcontext 10 10 string)))
-
-
-
-
-
-
-

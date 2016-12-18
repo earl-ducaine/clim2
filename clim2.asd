@@ -171,6 +171,7 @@
      (:file "tk/xm-protocols")
      (:file "tk/convenience")
      (:file "tk/make-widget")
+     (:file "tk/examples")
 
      (:file "tk-silica/xt-silica")
      (:file "tk-silica/xt-stipples")
@@ -185,6 +186,7 @@
 
      (:file "tk-silica/xt-pixmaps")
      (:file "tk-silica/gc-cursor")
+
      (:file "clim/japanese-input-editor")
 
      ;; system: testing
