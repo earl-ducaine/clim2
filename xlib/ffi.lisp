@@ -250,6 +250,7 @@
 (def-exported-foreign-synonym-type long-float double)
 
 (def-exported-foreign-synonym-type caddr-t :pointer)
+
 (def-exported-foreign-synonym-type u-char unsigned-char)
 (def-exported-foreign-synonym-type u-short unsigned-short)
 (def-exported-foreign-synonym-type u-int unsigned-int)

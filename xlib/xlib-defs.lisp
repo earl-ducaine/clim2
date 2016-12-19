@@ -81,6 +81,15 @@
 ;;; Above is renamed here to avoid colliding with the slots called above
 ;;; in xconfigurerequestevent and xconfigureevent.
 
+
+
+;; new
+(def-exported-foreign-synonym-type-cffi caddr-t :pointer)
+
+
+
+
+
 (def-exported-constant was-called-above 0)             ;; #define Above   0
 
 
@@ -593,11 +602,20 @@
 (def-exported-constant xa-last-predefined 68)         ;; #define XA_LAST_PREDEFINED ((Atom) 68)
 
 
+
 (def-exported-foreign-synonym-type xid unsigned-long)
+(def-exported-foreign-synonym-type-cffi xid unsigned-long)
+
+
 (def-exported-foreign-synonym-type window xid)
+(def-exported-foreign-synonym-type-cffi window xid)
+
 (def-exported-foreign-synonym-type drawable xid)
 (def-exported-foreign-synonym-type font xid)
+
 (def-exported-foreign-synonym-type pixmap xid)
+(def-exported-foreign-synonym-type-cffi pixmap xid)
+
 (def-exported-foreign-synonym-type cursor xid)
 (def-exported-foreign-synonym-type colormap xid)
 (def-exported-foreign-synonym-type gcontext xid)
@@ -1406,10 +1424,10 @@ typedef union { Display *display;
 (def-exported-foreign-synonym-type xrmclasslist xrmquarklist)
 (def-exported-foreign-synonym-type xrmrepresentation xrmquark)
 
-(def-exported-foreign-struct xrmvalue
+(def-exported-foreign-struct-cffi xrmvalue
   (size :type unsigned-int)
   (addr :type caddr-t))
-(def-exported-foreign-synonym-type xrmvalueptr (:pointer xrmvalue))
+(def-exported-foreign-synonym-type-cffi xrmvalueptr (:pointer xrmvalue))
 
 (def-exported-foreign-synonym-type xrmsearchlist int)
 (def-exported-foreign-synonym-type xrmdatabase int)
@@ -1441,9 +1459,14 @@ typedef union { Display *display;
 (defconstant XrmoptionResArg 4)
 (defconstant XrmoptionSkipArg 5)
 (defconstant XrmoptionSkipLine 6)
-(def-exported-foreign-synonym-type XrmOptionKind int)
 
-(def-exported-foreign-struct xrmoptiondescrec
+(def-exported-foreign-synonym-type XrmOptionKind int)
+(def-exported-foreign-synonym-type-cffi XrmOptionKind int)
+
+
+
+
+(def-exported-foreign-struct-cffi xrmoptiondescrec
   (option :type (:pointer char))
   (specifier :type (:pointer char))
   (argkind :type XrmOptionKind)
@@ -1453,7 +1476,7 @@ typedef union { Display *display;
 
 ;;; Utility Definitions from Xutil.h
 
-(def-exported-foreign-struct xwmhints
+(def-exported-foreign-struct-cffi xwmhints
   (flags :type long)
   (input :type int)
   (initial-state :type int)

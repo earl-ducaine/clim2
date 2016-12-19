@@ -1649,12 +1649,10 @@
 
 (defun allocate-cstruct-cffi (name &key
 			      (number 1)
-			      (initialize
-			       (ff::cstruct-property-initialize
-				(ff::cstruct-prop name))))
-  (declare (optimize (speed 3)))
-;;  (break)
-  (cffi:foreign-alloc `(:pointer (:struct ,name))))
+				     initialize)
+  (when (/= number 1)
+    (error "Error: allocate-cstruct-cffi currently doesn't support creating more than a single value: ~s~%" number))
+  (cffi:foreign-alloc `(:pointer (:struct ,name)) :initial-contents '(0)))
 
 (defun allocate-cstruct (name &key
 			      (number 1)
