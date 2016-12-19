@@ -42,26 +42,26 @@
       `(let* (,run-time-vars
 	      ,run-time-vals
 	      (wrapped-body
-		(let ,(mapcar #'list variables (reverse expand-time-val-forms))
-		  ,@body)))
+	       (let ,(mapcar #'list variables (reverse expand-time-val-forms))
+		 ,@body)))
 	 `(let ,(mapcar #'list (reverse ,run-time-vars)
-			       (reverse ,run-time-vals))
+			(reverse ,run-time-vals))
 	    ,wrapped-body)))))
 
 (eval-when (compile load eval)
-(defun decode-once-only-arguments (variables)
-  (let ((vars nil)
-	(env nil)
-	(vl variables))
-    (loop
-      (when (null vl)
-	(return-from decode-once-only-arguments
-	  (values (nreverse vars) env)))
-      (let ((var (pop vl)))
-	(if (eq var '&environment)
-	    (setq env (pop vl))
-	    (push var vars))))))
-)	;eval-when
+  (defun decode-once-only-arguments (variables)
+    (let ((vars nil)
+	  (env nil)
+	  (vl variables))
+      (loop
+	 (when (null vl)
+	   (return-from decode-once-only-arguments
+	     (values (nreverse vars) env)))
+	 (let ((var (pop vl)))
+	   (if (eq var '&environment)
+	       (setq env (pop vl))
+	       (push var vars))))))
+  )	;eval-when
 
 
 (defmacro dorest ((var list &optional (by 'cdr)) &body body)
@@ -98,7 +98,7 @@
 	      (,startd ,start)
 	      (,endd ,(if simple-p
 			  `,end
-			`(or ,end (length ,fvector))))
+			  `(or ,end (length ,fvector))))
 	      (,fromend ,from-end)
 	      (,index (if ,fromend (1- ,endd) ,startd))
 	      (,limit (if ,fromend (1- ,startd) ,endd)))
@@ -107,12 +107,12 @@
 		  (optimize (speed 3) (safety 0))
 		  ,(if simple-p
 		       `(type simple-vector ,fvector)
-		     `(type vector ,fvector)))
+		       `(type vector ,fvector)))
 	 (loop
-	   (when (= ,index ,limit) (return))
-	   (let ((,variable (,aref ,fvector ,index)))
-	     ,@body)
-	   (if ,fromend (decf ,index) (incf ,index)))))))
+	    (when (= ,index ,limit) (return))
+	    (let ((,variable (,aref ,fvector ,index)))
+	      ,@body)
+	    (if ,fromend (decf ,index) (incf ,index)))))))
 
 ;;The old definition
 #+ignore
@@ -142,10 +142,10 @@
 		       `(type simple-vector ,fvector)
 		       `(type vector ,fvector)))
 	 (loop
-	   (when (= ,index ,limit) (return))
-	   (let ((,variable (,aref ,fvector ,index)))
-	     ,@body)
-	   (,(if from-end 'decf 'incf) ,index))))))
+	    (when (= ,index ,limit) (return))
+	    (let ((,variable (,aref ,fvector ,index)))
+	      ,@body)
+	    (,(if from-end 'decf 'incf) ,index))))))
 
 (defmacro doseq ((var sequence) &body body)
   (let ((fcn (gensymbol 'doseq)))
@@ -168,19 +168,19 @@
   #+use-float-coordinates `(the coordinate (float ,x 0f0))
   #+use-fixnum-coordinates (ecase round-direction
 			     (round
-			       #+(or allegro Lucid) `(the fixnum (round ,x))
-			       #-(or allegro Lucid) `(the fixnum (values (floor (+ ,x .5f0)))))
+			      #+(or allegro Lucid) `(the fixnum (round ,x))
+			      #-(or allegro Lucid) `(the fixnum (values (floor (+ ,x .5f0)))))
 			     (floor
-			       `(the fixnum (values (floor ,x))))
+			      `(the fixnum (values (floor ,x))))
 			     (ceiling
-			       `(the fixnum (values (ceiling ,x)))))
+			      `(the fixnum (values (ceiling ,x)))))
   #-(or use-float-coordinates use-fixnum-coordinates) `,x)
 
 #-(or aclpc acl86win32)
 (defconstant +largest-coordinate+
-    #+use-float-coordinates (float (expt 10 (floor (log most-positive-fixnum 10))) 0f0)
-    #+use-fixnum-coordinates most-positive-fixnum
-    #-(or use-float-coordinates use-fixnum-coordinates) most-positive-fixnum)
+  #+use-float-coordinates (float (expt 10 (floor (log most-positive-fixnum 10))) 0f0)
+  #+use-fixnum-coordinates most-positive-fixnum
+  #-(or use-float-coordinates use-fixnum-coordinates) most-positive-fixnum)
 
 #+(or aclpc acl86win32)
 (defconstant +largest-coordinate+
@@ -228,13 +228,13 @@
   (etypecase coord
     (fixnum coord)
     (single-float
-      (integerize-single-float-coordinate coord))
+     (integerize-single-float-coordinate coord))
     (double-float
-      (integerize-double-float-coordinate coord))
+     (integerize-double-float-coordinate coord))
     (float
-      (integerize-float-coordinate coord))
+     (integerize-float-coordinate coord))
     (ratio
-      (values (floor (+ coord 1/2))))
+     (values (floor (+ coord 1/2))))
     ;; disallow bignums and other types of numbers
     ))
 
@@ -257,12 +257,12 @@
   (once-only (x-delta y-delta)
     `(progn
        ,@(let ((forms nil))
-	   (dorest (pts coordinate-pairs cddr)
-	     (push `(setf ,(first pts)
-			  (the coordinate (+ ,(first pts)  ,x-delta))) forms)
-	     (push `(setf ,(second pts)
-			  (the coordinate (+ ,(second pts) ,y-delta))) forms))
-	   (nreverse forms)))))
+	      (dorest (pts coordinate-pairs cddr)
+		      (push `(setf ,(first pts)
+				   (the coordinate (+ ,(first pts)  ,x-delta))) forms)
+		      (push `(setf ,(second pts)
+				   (the coordinate (+ ,(second pts) ,y-delta))) forms))
+	      (nreverse forms)))))
 
 ;; Warning: this macro evaluates its position arguments multiple times
 (defmacro convert-to-device-coordinates (transform &body positions)
@@ -272,15 +272,15 @@
 	  "Each of the positions must be a variable in ~S" positions)
   (let ((forms nil))
     (loop
-      (when (null positions)
-	(return `(progn ,@(nreverse forms))))
-      (let* ((x (pop positions))
-	     (y (pop positions)))
-	(push `(progn
-		 (multiple-value-setq (,x ,y)
-		   (transform-position ,transform ,x ,y))
-		 (fix-coordinates ,x ,y))
-	      forms)))))
+       (when (null positions)
+	 (return `(progn ,@(nreverse forms))))
+       (let* ((x (pop positions))
+	      (y (pop positions)))
+	 (push `(progn
+		  (multiple-value-setq (,x ,y)
+		    (transform-position ,transform ,x ,y))
+		  (fix-coordinates ,x ,y))
+	       forms)))))
 
 ;; Warning: this macro evaluates its position arguments multiple times
 (defmacro convert-to-device-distances (transform &body distances)
@@ -290,15 +290,15 @@
 	  "Each of the distances must be a variable in ~S" distances)
   (let ((forms nil))
     (loop
-      (when (null distances)
-	(return `(progn ,@(nreverse forms))))
-      (let* ((x (pop distances))
-	     (y (pop distances)))
-	(push `(progn
-		 (multiple-value-setq (,x ,y)
-		   (transform-distance ,transform ,x ,y))
-		 (fix-coordinates ,x ,y))
-	      forms)))))
+       (when (null distances)
+	 (return `(progn ,@(nreverse forms))))
+       (let* ((x (pop distances))
+	      (y (pop distances)))
+	 (push `(progn
+		  (multiple-value-setq (,x ,y)
+		    (transform-distance ,transform ,x ,y))
+		  (fix-coordinates ,x ,y))
+	       forms)))))
 
 
 ;;; Characters that are ordinary text rather than potential input editor commands.
@@ -340,10 +340,10 @@
 		t				;*print-array*
 		nil)))				;*read-suppress*
   (values
-    '(*read-base* *readtable* *package* *print-escape* *print-pretty*
-      *print-radix* *print-base* *print-circle* *print-level* *print-length*
-      *print-case* *print-gensym* *print-array* *read-suppress*)
-    *standard-io-environment-val-cache*))
+   '(*read-base* *readtable* *package* *print-escape* *print-pretty*
+     *print-radix* *print-base* *print-circle* *print-level* *print-length*
+     *print-case* *print-gensym* *print-array* *read-suppress*)
+   *standard-io-environment-val-cache*))
 
 (defmacro with-standard-io-environment (&body body)
   #+(or (not ansi-90) aclpc)
@@ -391,21 +391,21 @@
       (declare (ignore documentation))
       `(let (,temporary-stream-variable
 	     (,aborted-variable t))
-       (unwind-protect
-	   (multiple-value-prog1
-	     (progn (setq ,temporary-stream-variable ,construction-form)
-		    (let ((,stream-variable ,temporary-stream-variable))
-		      ,@declarations
-		      ,@actual-body))
-	     (setf ,aborted-variable nil))
-	 (when ,temporary-stream-variable
-	   (close ,temporary-stream-variable :abort ,aborted-variable)))))))
+	 (unwind-protect
+	      (multiple-value-prog1
+		  (progn (setq ,temporary-stream-variable ,construction-form)
+			 (let ((,stream-variable ,temporary-stream-variable))
+			   ,@declarations
+			   ,@actual-body))
+		(setf ,aborted-variable nil))
+	   (when ,temporary-stream-variable
+	     (close ,temporary-stream-variable :abort ,aborted-variable)))))))
 
 (defun follow-synonym-stream (stream)
   #+Genera (si:follow-syn-stream stream)
   #+(and ansi-90 (not Genera)) (typecase stream
 				 (synonym-stream
-				   (symbol-value (synonym-stream-symbol stream)))
+				  (symbol-value (synonym-stream-symbol stream)))
 				 (t stream))
   #-(or Genera ansi-90) stream)
 
@@ -434,8 +434,8 @@
 		  (apply #'lisp:format () format-string
 			 (mapcar #'(lambda (x)
 				     (excl::if* (symbolp x)
-					then (symbol-name x)
-					else x))
+						then (symbol-name x)
+						else x))
 				 format-args)))))
 	  package))
 
@@ -447,11 +447,11 @@
 (defvar *gensymbol* 0)
 
 (eval-when (compile load eval)
-(defun gensymbol (&rest parts)
-  (declare (dynamic-extent parts))
-  (when (null parts) (setf parts '(gensymbol)))
-  (make-symbol (lisp:format nil "~{~A-~}~D" parts (incf *gensymbol*))))
-)	;eval-when
+  (defun gensymbol (&rest parts)
+    (declare (dynamic-extent parts))
+    (when (null parts) (setf parts '(gensymbol)))
+    (make-symbol (lisp:format nil "~{~A-~}~D" parts (incf *gensymbol*))))
+  )	;eval-when
 
 ;;; For macro writers; you can have your GENSYMBOLs start at 1.  Use
 ;;; this in the macro, not in its expansion...
@@ -494,11 +494,11 @@
   `(catch (if ,condition ,tag '#:tag-for-catch-if)
      ,@body))
 
-;#+Genera
-;(defmacro letf-globally (places-and-vals &body body)
-;  `(sys:letf* ,places-and-vals ,@body))
-;
-;#-Genera
+					;#+Genera
+					;(defmacro letf-globally (places-and-vals &body body)
+					;  `(sys:letf* ,places-and-vals ,@body))
+					;
+					;#-Genera
 ;;; can't hack return-from in macro for aclpc +++pr
 (defmacro letf-globally (places-and-vals &body body)
   ;; I don't want to use LETF-globally, mind you, but I can't easily implement
@@ -507,26 +507,26 @@
   ;; A minor optimization: when you bind something to itself or don't
   ;;  say what to bind it to, it doesn't get SETF'd, since it isn't
   ;;  being changed.
- (if (null places-and-vals)
-  `(progn ,@body)
-  (let ((let-forms nil)
-	(set-forms nil)
-	(unwind-forms nil))
-    ;; remember that we can't use SCL:LOOP
-    (map nil #'(lambda (place-and-val)
-		 (let* ((place (pop place-and-val))
-			(val-p (not (null place-and-val)))
-			(val (and val-p (pop place-and-val)))
-			(temp-var (gensymbol 'letf-globally-temp)))
-		   (when (and val-p (equal place val)) (setf val-p nil))   ;bind to itself?
-		   (push `(,temp-var ,place) let-forms)
-		   (when val-p (push place set-forms) (push val set-forms))
-		   (push temp-var unwind-forms) (push place unwind-forms)))
-	 places-and-vals)
-    `(let ,(nreverse let-forms)
-       (unwind-protect
-	   (progn (setf ,@(nreverse set-forms)) ,@body)
-	 (setf ,@unwind-forms))))))		;Undo backwards.
+  (if (null places-and-vals)
+      `(progn ,@body)
+      (let ((let-forms nil)
+	    (set-forms nil)
+	    (unwind-forms nil))
+	;; remember that we can't use SCL:LOOP
+	(map nil #'(lambda (place-and-val)
+		     (let* ((place (pop place-and-val))
+			    (val-p (not (null place-and-val)))
+			    (val (and val-p (pop place-and-val)))
+			    (temp-var (gensymbol 'letf-globally-temp)))
+		       (when (and val-p (equal place val)) (setf val-p nil))   ;bind to itself?
+		       (push `(,temp-var ,place) let-forms)
+		       (when val-p (push place set-forms) (push val set-forms))
+		       (push temp-var unwind-forms) (push place unwind-forms)))
+	     places-and-vals)
+	`(let ,(nreverse let-forms)
+	   (unwind-protect
+		(progn (setf ,@(nreverse set-forms)) ,@body)
+	     (setf ,@unwind-forms))))))		;Undo backwards.
 
 (defmacro letf-globally-if (condition places-and-vals &body body)
   #+Genera (declare (zwei:indentation 1 4 2 1))
@@ -549,8 +549,8 @@
     `(let ((,condition-value ,condition))
        (let ,(nreverse let-forms)
 	 (unwind-protect
-	     (progn (when ,condition-value (setf ,@(nreverse set-forms)))
-		    ,@body)
+	      (progn (when ,condition-value (setf ,@(nreverse set-forms)))
+		     ,@body)
 	   (when ,condition-value (setf ,@unwind-forms)))))))
 
 #-(and ansi-90 (not allegro) (not Symbolics))
@@ -568,7 +568,7 @@
     (dolist (v vars)
       (block process-var
         (multiple-value-bind (type local info)
-                             (variable-information v env)
+	    (variable-information v env)
           (declare (ignore local))
           (case type
             (:lexical
@@ -602,13 +602,13 @@
                            (get-internal-time-units-per-second)))
             (,timeout-var nil))
        (flet ((,predicate-fun ()
-                 (cond ((,old-predicate)
-                        t)
-                       ((and ,delta-time
-                             (time-elapsed-p ,delta-time ,start-time))
-                        (setq ,timeout-var t)
-                        t)
-                       (t nil))))
+		(cond ((,old-predicate)
+		       t)
+		      ((and ,delta-time
+			    (time-elapsed-p ,delta-time ,start-time))
+		       (setq ,timeout-var t)
+		       t)
+		      (t nil))))
          ,@body))))
 
 
@@ -618,94 +618,94 @@
 ;; I suppose this could be done with IMPORT
 #+Genera
 (progn
-(defmacro with-stack-list ((var &rest elements) &body body)
-  `(scl:with-stack-list (,var ,@elements) ,@body))
+  (defmacro with-stack-list ((var &rest elements) &body body)
+    `(scl:with-stack-list (,var ,@elements) ,@body))
 
-(defmacro with-stack-list* ((var &rest elements) &body body)
-  `(scl:with-stack-list* (,var ,@elements) ,@body))
+  (defmacro with-stack-list* ((var &rest elements) &body body)
+    `(scl:with-stack-list* (,var ,@elements) ,@body))
 
-(defun-inline evacuate-list (list)
-  (if (and (sys:%pointerp list)
-	   (not (or (sys:%pointer-lessp list sys:%control-stack-low)
-		    (sys:%pointer-lessp (progn #+3600  sys:%control-stack-limit
-					       #+imach (sys:%read-internal-register
-							 sys:%register-control-stack-limit))
-					list))))
-      (copy-list list)
-      list))
-)	;#+Genera
+  (defun-inline evacuate-list (list)
+    (if (and (sys:%pointerp list)
+	     (not (or (sys:%pointer-lessp list sys:%control-stack-low)
+		      (sys:%pointer-lessp (progn #+3600  sys:%control-stack-limit
+						 #+imach (sys:%read-internal-register
+							  sys:%register-control-stack-limit))
+					  list))))
+	(copy-list list)
+	list))
+  )	;#+Genera
 
 #+Cloe-Runtime
 (progn
-(defmacro with-stack-list ((var &rest elements) &body body)
-  `(sys::with-stack-list (,var ,@elements) ,@body))
+  (defmacro with-stack-list ((var &rest elements) &body body)
+    `(sys::with-stack-list (,var ,@elements) ,@body))
 
-(defmacro with-stack-list* ((var &rest elements) &body body)
-  `(sys::with-stack-list* (,var ,@elements) ,@body))
+  (defmacro with-stack-list* ((var &rest elements) &body body)
+    `(sys::with-stack-list* (,var ,@elements) ,@body))
 
-#+Cloe-Runtime
-(defun-inline evacuate-list (list)
-  (if (logtest (the fixnum (sys::gcltype list)) sys::lo$k-_astack)
-      (copy-list list)
-      list))
-)	;#+Cloe-Runtime
+  #+Cloe-Runtime
+  (defun-inline evacuate-list (list)
+    (if (logtest (the fixnum (sys::gcltype list)) sys::lo$k-_astack)
+	(copy-list list)
+	list))
+  )	;#+Cloe-Runtime
 
 #+allegro
 (progn
-(defmacro with-stack-list ((var &rest elements) &body body)
-  `(let ((,var (list ,@elements)))
-     (declare (dynamic-extent ,var))
-     ,@body))
+  (defmacro with-stack-list ((var &rest elements) &body body)
+    `(let ((,var (list ,@elements)))
+       (declare (dynamic-extent ,var))
+       ,@body))
 
-(defmacro with-stack-list* ((var &rest elements) &body body)
-  `(let ((,var (list* ,@elements)))
-     (declare (dynamic-extent ,var))
-     ,@body))
+  (defmacro with-stack-list* ((var &rest elements) &body body)
+    `(let ((,var (list* ,@elements)))
+       (declare (dynamic-extent ,var))
+       ,@body))
 
-(defun-inline evacuate-list (list)
-  (if (and (consp list)
-	   (excl::stack-allocated-p list))
-      (copy-list list)
-    list))
+  (defun-inline evacuate-list (list)
+    (if (and (consp list)
+	     (excl::stack-allocated-p list))
+	(copy-list list)
+	list))
 
-)	;#+Allegro
+  )	;#+Allegro
 
 #+CCL-2
 (progn
-(defmacro with-stack-list ((var &rest elements) &body body)
-  `(let ((,var (list ,@elements)))
-     (declare (dynamic-extent ,var))
-     ,@body))
+  (defmacro with-stack-list ((var &rest elements) &body body)
+    `(let ((,var (list ,@elements)))
+       (declare (dynamic-extent ,var))
+       ,@body))
 
-(defmacro with-stack-list* ((var &rest elements) &body body)
-  `(let ((,var (list* ,@elements)))
-     (declare (dynamic-extent ,var))
-     ,@body))
+  (defmacro with-stack-list* ((var &rest elements) &body body)
+    `(let ((,var (list* ,@elements)))
+       (declare (dynamic-extent ,var))
+       ,@body))
 
-(defun evacuate-list (list)
-  ;;--- Dunno if this is the right function to be calling
-  ;;--- but it seems to give the right answers.
-  (cond ((and (ccl::stack-area-endptr list)
-              (listp list))
-         (copy-list list))
-        (t list)))
-)	;#+CCL-2
+  (defun evacuate-list (list)
+    ;;--- Dunno if this is the right function to be calling
+    ;;--- but it seems to give the right answers.
+    (cond ((and (ccl::stack-area-endptr list)
+		(listp list))
+	   (copy-list list))
+	  (t list)))
+  )	;#+CCL-2
 
 #-(or Genera Cloe-Runtime allegro CCL-2)
 (progn
-(defmacro with-stack-list ((var &rest elements) &body body)
-  `(let ((,var (list ,@elements)))
-     ,@body))
+  (defmacro with-stack-list ((var &rest elements) &body body)
+    `(let ((,var (list ,@elements)))
+       ,@body))
 
-(defmacro with-stack-list* ((var &rest elements) &body body)
-  `(let ((,var (list* ,@elements)))
-     ,@body))
+  (defmacro with-stack-list* ((var &rest elements) &body body)
+    `(let ((,var (list* ,@elements)))
+       ,@body))
 
-;; Since with-stack-list does nothing, this doesn't either.
-;; When stack-consing works for non-Genera/Cloe, make this do something.
-(defmacro evacuate-list (list)
-  `,list)
-)	;#-(or Genera Cloe-Runtime allegro)
+  ;; Since with-stack-list does nothing, this doesn't either.
+  ;; When stack-consing works for non-Genera/Cloe, make this do something.
+  (defmacro evacuate-list (list)
+    `,list)
+  )	;#-(or Genera Cloe-Runtime allegro)
 
 #+Genera
 (defmacro with-stack-array ((name size &rest options) &body body)
@@ -733,37 +733,37 @@
 
 #-(or Genera Cloe-Runtime)
 (progn
-(defmacro with-keywords-removed ((new-list list keywords-to-remove) &body body)
-  `(let ((,new-list (remove-keywords ,list ,keywords-to-remove)))
-     ,@body))
+  (defmacro with-keywords-removed ((new-list list keywords-to-remove) &body body)
+    `(let ((,new-list (remove-keywords ,list ,keywords-to-remove)))
+       ,@body))
 
-(defun remove-keywords (list keywords)
-  (macrolet ((remove-keywords-1 (name-var predicate-form)
-	       `(let ((head nil)
-		      (tail nil))
-		  (do ()
-		      ((null list))
-		    (let ((,name-var (pop list))
-			  (value (pop list)))
-		      (unless ,predicate-form
-			(setq tail (setq head (list ,name-var value)))
-			(return))))
-		  (do ()
-		      ((null list) head)
-		    (let ((,name-var (pop list))
-			  (value (pop list)))
-		      (unless ,predicate-form
-			(setq tail (setf (cddr tail) (list ,name-var value)))))))))
-    (cond ((null list) nil)
-	  ((null keywords) list)
-	  ;; Special case: use EQ instead of MEMBER when only one keyword is supplied.
-	  ((null (cdr keywords))
-	   (let ((keyword (car keywords)))
-	     (remove-keywords-1 name (eq name keyword))))
-	  (t
-	   (remove-keywords-1 name (member name keywords))))))
+  (defun remove-keywords (list keywords)
+    (macrolet ((remove-keywords-1 (name-var predicate-form)
+		 `(let ((head nil)
+			(tail nil))
+		    (do ()
+			((null list))
+		      (let ((,name-var (pop list))
+			    (value (pop list)))
+			(unless ,predicate-form
+			  (setq tail (setq head (list ,name-var value)))
+			  (return))))
+		    (do ()
+			((null list) head)
+		      (let ((,name-var (pop list))
+			    (value (pop list)))
+			(unless ,predicate-form
+			  (setq tail (setf (cddr tail) (list ,name-var value)))))))))
+      (cond ((null list) nil)
+	    ((null keywords) list)
+	    ;; Special case: use EQ instead of MEMBER when only one keyword is supplied.
+	    ((null (cdr keywords))
+	     (let ((keyword (car keywords)))
+	       (remove-keywords-1 name (eq name keyword))))
+	    (t
+	     (remove-keywords-1 name (member name keywords))))))
 
-)	;#-(or Genera Cloe-Runtime)
+  )	;#-(or Genera Cloe-Runtime)
 
 
 ;;; Generate a list of keyword information for a given type of keyword.
@@ -784,10 +784,10 @@
 	 (value-incrementor  () start))
     (let ((keyword-stuff (mapcar #'(lambda (n&v)
 				     `(,(first n&v) ,(second n&v)
-				       ,(intern (string (first n&v)) *keyword-package*)
-				       ,(gensymbol (first n&v) 'p)
-				       ,@(when accessor-prefix
-					   `(,(fintern "~A-~A" accessor-prefix (first n&v))))))
+					,(intern (string (first n&v)) *keyword-package*)
+					,(gensymbol (first n&v) 'p)
+					,@(when accessor-prefix
+						`(,(fintern "~A-~A" accessor-prefix (first n&v))))))
 				 names-and-values))
 	  (incrementor (ecase incrementor
 			 (counter #'counter-incrementor)
@@ -795,9 +795,9 @@
 			 (value #'value-incrementor))))
       `(progn (defparameter ,name ',keyword-stuff)
 	      ,@(when type
-		  (mapcar #'(lambda (k)
-			      `(setf (get ',(third k) ',type) ,(funcall incrementor)))
-			  keyword-stuff))))))
+		      (mapcar #'(lambda (k)
+				  `(setf (get ',(third k) ',type) ,(funcall incrementor)))
+			      keyword-stuff))))))
 
 
 (defmacro writing-clauses (&body body)
@@ -823,17 +823,17 @@
       (cond ((listp arg-spec)
 	     (case mode
 	       (&optional
-		 (push (first arg-spec) new-arglist))
+		(push (first arg-spec) new-arglist))
 	       (&key
-		 ;; deal with "(... &key ((:keyword var) default))" syntax
-		 (let ((thing (first arg-spec)))
-		   (push (if (listp thing)
-			     (let ((name (first thing)))
-			       (if (eq (symbol-package name) *keyword-package*)
-				   (intern (symbol-name name))
-				   name))
-			     thing)
-			 new-arglist)))))
+		;; deal with "(... &key ((:keyword var) default))" syntax
+		(let ((thing (first arg-spec)))
+		  (push (if (listp thing)
+			    (let ((name (first thing)))
+			      (if (eq (symbol-package name) *keyword-package*)
+				  (intern (symbol-name name))
+				  name))
+			    thing)
+			new-arglist)))))
 	    ((member arg-spec '(&key &rest &optional))
 	     (setq mode arg-spec)
 	     (push arg-spec new-arglist))
@@ -874,38 +874,38 @@
 		 (error "~&&ALLOW-OTHER-KEYS must follow &KEY")))
 	      (t (case mode
 		   (&key
-		     (let ((arg-name arg) (arg-var arg))
-		       (cond ((and (listp arg-spec)
-				   (listp (first arg-spec)))
-			      (setq arg-name `',(first (first arg-spec)))
-			      (setq arg-var (second (first arg-spec))))
-			     (t (setq arg-name (intern (symbol-name arg) *keyword-package*))))
-		       (push arg-name new-arglist)
-		       (push arg-var new-arglist)))
+		    (let ((arg-name arg) (arg-var arg))
+		      (cond ((and (listp arg-spec)
+				  (listp (first arg-spec)))
+			     (setq arg-name `',(first (first arg-spec)))
+			     (setq arg-var (second (first arg-spec))))
+			    (t (setq arg-name (intern (symbol-name arg) *keyword-package*))))
+		      (push arg-name new-arglist)
+		      (push arg-var new-arglist)))
 		   (&rest (setq apply-p t)
 			  (push arg new-arglist))
 		   (t (push arg new-arglist)))))))
     (values
-      (nreverse new-arglist)
-      apply-p)))
+     (nreverse new-arglist)
+     apply-p)))
 
 (defun ignore-arglist (arglist)
   (flet ((lambda-list-element-compare (element and-option)
 	   (and (atom element)
 		(string= element and-option))))
     `(progn ,@(let ((args nil))
-		(dolist (arg arglist)
-		  ;; These various &keys may be in some other package.
-		  (cond ((member arg '(&rest &downward-rest &key &allow-other-keys &optional)
-				 :test #'lambda-list-element-compare)
-			 nil)
-			(t (push (cond ((atom arg) arg)
-				       ((atom (car arg)) (car arg))
-				       (t (cadar arg)))
-				 args)
-			   (when (and (consp arg) (consp (cdr arg)) (consp (cddr arg)))
-			     (push (third arg) args)))))
-		(nreverse args))
+		   (dolist (arg arglist)
+		     ;; These various &keys may be in some other package.
+		     (cond ((member arg '(&rest &downward-rest &key &allow-other-keys &optional)
+				    :test #'lambda-list-element-compare)
+			    nil)
+			   (t (push (cond ((atom arg) arg)
+					  ((atom (car arg)) (car arg))
+					  (t (cadar arg)))
+				    args)
+			      (when (and (consp arg) (consp (cdr arg)) (consp (cddr arg)))
+				(push (third arg) args)))))
+		   (nreverse args))
 	    nil)))
 
 (defun canonicalize-and-match-lambda-lists (canonical-order user-specified
@@ -941,15 +941,15 @@
 	(let ((user-entry (first (member canonical-var user-specified
 					 :test #'string-equal
 					 :key #'user-var-name))))
-	(cond (user-entry
-	       (push (user-var-symbol user-entry) new-lambda-list)
-	       (setq user-specified (remove user-entry user-specified)))
-	      (t (let ((canonical-gensym (get canonical-var 'canonical-gensym)))
-		   (unless canonical-gensym
-		     (setq canonical-gensym (make-symbol (symbol-name canonical-var)))
-		     (setf (get canonical-var 'canonical-gensym) canonical-gensym))
-		   (push canonical-gensym new-lambda-list)
-		   (push canonical-gensym ignores))))))
+	  (cond (user-entry
+		 (push (user-var-symbol user-entry) new-lambda-list)
+		 (setq user-specified (remove user-entry user-specified)))
+		(t (let ((canonical-gensym (get canonical-var 'canonical-gensym)))
+		     (unless canonical-gensym
+		       (setq canonical-gensym (make-symbol (symbol-name canonical-var)))
+		       (setf (get canonical-var 'canonical-gensym) canonical-gensym))
+		     (push canonical-gensym new-lambda-list)
+		     (push canonical-gensym ignores))))))
       (when (set-difference user-specified '(&key &allow-other-keys))
 	(error "The arguments ~S aren't valid for this lambda list."
 	       user-specified))
@@ -966,13 +966,13 @@
 #-Genera
 (defmacro defun-property ((symbol indicator) lambda-list &body body)
   (let ((function-name
-	  (make-symbol (lisp:format nil "~A-~A-~A" symbol indicator 'property))))
+	 (make-symbol (lisp:format nil "~A-~A-~A" symbol indicator 'property))))
     `(progn (defun ,function-name ,lambda-list ,@body)
 	    (eval-when (load eval) (setf (get ',symbol ',indicator) #',function-name)))))
 
 (defmacro do-delimited-substrings (((string &key (start 0) end)
 				    (start-index-var end-index-var &optional char-var))
-				   substring-form
+								     substring-form
 				   &body char-clauses)
   (let ((special-characters ())
 	(next-var (gensymbol 'next))
@@ -985,36 +985,36 @@
 	    (push chars special-characters)
 	    (setf special-characters (nconc special-characters chars)))))
     `(,(if (eq string string-var) 'let 'let*)
-	   ((,start-index-var ,start)
-	   ,@(unless (eq string string-var)
-	       `((,string-var ,string)))
-	   (,end-var (or ,end (length ,string-var)))
-	   (,end-index-var 0)
-	   (,next-var nil)
-	   ,@(when (cdr special-characters)
-	       `((,char-var ,(car special-characters)))))
+       ((,start-index-var ,start)
+	,@(unless (eq string string-var)
+		  `((,string-var ,string)))
+	(,end-var (or ,end (length ,string-var)))
+	(,end-index-var 0)
+	(,next-var nil)
+	,@(when (cdr special-characters)
+		`((,char-var ,(car special-characters)))))
        (declare (type fixnum ,start-index-var ,end-var ,end-index-var)
 		(type (or fixnum null) ,next-var)
 		(character ,char-var))
        (loop
-	 (setf ,next-var ,(if (null (cdr special-characters))
-			      `(position ,(first special-characters) ,string-var
-					 :start ,start-index-var :end ,end-var)
-			      `(flet ((char-in-set-p (set char) (find char set)))
-				 (declare (dynamic-extent #'char-in-set-p))
-				 (position ,(coerce special-characters 'string) ,string-var
-					   :start ,start-index-var :end ,end-var
-					   :test #'char-in-set-p))))
-	 (setf ,end-index-var (or ,next-var ,end-var))
-	 ,substring-form
-	 (when (null ,next-var) (return (values)))
-	 ,@(when (cdr special-characters)
-	     `((setf ,char-var (aref ,string-var ,next-var))))	;NOT svref
-	 ,@(if (null (cdr char-clauses))
-	       (cdr (first char-clauses))
-	       `((case ,char-var
-		   ,@char-clauses)))
-	 (setf ,start-index-var (1+ ,end-index-var))))))
+	  (setf ,next-var ,(if (null (cdr special-characters))
+			       `(position ,(first special-characters) ,string-var
+					  :start ,start-index-var :end ,end-var)
+			       `(flet ((char-in-set-p (set char) (find char set)))
+				  (declare (dynamic-extent #'char-in-set-p))
+				  (position ,(coerce special-characters 'string) ,string-var
+					    :start ,start-index-var :end ,end-var
+					    :test #'char-in-set-p))))
+	  (setf ,end-index-var (or ,next-var ,end-var))
+	  ,substring-form
+	  (when (null ,next-var) (return (values)))
+	  ,@(when (cdr special-characters)
+		  `((setf ,char-var (aref ,string-var ,next-var))))	;NOT svref
+	  ,@(if (null (cdr char-clauses))
+		(cdr (first char-clauses))
+		`((case ,char-var
+		    ,@char-clauses)))
+	  (setf ,start-index-var (1+ ,end-index-var))))))
 
 
 ;;; COMPILER-LET replacement from Dave Moon.
@@ -1072,7 +1072,7 @@
     (values (gethash symbol table default))))
 
 (defsetf compile-time-property #+Genera compiler:file-declare
-			       #-Genera set-compile-time-property)
+  #-Genera set-compile-time-property)
 
 #-Genera
 (defun set-compile-time-property (symbol indicator value)
@@ -1137,8 +1137,8 @@
 ;;; This is part of deleting spurious multiple-definition warnings about constructors.
 ;;; Of course, who knows if this will work in other lisps.
 (zl:::scl:defun (:property ftype zl:::scl:proclaim) (decl compile-time)
-  (declare (ignore compile-time))		;Do it at load time as well.
-  (mapc #'compiler:function-defined (cdr decl)))
+		(declare (ignore compile-time))		;Do it at load time as well.
+		(mapc #'compiler:function-defined (cdr decl)))
 
 
 #-(or Genera ansi-90)
@@ -1152,7 +1152,7 @@
 #-(or Genera ansi-90)
 ;;; EXTRA-SPACE-REQUIRED is optional because old compiled code didn't always supply it.
 (defun print-unreadable-object-1 (object stream type identity continuation
-					 &optional (extra-space-required t))
+				  &optional (extra-space-required t))
   (write-string "#<" stream)
   ;; wish TYPE-OF worked in PCL
   (when type (lisp:format stream "~S " (class-name (class-of object))))
@@ -1160,8 +1160,8 @@
   (when identity
     (when extra-space-required (write-char #\space stream))
     (#+PCL pcl::printing-random-thing-internal	;; I assume PCL gets this right. -- rsl
-     #-PCL print-unreadable-object-identity
-     object stream))
+	   #-PCL print-unreadable-object-identity
+	   object stream))
   (write-string ">" stream))
 
 #-(or PCL Genera ansi-90)
@@ -1232,7 +1232,7 @@
 	 #-(or Genera Cloe-Runtime Minima Lucid allegro)
 	 `(flet ((bind-to-list-body ,lambda-list
 		   ,@(when (member '&rest lambda-list)
-		       `((declare (dynamic-extent ,(second (member '&rest lambda-list))))))
+			   `((declare (dynamic-extent ,(second (member '&rest lambda-list))))))
 		   ,(ignore-arglist lambda-list)
 		   ,@body))
 	    (declare (dynamic-extent #'bind-to-list-body))
@@ -1243,44 +1243,44 @@
 	 ;; for the default value forms in the lambda-list
 	 (setq list (eval list))
 	 `(symbol-macrolet
-	    ,(do ((item)
-		  (result nil)
-		  (mode nil))
-		 ((null lambda-list) (nreverse result))
-	       (setq item (pop lambda-list))
-	       (cond ((member item '(&optional &rest &key &aux))
-		      (setq mode item))
-		     ((member item lambda-list-keywords))
-		     ((eq mode '&rest)
-		      (push `(,item ',list) result))
-		     ((eq mode '&key)
-		      (multiple-value-bind (variable default supplied-p)
-			  (if (atom item) (values item nil nil)
-			    (values (if (atom (car item)) (car item) (cadar item))
-				    (second item) (third item)))
-			(do ((l list (cddr l))
-			     (k (parameter-specifier-keyword item)))
-			    ((null l)
-			     (push `(,variable ,default) result)
-			     (when supplied-p
-			       (push `(,supplied-p 'nil) result)))
-			  (when (eq (first l) k)
-			    (push `(,variable ',(second l)) result)
-			    (when supplied-p
-			      (push `(,supplied-p 't) result))
-			    (return)))))
-		     (t
-		      (multiple-value-bind (variable default supplied-p)
-			  (if (atom item) (values item nil nil)
-			    (values (first item) (second item) (third item)))
-			(cond ((null list)
-			       (push `(,variable ,default) result)
-			       (when supplied-p
-				 (push `(,supplied-p 'nil) result)))
-			      (t
-			       (push `(,variable ',(pop list)) result)
-			       (when supplied-p
-				 (push `(,supplied-p 't) result))))))))
+	      ,(do ((item)
+		    (result nil)
+		    (mode nil))
+		   ((null lambda-list) (nreverse result))
+		   (setq item (pop lambda-list))
+		   (cond ((member item '(&optional &rest &key &aux))
+			  (setq mode item))
+			 ((member item lambda-list-keywords))
+			 ((eq mode '&rest)
+			  (push `(,item ',list) result))
+			 ((eq mode '&key)
+			  (multiple-value-bind (variable default supplied-p)
+			      (if (atom item) (values item nil nil)
+				  (values (if (atom (car item)) (car item) (cadar item))
+					  (second item) (third item)))
+			    (do ((l list (cddr l))
+				 (k (parameter-specifier-keyword item)))
+				((null l)
+				 (push `(,variable ,default) result)
+				 (when supplied-p
+				   (push `(,supplied-p 'nil) result)))
+			      (when (eq (first l) k)
+				(push `(,variable ',(second l)) result)
+				(when supplied-p
+				  (push `(,supplied-p 't) result))
+				(return)))))
+			 (t
+			  (multiple-value-bind (variable default supplied-p)
+			      (if (atom item) (values item nil nil)
+				  (values (first item) (second item) (third item)))
+			    (cond ((null list)
+				   (push `(,variable ,default) result)
+				   (when supplied-p
+				     (push `(,supplied-p 'nil) result)))
+				  (t
+				   (push `(,variable ',(pop list)) result)
+				   (when supplied-p
+				     (push `(,supplied-p 't) result))))))))
 	    ,@body))))
 
 ;;; Optimization to not bother with destructuring bind if none of the variables
@@ -1354,10 +1354,10 @@
 	          (find-class name errorp)))
   #+aclpc (find-class name errorp environment)
   #-(or allegro aclpc)
-          (if (compile-file-environment-p environment)
-	        (or (find-class name nil environment)
-		    (find-class name errorp nil))
-	        (find-class name errorp environment)))
+  (if (compile-file-environment-p environment)
+      (or (find-class name nil environment)
+	  (find-class name errorp nil))
+      (find-class name errorp environment)))
 
 #+(and allegro never-never-and-never)
 (eval-when (compile)
@@ -1385,13 +1385,13 @@
 	   (type simple-vector from-vector to-vector))
   (declare (optimize (speed 3) (safety 0)))
   (cond (#+Genera (< length 8) #-Genera t
-	 (let (#+(or Genera Minima) (from-vector from-vector)
-	       #+(or Genera Minima) (to-vector to-vector))
-	   #+(or Genera Minima) (declare (type simple-vector from-vector to-vector))
-	   (repeat length
-	     (setf (svref to-vector to-start) (svref from-vector from-start))
-	     (incf from-start)
-	     (incf to-start))))
+		  (let (#+(or Genera Minima) (from-vector from-vector)
+			  #+(or Genera Minima) (to-vector to-vector))
+		    #+(or Genera Minima) (declare (type simple-vector from-vector to-vector))
+		    (repeat length
+			    (setf (svref to-vector to-start) (svref from-vector from-start))
+			    (incf from-start)
+			    (incf to-start))))
 	#+Genera
 	(t
 	 (si:copy-array-portion from-vector from-start (+ from-start length)
@@ -1461,11 +1461,11 @@
 ;;; proceed option, but in Lucid it ends up on ":A".
 (defmacro with-simple-abort-restart ((format-string &rest format-args) &body body)
   #{
-    Genera `(scl:catch-error-restart ((sys:abort) ,format-string ,@format-args)
-	      ,@body)
-    otherwise `(with-simple-restart (abort ,format-string ,@format-args)
-		 ,@body)
-   }
+  Genera `(scl:catch-error-restart ((sys:abort) ,format-string ,@format-args)
+				   ,@body)
+  otherwise `(with-simple-restart (abort ,format-string ,@format-args)
+	       ,@body)
+  }
   )
 
 (defmacro with-simple-abort-restart-if (condition (format-string &rest format-args) &body body)
@@ -1507,9 +1507,9 @@
 (defmacro define-class-mixture-and-resource (name (&key initializer initial-copies)
 					     &body specs)
   (let ((matcher-function-name
-	  (make-symbol (lisp:format nil "~A-~A" name 'matcher)))
+	 (make-symbol (lisp:format nil "~A-~A" name 'matcher)))
 	(constructor-function-name
-	  (make-symbol (lisp:format nil "~A-~A" name 'constructor))))
+	 (make-symbol (lisp:format nil "~A-~A" name 'constructor))))
     `(define-group ,name define-class-mixture-and-resource
        (define-class-mixture ,name ,@specs)
        (defun ,matcher-function-name (object os &rest args)
@@ -1552,7 +1552,7 @@
     (labels ((compile (form) (push form forms))
 	     (define-class (class-name component-list)
 	       (compile `(defclass ,class-name
-				   (,@component-list ,name)
+			     (,@component-list ,name)
 			   ())))
 	     (substring (string start &optional end)
 	       (setf string (string string))
@@ -1580,10 +1580,10 @@
 		 (return-from invent-class-name `(error "Can't decode mixture ~S: ~A"
 							',name ,(first subclasses))))
 	       (intern
-		 (with-output-to-string (out)
-		   (dolist (class subclasses)
-		     (princ (trim-off-name-parts class) out))
-		   (princ name out))))
+		(with-output-to-string (out)
+		  (dolist (class subclasses)
+		    (princ (trim-off-name-parts class) out))
+		  (princ name out))))
 	     (process-specs (specs classes-so-far)
 	       (when (null specs)
 		 (let ((class-name (invent-class-name classes-so-far)))
@@ -1621,13 +1621,13 @@
 					 (process-specs (cdr specs) classes-so-far))))
 			      rest)
 		    ,@(unless (assoc 'otherwise rest)
-			`((otherwise (error "~S is illegal as the ~S option to mixture ~S.~%~
+			      `((otherwise (error "~S is illegal as the ~S option to mixture ~S.~%~
 					     The legal values are ~{~S~^, ~}."
-					    ,variable-name ,keyword ',name
-					    ',(mapcar #'first rest)))))))))
+						  ,variable-name ,keyword ',name
+						  ',(mapcar #'first rest)))))))))
       (let ((result (process-specs specs nil)))
 	(compile `(defun-property (,name mixture-class-name)
-				  (&key ,@keywords &allow-other-keys)
+		      (&key ,@keywords &allow-other-keys)
 		    ,result))))
     (nreverse forms)))
 
@@ -1648,20 +1648,20 @@
 ;;; We aren't using ff:make-cstruct because it uses excl:aclmalloc.
 
 (defun allocate-cstruct-cffi (name &key
-			      (number 1)
+				     (number 1)
 				     initialize)
   (when (/= number 1)
     (error "Error: allocate-cstruct-cffi currently doesn't support creating more than a single value: ~s~%" number))
   (cffi:foreign-alloc `(:pointer (:struct ,name)) :initial-contents '(0)))
 
 (defun allocate-cstruct (name &key
-			      (number 1)
-			      (initialize
-			       (ff::cstruct-property-initialize
-				(ff::cstruct-prop name)))
+				(number 1)
+				(initialize
+				 (ff::cstruct-property-initialize
+				  (ff::cstruct-prop name)))
 				)
   (declare (optimize (speed 3)))
-;;  (break)
+  ;;  (break)
   (let* ((prop (ff::cstruct-prop name))
 	 (size (* number (ff::cstruct-property-length prop))))
     (when initialize (setq initialize 0))
@@ -1687,8 +1687,8 @@
 (defun string-to-foreign (string &optional address)
   "Convert a Lisp string to a C string, by copying."
   (declare (optimize (speed 3))
-                (type string string)
-                (type integer address))
+	   (type string string)
+	   (type integer address))
   (unless (stringp string)
     (excl::.type-error string 'string))
   (if address
@@ -1696,19 +1696,19 @@
       (let* ((octets (excl:string-to-octets string :null-terminate t))
              (length (length octets)))
         (declare (optimize (safety 0))
-                      (type fixnum length))
+		 (type fixnum length))
         (setf address (excl:malloc length))
         (dotimes (i length)
           (declare (fixnum i))
           (setf (sys:memref-int address 0 i :unsigned-byte)
                 (aref octets i)))
         #+clim-utils::extra-careful(let ((re-char-ed (excl:octets-to-string octets)))
-          (assert (equal re-char-ed string)
-                  (re-char-ed string)
-                  "string isn't equal to re-chared octets~%~S~%~S!" string re-char-ed))))
+				     (assert (equal re-char-ed string)
+					     (re-char-ed string)
+					     "string isn't equal to re-chared octets~%~S~%~S!" string re-char-ed))))
 
   #+clim-utils::extra-careful(let ((re-lisped (excl:native-to-string address)))
-    (assert (equal re-lisped string)
-            (re-lisped string)
-            "string isn't equal to re-chared foreign mem ~%~S~%~S!" string re-lisped))
+			       (assert (equal re-lisped string)
+				       (re-lisped string)
+				       "string isn't equal to re-chared foreign mem ~%~S~%~S!" string re-lisped))
   address)

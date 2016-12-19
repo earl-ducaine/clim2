@@ -1427,6 +1427,7 @@ typedef union { Display *display;
 (def-exported-foreign-struct-cffi xrmvalue
   (size :type unsigned-int)
   (addr :type caddr-t))
+
 (def-exported-foreign-synonym-type-cffi xrmvalueptr (:pointer xrmvalue))
 
 (def-exported-foreign-synonym-type xrmsearchlist int)

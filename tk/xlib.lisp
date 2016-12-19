@@ -176,7 +176,7 @@
     (setf (foreign-pointer-address db) (x11:xrmgetstringdatabase ""))))
 
 (defun make-xrmvalue ()
-  (clim-utils::allocate-cstruct 'x11::xrmvalue :initialize t))
+  (clim-utils::allocate-cstruct-cffi 'x11::xrmvalue :initialize t))
 
 (defun get-resource (db name class)
   (with-ref-par ((type 0 *))
@@ -744,7 +744,7 @@
 			   ((= depth 8)
 			    #xff)
 			   ((= depth 16)
-			    #xffff) 
+			    #xffff)
 			   ((= depth 24)
 			    #xffffff)
 			   (t
