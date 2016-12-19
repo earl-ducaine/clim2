@@ -12,10 +12,6 @@
 (defparameter size-hints (x11::xallocsizehints))
 (defparameter flags (x11::xsizehints-flags size-hints))
 
-
-
-
-
 ;; clim2 format:
 ;;
 ;; (def-exported-foreign-function
@@ -424,3 +420,20 @@
   (xerror :type xerrorevent :overlays xany)
   (xkeymap :type xkeymapevent :overlays xany)
   (pad :type (:array long (24)) :overlays xany)))
+
+
+
+
+;; Create a slot accessor function exported in the specified package.
+;; (defun generate-slot-accessor-old (package-name cstruct-name slot-name)
+;;   (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name))
+;; 	 (setter-symbol (create-slot-setter-symbol package-name cstruct-name slot-name)))
+;;     (format t "symbol ~s, (type-of symbol) ~s~%" symbol (type-of symbol))
+;;     (defun set-xsizehints-flags (cstruct value)
+;;       (setf (cffi:foreign-slot-value object struct slot) value))
+;;     (defsetf xsizehints-flags set-xsizehints-flags)
+;;     (setf (symbol-function symbol)
+;; 	  (function (lambda (struct)
+;; 	    (cffi:foreign-slot-value struct
+;; 				     (find-symbol (string-upcase cstruct-name) :x11)
+;; 				     (find-symbol (string-upcase slot-name) :x11)))))))

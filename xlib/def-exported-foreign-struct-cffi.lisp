@@ -74,8 +74,6 @@
   (make-symbol (string-upcase symbol-name)))
 
 
-
-
 ;; Create a slot accessor function exported in the specified package.
 (defun generate-slot-accessor (package-name cstruct-name slot-name)
   (let* ((cstruct-symbol (intern (string-upcase cstruct-name)))
@@ -95,41 +93,6 @@
      `(defun ,function-symbol () 'a))
     (eval
      `(defun (setf ,function-symbol) (value) value))))
-
-;; Create a slot accessor function exported in the specified package.
-(defun generate-slot-accessor-old (package-name cstruct-name slot-name)
-  (let* ((symbol (create-slot-accessor-symbol package-name cstruct-name slot-name))
-	 (setter-symbol (create-slot-setter-symbol package-name cstruct-name slot-name)))
-    (format t "symbol ~s, (type-of symbol) ~s~%" symbol (type-of symbol))
-    (defun set-xsizehints-flags (cstruct value)
-      (setf (cffi:foreign-slot-value object struct slot) value))
-    (defsetf xsizehints-flags set-xsizehints-flags)
-    (setf (symbol-function symbol) (function (lambda (struct)
-				     (cffi:foreign-slot-value struct
-							      (find-symbol (string-upcase cstruct-name) :x11)
-							      (find-symbol (string-upcase slot-name) :x11)))))))
-
-
-
-
-
-;;  (define-setf-expander ldb (bytespec int &environment env)
-;;    (multiple-value-bind (temps vals stores
-;;                           store-form access-form)
-;;        (get-setf-expansion int env);Get setf expansion for int.
-;;      (let ((btemp (gensym))     ;Temp var for byte specifier.
-;;            (store (gensym))     ;Temp var for byte to store.
-;;            (stemp (first stores))) ;Temp var for int to store.
-;;        (if (cdr stores) (error "Can't expand this."))
-;; ;;; Return the setf expansion for LDB as five values.
-;;        (values (cons btemp temps)       ;Temporary variables.
-;;                (cons bytespec vals)     ;Value forms.
-;;                (list store)             ;Store variables.
-;;                `(let ((,stemp (dpb ,store ,btemp ,access-form)))
-;;                   ,store-form
-;;                   ,store)               ;Storing form.
-;;                `(ldb ,btemp ,access-form) ;Accessing form.
-;;               ))))
 
 (define-setf-expander lastguy (x &environment env)
    "Set the last element in a list to the given value."
