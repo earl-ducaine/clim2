@@ -125,29 +125,28 @@
       (list list)))
 
 
-(defun compute-cffi-style-cstruct-slots (name-and-options &rest excl-slot-defs)
-  (reverse
-   (reduce
-    (lambda (slots slot)
-      (format t "slot: ~s~%" slot)
-      (cond  ((stringp slot)
-	      ;; documentation string
-	      (cons slot slots))
-	     ((or (listp slot)
-		  (symbolp slot)
-		  (keywordp slot))
-	      (destructuring-bind (cstruct . options)
-		  (ensure-list name-and-options)
-		(cons (compute-cffi-style-cstruct-slot "x11"
-						       (if (stringp cstruct)
-							   cstruct
-							   ;; asume it's a symbol
-							   (symbol-name cstruct))
-						       slot)
-		      slots)))
-	     (t (error "unexpected slot type"))))
-    excl-slot-defs
-    :initial-value '())))
+(defun reformat-and-push-slot (name-and-options slots slot)
+  (cond  ((stringp slot)
+	  ;; documentation string
+	  (cons slot slots))
+	 ((or (listp slot)
+	      (symbolp slot)
+	      (keywordp slot))
+	  (destructuring-bind (cstruct . options)
+	      (ensure-list name-and-options)
+	    (cons (compute-cffi-style-cstruct-slot "x11"
+						   (if (stringp cstruct)
+						       cstruct
+						       ;; asume it's a symbol
+						       (symbol-name cstruct))
+						   slot)
+		  slots)))
+	 (t (error "unexpected slot type"))))
+
+(defun compute-cffi-style-cstruct-slots (name-and-options slots)
+  (reverse (reduce (lambda (slots slot)
+		     (reformat-and-push-slot name-and-options slots slot))
+		   slots :initial-value '())))
 
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
