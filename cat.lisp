@@ -50,4 +50,5 @@
 (cl:in-package #:user)
 
 (unless (ff:get-entry-point (ff:convert-foreign-name "XmCreateMyDrawingArea"))
-  (load "./liblib_motif_wrapper.so"))
+  (load (merge-pathnames (asdf:system-source-directory :clim2)
+			 "liblib_motif_wrapper.so")))
