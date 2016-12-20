@@ -625,7 +625,10 @@
     #+alpha unsigned-int
     #-alpha xid)
 (def-exported-foreign-synonym-type-cffi mask unsigned-long)
+
 (def-exported-foreign-synonym-type atom unsigned-long)
+(def-exported-foreign-synonym-type-cffi atom unsigned-long)
+
 (def-exported-foreign-synonym-type visualid unsigned-long)
 (def-exported-foreign-synonym-type time
     #+alpha unsigned-int
@@ -641,6 +644,12 @@
 (def-exported-foreign-synonym-type callback-function-addr :signed-32bit)
 
 (def-exported-foreign-struct xextdata
+  (number :type int)
+  (next :type (:pointer xextdata))
+  (free-private :type (:pointer :pointer))
+  (private-data :type (:pointer char)))
+
+(def-exported-foreign-struct-cffi xextdata
   (number :type int)
   (next :type (:pointer xextdata))
   (free-private :type (:pointer :pointer))
@@ -1360,7 +1369,19 @@
   (descent :type short)
   (attributes :type unsigned-short))
 
+(def-exported-foreign-struct-cffi xcharstruct
+  (lbearing :type short)
+  (rbearing :type short)
+  (width :type short)
+  (ascent :type short)
+  (descent :type short)
+  (attributes :type unsigned-short))
+
 (def-exported-foreign-struct xfontprop
+  (name :type atom)
+  (card32 :type unsigned-long))
+
+(def-exported-foreign-struct-cffi xfontprop
   (name :type atom)
   (card32 :type unsigned-long))
 
