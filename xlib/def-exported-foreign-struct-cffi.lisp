@@ -12,12 +12,16 @@
   '(char unsigned-char short unsigned-short int unsigned-int long unsigned-long
     long-long unsigned-long-long uchar ushort uint ulong llong llong ullong
     int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double long-double
-    pointer void))
+    pointer void unsigned))
 
 (defun convert-builtin-ctypes-to-keyword (symbol)
-  (if (member symbol *builtin-ctypes*)
-      (alexandria:make-keyword (string-upcase (symbol-name symbol)))
-      symbol))
+  (cond
+    ((equalp symbol 'unsigned)
+     :unsigned-int)
+    ((member symbol *builtin-ctypes*)
+     (alexandria:make-keyword (string-upcase (symbol-name symbol))))
+    (t
+     symbol)))
 
 ;; Old way of creating interface to xcomposestatus.
 ;; (def-exported-foreign-struct-cffi xcomposestatus-ffi

@@ -611,7 +611,9 @@
 (def-exported-foreign-synonym-type-cffi window xid)
 
 (def-exported-foreign-synonym-type drawable xid)
+
 (def-exported-foreign-synonym-type font xid)
+(def-exported-foreign-synonym-type-cffi font xid)
 
 (def-exported-foreign-synonym-type pixmap xid)
 (def-exported-foreign-synonym-type-cffi pixmap xid)
@@ -1380,17 +1382,17 @@
   (ascent :type int)
   (descent :type int))
 
-(def-exported-foreign-struct xtextitem
+(def-exported-foreign-struct-cffi xtextitem
   (chars :type (:pointer char))
   (nchars :type int)
   (delta :type int)
   (font :type font))
 
-(def-exported-foreign-struct xchar2b
+(def-exported-foreign-struct-cffi xchar2b
   (byte1 :type unsigned-char)
   (byte2 :type unsigned-char))
 
-(def-exported-foreign-struct xtextitem16
+(def-exported-foreign-struct-cffi xtextitem16
   (chars :type (:pointer xchar2b))
   (nchars :type int)
   (delta :type int)
