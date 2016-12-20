@@ -431,7 +431,7 @@
 (def-exported-foreign-function (xflush (:name "XFlush"))
    (dpy (:pointer display)))
 
-(def-exported-foreign-function (xloadqueryfont (:return-type (:pointer xfontstruct)) (:name "XLoadQueryFont"))
+(def-exported-foreign-function-cffi (xloadqueryfont (:return-type (:pointer xfontstruct)) (:name "XLoadQueryFont"))
    (dpy (:pointer display))
    (name (:pointer char)))
 
