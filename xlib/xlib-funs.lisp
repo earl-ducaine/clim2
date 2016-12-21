@@ -435,15 +435,15 @@
    (dpy (:pointer display))
    (name (:pointer char)))
 
-(def-exported-foreign-function (xfreefont (:name "XFreeFont"))
+(def-exported-foreign-function-cffi (xfreefont (:name "XFreeFont"))
    (dpy (:pointer display))
    (fs (:pointer xfontstruct)))
 
-(def-exported-foreign-function (xqueryfont (:return-type (:pointer xfontstruct)) (:name "XQueryFont"))
+(def-exported-foreign-function-cffi (xqueryfont (:return-type (:pointer xfontstruct)) (:name "XQueryFont"))
    (dpy (:pointer display))
    (fid font))
 
-(def-exported-foreign-function (xlistfontswithinfo (:return-type (:pointer (:pointer char))) (:name "XListFontsWithInfo"))
+(def-exported-foreign-function-cffi (xlistfontswithinfo (:return-type (:pointer (:pointer char))) (:name "XListFontsWithInfo"))
    (dpy (:pointer display))
    (pattern (:pointer char))
    (maxnames int)

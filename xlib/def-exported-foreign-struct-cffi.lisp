@@ -176,10 +176,10 @@
 	      ((int :signed-32bit) '(:int))
 	      ((unsigned-int :unsigned-32bit) '(:unsigned-int))
 	      ((fixnum-int fixnum-unsigned-int) '(:int fixnum))
-	      (fixnum-drawable '(:foreign-address))
+	      (fixnum-drawable '(:pointer))
 	      (t
 	       (if (get (cadr type) 'ff::cstruct)
-		   '(:foreign-address)
+		   '(:pointer)
 		   '(:lisp)))))))
 
 (defun trans-return-type-cffi (type)
