@@ -450,7 +450,7 @@
    (actualcount (:pointer int))
    (info (:pointer (:pointer xfontstruct))))
 
-(def-exported-foreign-function (xfreefontinfo (:name "XFreeFontInfo"))
+(def-exported-foreign-function-cffi (xfreefontinfo (:name "XFreeFontInfo"))
    (names (:pointer (:pointer char)))
    (info (:pointer xfontstruct))
    (actualcount int))
@@ -530,7 +530,7 @@
 (def-exported-foreign-function (xfreefontpath (:name "XFreeFontPath"))
    (list (:pointer (:pointer char))))
 
-(def-exported-foreign-function (xgetfontproperty (:return-type int) (:name "XGetFontProperty"))
+(def-exported-foreign-function-cffi (xgetfontproperty (:return-type int) (:name "XGetFontProperty"))
    (fs (:pointer xfontstruct))
    (name :unsigned-32bit)
    (valueptr (:pointer unsigned-long)))
@@ -1454,7 +1454,7 @@
    (dpy (:pointer display))
    (func (:pointer :pointer)))
 
-(def-exported-foreign-function (xtextextents (:name "XTextExtents"))
+(def-exported-foreign-function-cffi (xtextextents (:name "XTextExtents"))
    (fontstruct (:pointer xfontstruct))
    (string (:pointer char))
    (nchars int)
@@ -1463,12 +1463,12 @@
    (font-descent (:pointer int))
    (overall (:pointer xcharstruct)))
 
-(def-exported-foreign-function (xtextwidth (:return-type int) (:name "XTextWidth"))
+(def-exported-foreign-function-cffi (xtextwidth (:return-type int) (:name "XTextWidth"))
    (fontstruct (:pointer xfontstruct))
    (string (:pointer char))
    (count int))
 
-(def-exported-foreign-function (xtextextents16 (:name "XTextExtents16"))
+(def-exported-foreign-function-cffi (xtextextents16 (:name "XTextExtents16"))
    (fontstruct (:pointer xfontstruct))
    (string (:pointer xchar2b))
    (nchars int)
@@ -1477,7 +1477,7 @@
    (font-descent (:pointer int))
    (overall (:pointer xcharstruct)))
 
-(def-exported-foreign-function (xtextwidth16 (:return-type int) (:name "XTextWidth16"))
+(def-exported-foreign-function-cffi (xtextwidth16 (:return-type int) (:name "XTextWidth16"))
    (fontstruct (:pointer xfontstruct))
    (string (:pointer xchar2b))
    (count int))
@@ -2046,7 +2046,7 @@
     (missing-count (:pointer int))
     (default-string (:pointer (:pointer char))))
 
-(def-exported-foreign-function (xfontsoffontset (:return-type int) (:name "XFontsOfFontSet"))
+(def-exported-foreign-function-cffi (xfontsoffontset (:return-type int) (:name "XFontsOfFontSet"))
     (font-set xfontset)
     (font-struct-list (:pointer (:pointer (:pointer xfontstruct))))
     (font-name-list (:pointer (:pointer (:pointer char)))))
