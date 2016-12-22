@@ -38,7 +38,8 @@
 ;; So, def-exported-foreign-struct-cffi has to render the old to the new.
 
 (defun compute-cffi-style-cstruct-type (type)
-  (cond ((listp type) (if (eq (car type) :pointer)
+  (cond ((listp type) (if (or (eq (car type) :pointer)
+			      (eq (car type) :array))
 			  :pointer
 			  (mapcar (lambda (symbol)
 				    (convert-builtin-ctypes-to-keyword symbol)
@@ -154,10 +155,13 @@
 
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
+  (let ((name (if (listp name-and-options)
+		  (car name-and-options)
+		  name-and-options)))
   (eval-when (:compile-toplevel :execute :load-toplevel)
-    (let ((cffi-slots (compute-cffi-style-cstruct-slots name-and-options slots)))
+    (let ((cffi-slots (compute-cffi-style-cstruct-slots name slots)))
       (format t "cffi-slots ~s~%" cffi-slots)
-    `(cffi:defcstruct ,name-and-options ,@cffi-slots))))
+    `(cffi:defcstruct ,name ,@cffi-slots)))))
 
 (defmacro def-exported-foreign-synonym-type-cffi (new-name old-name)
   `(progn

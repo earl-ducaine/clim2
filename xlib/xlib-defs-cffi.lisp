@@ -83,6 +83,10 @@
 
 
 
+;; new
+(def-exported-foreign-synonym-type-cffi caddr-t :pointer)
+
+
 
 
 
@@ -600,27 +604,40 @@
 
 
 (def-exported-foreign-synonym-type xid unsigned-long)
+(def-exported-foreign-synonym-type-cffi xid unsigned-long)
+
+
 (def-exported-foreign-synonym-type window xid)
+(def-exported-foreign-synonym-type-cffi window xid)
 
 (def-exported-foreign-synonym-type drawable xid)
 
 (def-exported-foreign-synonym-type font xid)
+(def-exported-foreign-synonym-type-cffi font xid)
 
 (def-exported-foreign-synonym-type pixmap xid)
+(def-exported-foreign-synonym-type-cffi pixmap xid)
 
 (def-exported-foreign-synonym-type cursor xid)
 (def-exported-foreign-synonym-type colormap xid)
 (def-exported-foreign-synonym-type gcontext xid)
-(def-exported-foreign-synonym-type keysym xid)
-
+(def-exported-foreign-synonym-type keysym
+    #+alpha unsigned-int
+    #-alpha xid)
+(def-exported-foreign-synonym-type-cffi mask unsigned-long)
 
 (def-exported-foreign-synonym-type atom unsigned-long)
+(def-exported-foreign-synonym-type-cffi atom unsigned-long)
 
 (def-exported-foreign-synonym-type visualid unsigned-long)
 
 (def-exported-foreign-synonym-type time unsigned-long)
+(def-exported-foreign-synonym-type-cffi time unsigned-long)
+
 (def-exported-foreign-synonym-type keycode unsigned-char)
+
 (def-exported-foreign-synonym-type xfontset unsigned-long)
+
 (def-exported-foreign-synonym-type fixnum-drawable :fixnum)
 (def-exported-foreign-synonym-type fixnum-int :fixnum)
 (def-exported-foreign-synonym-type fixnum-unsigned-int :fixnum)
@@ -628,6 +645,12 @@
 (def-exported-foreign-synonym-type callback-function-addr :signed-32bit)
 
 (def-exported-foreign-struct xextdata
+  (number :type int)
+  (next :type (:pointer xextdata))
+  (free-private :type (:pointer :pointer))
+  (private-data :type (:pointer char)))
+
+(def-exported-foreign-struct-cffi xextdata
   (number :type int)
   (next :type (:pointer xextdata))
   (free-private :type (:pointer :pointer))
@@ -951,6 +974,24 @@
 (def-exported-foreign-synonym-type xkeypressedevent xkeyevent)
 (def-exported-foreign-synonym-type xkeyreleasedevent xkeyevent)
 
+(def-exported-foreign-struct-cffi xkeyevent
+  (type :type int)
+  (serial :type unsigned-long)
+  (send-event :type int)
+  (display :type (:pointer display))
+  (window :type window)
+  (root :type window)
+  (subwindow :type window)
+  (time :type time)
+  (x :type int)
+  (y :type int)
+  (x-root :type int)
+  (y-root :type int)
+  (state :type unsigned-int)
+  (keycode :type unsigned-int)
+  (same-screen :type int))
+(def-exported-foreign-synonym-type-cffi xkeypressedevent xkeyevent)
+(def-exported-foreign-synonym-type-cffi xkeyreleasedevent xkeyevent)
 
 ;;--------------------------------------------------------------------
 
@@ -977,7 +1018,25 @@
 (def-exported-foreign-synonym-type xbuttonreleasedevent xbuttonevent)
 
 
+(def-exported-foreign-struct-cffi xbuttonevent
+  (type :type int)
+  (serial :type unsigned-long)
+  (send-event :type int)
+  (display :type (:pointer display))
+  (window :type window)
+  (root :type window)
+  (subwindow :type window)
+  (time :type time)
+  (x :type int)
+  (y :type int)
+  (x-root :type int)
+  (y-root :type int)
+  (state :type unsigned-int)
+  (button :type unsigned-int)
+  (same-screen :type int))
 
+(def-exported-foreign-synonym-type xbuttonpressedevent-cffi xbuttonevent)
+(def-exported-foreign-synonym-type xbuttonreleasedevent-cffi xbuttonevent)
 ;;--------------------------------------------------------------------
 
 
@@ -1004,7 +1063,24 @@
 (def-exported-foreign-synonym-type xpointermovedevent xmotionevent)
 
 
+(def-exported-foreign-struct-cffi xmotionevent
+  (type :type int)
+  (serial :type unsigned-long)
+  (send-event :type int)
+  (display :type (:pointer display))
+  (window :type window)
+  (root :type window)
+  (subwindow :type window)
+  (time :type time)
+  (x :type int)
+  (y :type int)
+  (x-root :type int)
+  (y-root :type int)
+  (state :type unsigned-int)
+  (is-hint :type char)
+  (same-screen :type int))
 
+(def-exported-foreign-synonym-type-cffi xpointermovedevent xmotionevent)
 
 ;;--------------------------------------------------------------------
 
@@ -1378,6 +1454,13 @@
   (descent :type short)
   (attributes :type unsigned-short))
 
+(def-exported-foreign-struct-cffi xcharstruct
+  (lbearing :type short)
+  (rbearing :type short)
+  (width :type short)
+  (ascent :type short)
+  (descent :type short)
+  (attributes :type unsigned-short))
 
 ;;; ------------------------------------------------------------------
 
@@ -1388,12 +1471,11 @@
   (name :type atom)
   (card32 :type unsigned-long))
 
+(def-exported-foreign-struct-cffi xfontprop
+  (name :type atom)
+  (card32 :type unsigned-long))
 
-;;; ------------------------------------------------------------------
-
-;;; ------------------------------------------------------------------
-
-(def-exported-foreign-struct xfontstruct
+(def-exported-foreign-struct-cffi xfontstruct
   (ext-data :type (:pointer xextdata))
   (fid :type font)
   (direction :type unsigned)
@@ -1411,104 +1493,72 @@
   (ascent :type int)
   (descent :type int))
 
-
 ;;; ------------------------------------------------------------------
 
+(def-exported-foreign-struct-cffi xtextitem
+  (chars :type (:pointer char))
+  (nchars :type int)
+  (delta :type int)
+  (font :type font))
 
+(def-exported-foreign-struct-cffi xchar2b
+  (byte1 :type unsigned-char)
+  (byte2 :type unsigned-char))
 
+(def-exported-foreign-struct-cffi xtextitem16
+  (chars :type (:pointer xchar2b))
+  (nchars :type int)
+  (delta :type int)
+  (font :type font))
 
+(def-exported-foreign-struct-cffi xrmvalue
+  (size :type unsigned-int)
+  (addr :type caddr-t))
 
-#|
-typedef union { Display *display;
-		GC gc;
-		Visual *visual;
-		Screen *screen;
-		ScreenFormat *pixmap_format;
-		XFontStruct *font; } XEDataObject;
-|#
-(def-exported-foreign-synonym-type xedataobject caddr-t)
+(def-exported-foreign-synonym-type-cffi xrmvalueptr (:pointer xrmvalue))
+(def-exported-foreign-synonym-type-cffi XrmOptionKind int)
 
-;;; Xlib Resource Manager Definitions from Xresource.h
-
-(def-exported-foreign-synonym-type xrmquark int)
-(def-exported-foreign-synonym-type xrmquarklist (:pointer int))
-(def-exported-foreign-synonym-type xrmstring (:pointer char))
-
-(defconstant XrmBindTightly 0)
-(defconstant XrmBindLoosely 1)
-(def-exported-foreign-synonym-type XrmBinding :fixnum)
-(def-exported-foreign-synonym-type XrmBindingList (:pointer :fixnum))
-
-(def-exported-foreign-synonym-type xrmname xrmquark)
-(def-exported-foreign-synonym-type xrmnamelist xrmquarklist)
-(def-exported-foreign-synonym-type xrmclass xrmquark)
-(def-exported-foreign-synonym-type xrmclasslist xrmquarklist)
-(def-exported-foreign-synonym-type xrmrepresentation xrmquark)
-
-
-
-(def-exported-foreign-synonym-type xrmsearchlist int)
-(def-exported-foreign-synonym-type xrmdatabase int)
-(def-exported-foreign-synonym-type xim int)
-(def-exported-foreign-synonym-type xic int)
-
-(defconstant XNInputStyle "inputStyle")
-(defconstant XNClientWindow "clientWindow")
-(defconstant XNFocusWindow "focusWindow")
-(defconstant XNPreeditState "preeditState")
-(defconstant XIMPreeditNothing #x8)
-(defconstant XIMPreeditPosition #x4)
-(defconstant XIMStatusNothing #x400)
-(defconstant XIMStatusNone #x800)
-
-(defconstant XIMPreeditEnable #x1)
-
-(defconstant XBufferOverflow -1)
-(defconstant XLookupNone 1)
-(defconstant XLookupChars 2)
-(defconstant XLookupKeySym 3)
-(defconstant XLookupKeyBoth 4)
-
-
-(defconstant XrmoptionNoArg 0)
-(defconstant XrmoptionIsArg 1)
-(defconstant XrmoptionStickyArg 2)
-(defconstant XrmoptionSepArg 3)
-(defconstant XrmoptionResArg 4)
-(defconstant XrmoptionSkipArg 5)
-(defconstant XrmoptionSkipLine 6)
-
-(def-exported-foreign-synonym-type XrmOptionKind int)
-(def-exported-foreign-synonym-type xrmoptiondesclist (:pointer xrmoptiondescrec))
+(def-exported-foreign-struct-cffi xrmoptiondescrec
+  (option :type (:pointer char))
+  (specifier :type (:pointer char))
+  (argkind :type XrmOptionKind)
+  (value :type caddr-t))
 
 ;;; Utility Definitions from Xutil.h
-(def-exported-constant inputhint 1)          ;; #define InputHint        (1L << 0)
-(def-exported-constant statehint 2)          ;; #define StateHint        (1L << 1)
-(def-exported-constant iconpixmaphint 4)     ;; #define IconPixmapHint   (1L << 2)
-(def-exported-constant iconwindowhint 8)     ;; #define IconWindowHint   (1L << 3)
-(def-exported-constant iconpositionhint 16)  ;; #define IconPositionHint (1L << 4)
-(def-exported-constant iconmaskhint 32)      ;; #define IconMaskHint     (1L << 5)
-(def-exported-constant windowgrouphint 64)   ;; #define WindowGroupHint  (1L << 6)
 
-(def-exported-constant WithdrawnState 0)     ;; #define WithdrawnState 0
-(def-exported-constant NormalState 1)        ;; #define NormalState 1
-(def-exported-constant IconicState 3)        ;; #define IconicState 3
-(def-exported-constant DontCareState 0)      ;; #define DontCareState 0
-(def-exported-constant ZoomState 2)          ;; #define ZoomState 2
-(def-exported-constant InactiveState 4)      ;; #define InactiveState 4
+(def-exported-foreign-struct-cffi xwmhints
+  (flags :type long)
+  (input :type int)
+  (initial-state :type int)
+  (icon-pixmap :type pixmap)
+  (icon-window :type window)
+  (icon-x :type int)
+  (icon-y :type int)
+  (icon-mask :type pixmap)
+  (window-group :type xid))
 
+(def-exported-foreign-struct-cffi xsizehints
+  (flags :type long)
+  (x :type int)				; Obsolete
+  (y :type int)				; Obsolete
+  (width :type int)			; Obsolete
+  (height :type int)			; Obsolete
+  (min-width :type int)
+  (min-height :type int)
+  (max-width :type int)
+  (max-height :type int)
+  (width-inc :type int)
+  (height-inc :type int)
+  (min-aspect-x :type int)
+  (min-aspect-y :type int)
+  (max-aspect-x :type int)
+  (max-aspect-y :type int)
+  (base-width :type int)
+  (base-height :type int)
+  (win-gravity :type int))
 
-(def-exported-constant uspositionhint 1)
-(def-exported-constant ussizehint 2)
-(def-exported-constant ppositionhint 4)
-(def-exported-constant psizehint 8)
-(def-exported-constant pminsizehint 16)
-(def-exported-constant pmaxsizehint 32)
-(def-exported-constant presizeincint 64)
-(def-exported-constant paspecthint 128)
-(def-exported-constant pbasesizehint 256)
-(def-exported-constant pwingravityhint 512)
+(def-exported-foreign-synonym-type-cffi xcontext int)
 
-(def-exported-constant xcsuccess 0)  ;; #define XCSUCCESS 0
-(def-exported-constant xcnomem   1)  ;; #define XCNOMEM   1
-(def-exported-constant xcnoent   2)  ;; #define XCNOENT   2
+(def-exported-foreign-struct-cffi xcomposestatus
+  (compose-ptr :type (:pointer char))
+  (chars-matched :type int))
