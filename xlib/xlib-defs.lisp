@@ -973,16 +973,6 @@
   (button :type unsigned-int)
   (same-screen :type int))
 
-(def-exported-foreign-synonym-type xbuttonpressedevent xbuttonevent)
-(def-exported-foreign-synonym-type xbuttonreleasedevent xbuttonevent)
-
-
-
-;;--------------------------------------------------------------------
-
-
-
-;;--------------------------------------------------------------------
 
 (def-exported-foreign-struct xmotionevent
   (type :type int)
@@ -1002,16 +992,6 @@
   (same-screen :type int))
 
 (def-exported-foreign-synonym-type xpointermovedevent xmotionevent)
-
-
-
-
-;;--------------------------------------------------------------------
-
-
-
-
-
 
 
 
@@ -1451,60 +1431,3 @@ typedef union { Display *display;
 (def-exported-foreign-synonym-type xrmdatabase int)
 (def-exported-foreign-synonym-type xim int)
 (def-exported-foreign-synonym-type xic int)
-
-(defconstant XNInputStyle "inputStyle")
-(defconstant XNClientWindow "clientWindow")
-(defconstant XNFocusWindow "focusWindow")
-(defconstant XNPreeditState "preeditState")
-(defconstant XIMPreeditNothing #x8)
-(defconstant XIMPreeditPosition #x4)
-(defconstant XIMStatusNothing #x400)
-(defconstant XIMStatusNone #x800)
-
-(defconstant XIMPreeditEnable #x1)
-
-(defconstant XBufferOverflow -1)
-(defconstant XLookupNone 1)
-(defconstant XLookupChars 2)
-(defconstant XLookupKeySym 3)
-(defconstant XLookupKeyBoth 4)
-
-
-(defconstant XrmoptionNoArg 0)
-(defconstant XrmoptionIsArg 1)
-(defconstant XrmoptionStickyArg 2)
-(defconstant XrmoptionSepArg 3)
-(defconstant XrmoptionResArg 4)
-(defconstant XrmoptionSkipArg 5)
-(defconstant XrmoptionSkipLine 6)
-
-(def-exported-foreign-synonym-type XrmOptionKind int)
-(def-exported-foreign-synonym-type xrmoptiondesclist (:pointer xrmoptiondescrec))
-
-;;; Utility Definitions from Xutil.h
-(def-exported-constant inputhint 1)          ;; #define InputHint        (1L << 0)
-(def-exported-constant statehint 2)          ;; #define StateHint        (1L << 1)
-(def-exported-constant iconpixmaphint 4)     ;; #define IconPixmapHint   (1L << 2)
-(def-exported-constant iconwindowhint 8)     ;; #define IconWindowHint   (1L << 3)
-(def-exported-constant iconpositionhint 16)  ;; #define IconPositionHint (1L << 4)
-(def-exported-constant iconmaskhint 32)      ;; #define IconMaskHint     (1L << 5)
-(def-exported-constant windowgrouphint 64)   ;; #define WindowGroupHint  (1L << 6)
-
-(def-exported-constant WithdrawnState 0)     ;; #define WithdrawnState 0
-(def-exported-constant NormalState 1)        ;; #define NormalState 1
-(def-exported-constant IconicState 3)        ;; #define IconicState 3
-(def-exported-constant DontCareState 0)      ;; #define DontCareState 0
-(def-exported-constant ZoomState 2)          ;; #define ZoomState 2
-(def-exported-constant InactiveState 4)      ;; #define InactiveState 4
-
-
-(def-exported-constant uspositionhint 1)
-(def-exported-constant ussizehint 2)
-(def-exported-constant ppositionhint 4)
-(def-exported-constant psizehint 8)
-(def-exported-constant pminsizehint 16)
-(def-exported-constant pmaxsizehint 32)
-(def-exported-constant presizeincint 64)
-(def-exported-constant paspecthint 128)
-(def-exported-constant pbasesizehint 256)
-(def-exported-constant pwingravityhint 512)
