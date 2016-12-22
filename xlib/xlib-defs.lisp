@@ -1508,7 +1508,3 @@ typedef union { Display *display;
 (def-exported-constant paspecthint 128)
 (def-exported-constant pbasesizehint 256)
 (def-exported-constant pwingravityhint 512)
-
-(def-exported-constant xcsuccess 0)  ;; #define XCSUCCESS 0
-(def-exported-constant xcnomem   1)  ;; #define XCNOMEM   1
-(def-exported-constant xcnoent   2)  ;; #define XCNOENT   2
