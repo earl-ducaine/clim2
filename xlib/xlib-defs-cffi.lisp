@@ -184,6 +184,10 @@
 
 ;;; ------------------------------------------------------------------
 
+(def-exported-constant xcsuccess 0)  ;; #define XCSUCCESS 0
+(def-exported-constant xcnomem   1)  ;; #define XCNOMEM   1
+(def-exported-constant xcnoent   2)  ;; #define XCNOENT   2
+
 (def-exported-foreign-struct-cffi xtextitem
   (chars :type (:pointer char))
   (nchars :type int)
