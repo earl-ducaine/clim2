@@ -16,6 +16,8 @@
 
 (defun convert-builtin-ctypes-to-keyword (symbol)
   (cond
+    ((listp symbol)
+     (mapcar #'convert-builtin-ctypes-to-keyword symbol))
     ((equalp symbol 'unsigned)
      :unsigned-int)
     ((member symbol *builtin-ctypes*)

@@ -1407,27 +1407,3 @@ typedef union { Display *display;
 		XFontStruct *font; } XEDataObject;
 |#
 (def-exported-foreign-synonym-type xedataobject caddr-t)
-
-;;; Xlib Resource Manager Definitions from Xresource.h
-
-(def-exported-foreign-synonym-type xrmquark int)
-(def-exported-foreign-synonym-type xrmquarklist (:pointer int))
-(def-exported-foreign-synonym-type xrmstring (:pointer char))
-
-(defconstant XrmBindTightly 0)
-(defconstant XrmBindLoosely 1)
-(def-exported-foreign-synonym-type XrmBinding :fixnum)
-(def-exported-foreign-synonym-type XrmBindingList (:pointer :fixnum))
-
-(def-exported-foreign-synonym-type xrmname xrmquark)
-(def-exported-foreign-synonym-type xrmnamelist xrmquarklist)
-(def-exported-foreign-synonym-type xrmclass xrmquark)
-(def-exported-foreign-synonym-type xrmclasslist xrmquarklist)
-(def-exported-foreign-synonym-type xrmrepresentation xrmquark)
-
-
-
-(def-exported-foreign-synonym-type xrmsearchlist int)
-(def-exported-foreign-synonym-type xrmdatabase int)
-(def-exported-foreign-synonym-type xim int)
-(def-exported-foreign-synonym-type xic int)

@@ -187,6 +187,23 @@
 
 ;;; ------------------------------------------------------------------
 
+(def-exported-foreign-synonym-type-cffi xrmquark int)
+(def-exported-foreign-synonym-type-cffi xrmquarklist (:pointer int))
+(def-exported-foreign-synonym-type-cffi xrmstring (:pointer char))
+(defconstant XrmBindTightly 0)
+(defconstant XrmBindLoosely 1)
+
+;; (def-exported-foreign-synonym-type-cffi XrmBinding :fixnum)
+;; (def-exported-foreign-synonym-type-cffi XrmBindingList (:pointer :fixnum))
+(def-exported-foreign-synonym-type-cffi xrmname xrmquark)
+(def-exported-foreign-synonym-type-cffi xrmnamelist xrmquarklist)
+(def-exported-foreign-synonym-type-cffi xrmclass xrmquark)
+(def-exported-foreign-synonym-type-cffi  xrmclasslist xrmquarklist)
+(def-exported-foreign-synonym-type-cffi  xrmrepresentation xrmquark)
+(def-exported-foreign-synonym-type xrmsearchlist int)
+(def-exported-foreign-synonym-type xrmdatabase int)
+(def-exported-foreign-synonym-type xim int)
+(def-exported-foreign-synonym-type xic int)
 
 (defconstant XNInputStyle "inputStyle")
 (defconstant XNClientWindow "clientWindow")
