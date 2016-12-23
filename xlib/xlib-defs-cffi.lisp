@@ -216,7 +216,6 @@
 
 
 (def-exported-foreign-synonym-type-cffi XrmOptionKind int)
-(def-exported-foreign-synonym-type-cffi xrmoptiondesclist (:pointer xrmoptiondescrec))
 
 ;;; Utility Definitions from Xutil.h
 (def-exported-constant inputhint 1)          ;; #define InputHint        (1L << 0)
@@ -274,6 +273,7 @@
   (specifier :type (:pointer char))
   (argkind :type XrmOptionKind)
   (value :type caddr-t))
+(def-exported-foreign-synonym-type-cffi xrmoptiondesclist (:pointer xrmoptiondescrec))
 
 ;;; Utility Definitions from Xutil.h
 
