@@ -187,6 +187,27 @@
 
 ;;; ------------------------------------------------------------------
 
+
+
+;; (def-exported-foreign-struct-cffi xfontstruct
+;;   (ext-data :type (:pointer xextdata))
+;;   (fid :type font)
+;;   (direction :type unsigned)
+;;   (min-char-or-byte2 :type unsigned)
+;;   (max-char-or-byte2 :type unsigned)
+;;   (min-byte1 :type unsigned)
+;;   (max-byte1 :type unsigned)
+;;   (all-chars-exist :type int)
+;;   (default-char :type unsigned)
+;;   (n-properties :type int)
+;;   (properties :type (:pointer xfontprop))
+;;   (min-bounds :type xcharstruct)
+;;   (max-bounds :type xcharstruct)
+;;   (per-char :type (:pointer xcharstruct))
+;;   (ascent :type int)
+;;   (descent :type int))
+
+
 (def-exported-foreign-synonym-type-cffi xedataobject caddr-t)
 (def-exported-foreign-synonym-type-cffi xrmquark int)
 (def-exported-foreign-synonym-type-cffi xrmquarklist (:pointer int))
