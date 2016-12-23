@@ -187,6 +187,7 @@
 
 ;;; ------------------------------------------------------------------
 
+(def-exported-foreign-synonym-type-cffi xedataobject caddr-t)
 (def-exported-foreign-synonym-type-cffi xrmquark int)
 (def-exported-foreign-synonym-type-cffi xrmquarklist (:pointer int))
 (def-exported-foreign-synonym-type-cffi xrmstring (:pointer char))

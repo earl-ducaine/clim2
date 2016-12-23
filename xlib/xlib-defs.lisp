@@ -1347,9 +1347,6 @@
 
 (def-exported-foreign-synonym-type _xsqevent _xqevent)
 
-
-;;; ------------------------------------------------------------------
-
 (def-exported-foreign-struct xcharstruct
   (lbearing :type short)
   (rbearing :type short)
@@ -1358,20 +1355,9 @@
   (descent :type short)
   (attributes :type unsigned-short))
 
-
-;;; ------------------------------------------------------------------
-
-
-;;; ------------------------------------------------------------------
-
 (def-exported-foreign-struct xfontprop
   (name :type atom)
   (card32 :type unsigned-long))
-
-
-;;; ------------------------------------------------------------------
-
-;;; ------------------------------------------------------------------
 
 (def-exported-foreign-struct xfontstruct
   (ext-data :type (:pointer xextdata))
@@ -1390,20 +1376,3 @@
   (per-char :type (:pointer xcharstruct))
   (ascent :type int)
   (descent :type int))
-
-
-;;; ------------------------------------------------------------------
-
-
-
-
-
-#|
-typedef union { Display *display;
-		GC gc;
-		Visual *visual;
-		Screen *screen;
-		ScreenFormat *pixmap_format;
-		XFontStruct *font; } XEDataObject;
-|#
-(def-exported-foreign-synonym-type xedataobject caddr-t)

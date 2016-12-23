@@ -53,3 +53,13 @@
 ;; #define DisplayString(dpy) 	((dpy)->display_name)
 ;; #define QLength(dpy) 		((dpy)->qlen)
 ;; #define WhitePixelOfScreen(s) ((s)->white_pixel)
+
+
+#|
+typedef union { Display *display;
+		GC gc;
+		Visual *visual;
+		Screen *screen;
+		ScreenFormat *pixmap_format;
+		XFontStruct *font; } XEDataObject;
+|#
