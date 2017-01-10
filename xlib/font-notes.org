@@ -1,0 +1,9 @@
+
+* About Fonts
+
+** Fonts are brokered by at least three layers of abstraction/adapters
+   - xlib 
+     Using xfontstruct and it's sturction field geters:
+     xfontstruct-ascent, descent, etc
+
+   - 
