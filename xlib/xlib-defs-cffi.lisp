@@ -187,9 +187,7 @@
 
 ;;; ------------------------------------------------------------------
 
-
-
-;; (def-exported-foreign-struct-cffi xfontstruct
+;; (def-exported-foreign-struct xfontstruct
 ;;   (ext-data :type (:pointer xextdata))
 ;;   (fid :type font)
 ;;   (direction :type unsigned)

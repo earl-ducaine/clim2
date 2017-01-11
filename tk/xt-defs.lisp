@@ -101,7 +101,7 @@
 
 (def-c-type (xfontname-list :no-defuns :no-constructor) 1 * :char)
 
-(def-c-type (xfontstruct-array :no-defuns :no-constructor) 1 x11::xfontstruct)
+;;(def-c-type (xfontstruct-array :no-defuns :no-constructor) 1 x11::xfontstruct)
 
 (def-c-type (class-array :no-defuns :no-constructor) 1 :unsigned-long)
 
