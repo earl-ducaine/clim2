@@ -370,18 +370,9 @@
 
 
 
-(:struct
-
-
-
-    (list slot-name type overlays))
-
-
-
-
-
-
-  (destructuring-bind ((a &optional (b 'bee)) one two three)
+;; (:struct
+;;     (list slot-name type overlays))
+;;   (destructuring-bind ((a &optional (b 'bee)) one two three)
 
 
 

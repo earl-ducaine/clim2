@@ -1358,3 +1358,29 @@
 (def-exported-foreign-struct xfontprop
   (name :type atom)
   (card32 :type unsigned-long))
+
+
+;; xfontstruct has both a cffi and ffi (native allegro c foreign)
+;; version.  Before we can get rid of the native version we need to
+;; convert the folowing:
+;;
+
+
+
+(def-exported-foreign-struct xfontstruct-old
+  (ext-data :type (:pointer xextdata))
+  (fid :type font)
+  (direction :type unsigned)
+  (min-char-or-byte2 :type unsigned)
+  (max-char-or-byte2 :type unsigned)
+  (min-byte1 :type unsigned)
+  (max-byte1 :type unsigned)
+  (all-chars-exist :type int)
+  (default-char :type unsigned)
+  (n-properties :type int)
+  (properties :type (:pointer xfontprop))
+  (min-bounds :type xcharstruct)
+  (max-bounds :type xcharstruct)
+  (per-char :type (:pointer xcharstruct))
+  (ascent :type int)
+  (descent :type int))

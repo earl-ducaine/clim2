@@ -13,6 +13,7 @@
 	    (if (slot-boundp x 'name) (font-name x) :dunno))))
 
 (defmethod initialize-instance :after ((f font) &key foreign-address display name)
+  (break)
   (unless foreign-address
     (check-type name string)
     (let ((x (x11:xloadqueryfont display
@@ -23,6 +24,7 @@
 
 
 (defun query-font (display font-id)
+  (break)
   (let ((h (x11:xqueryfont display font-id)))
     (when (zerop h)
       (error "Cannot query font: ~D" font-id))
@@ -38,6 +40,7 @@
      (x11:xfontstruct-descent font)))
 
 (defun font-ascent (font)
+  (break)
   (x11:xfontstruct-ascent font))
 
 (defun font-descent (font)
