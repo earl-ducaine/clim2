@@ -4,10 +4,8 @@
 
 (in-package :tk)
 
-(def-foreign-call (alisp_xm_string_create_localized "XmStringCreateLocalized")
-    ((text :foreign-address))
-  :returning :foreign-address
-  :call-direct t)
+(defun xm_string_create_localized (text)
+  (alisp_xm_string_create_localized text))
 
 (def-foreign-call (xm_string_create_l_to_r "XmStringCreateLtoR")
     ((x :foreign-address) (y :foreign-address))

@@ -55,11 +55,22 @@
 ;; #define WhitePixelOfScreen(s) ((s)->white_pixel)
 
 
-#|
+
 typedef union { Display *display;
 		GC gc;
 		Visual *visual;
 		Screen *screen;
 		ScreenFormat *pixmap_format;
 		XFontStruct *font; } XEDataObject;
-|#
+
+
+
+
+
+
+* Basics of alisp's clim2 lower level tk dependancies.
+
+  For the most part, alisp's dependancy is on the underlying xlib
+  library and not motif.  Therefore the protocol for creating a
+  wrapper around those functions should be similar to that used to
+  access raw CLX.

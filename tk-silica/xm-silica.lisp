@@ -71,45 +71,46 @@
   (popup (widget-parent mirror)))
 
 
-(ff:defun-foreign-callable my-drawing-area-query-geometry-stub
-    ((widget :foreign-address)
-     (intended :foreign-address)
-     (desired :foreign-address))
-  (my-drawing-area-query-geometry widget intended desired))
+;; (ff:defun-foreign-callable my-drawing-area-query-geometry-stub
+;;     ((widget :foreign-address)
+;;      (intended :foreign-address)
+;;      (desired :foreign-address))
+;;   (my-drawing-area-query-geometry widget intended desired))
 
-(defun setup-mda ()
-  (tk::initializemydrawingareaquerygeometry
-   (ff:register-foreign-callable 'my-drawing-area-query-geometry-stub)))
+;; (defun setup-mda ()
+;;   (break)
+;;   (tk::initializemydrawingareaquerygeometry
+;;    (ff:register-foreign-callable 'my-drawing-area-query-geometry-stub)))
 
-(setup-mda)
+;; (setup-mda)
 
-(defun my-drawing-area-query-geometry (widget intended desired)
-  (let* ((sheet (find-sheet-from-widget-address widget))
-	 (sr (compose-space sheet))
-	 (rm (tk::xt-widget-geometry-request-mode intended)))
-    ;; If its asking and its out of range then say so
-    (multiple-value-bind (width min-width max-width
-			  height min-height max-height)
-	(space-requirement-components sr)
-      (when (or (and (logtest rm x11:cwwidth)
-		     (not (<= min-width
-			      (tk::xt-widget-geometry-width intended)
-			      max-width)))
-		(and (logtest rm x11:cwheight)
-		     (not (<= min-height
-			      (tk::xt-widget-geometry-height intended)
-			      max-height))))
-	(return-from my-drawing-area-query-geometry tk::xt-geometry-no))
+;; (defun my-drawing-area-query-geometry (widget intended desired)
+;;   (let* ((sheet (find-sheet-from-widget-address widget))
+;; 	 (sr (compose-space sheet))
+;; 	 (rm (tk::xt-widget-geometry-request-mode intended)))
+;;     ;; If its asking and its out of range then say so
+;;     (multiple-value-bind (width min-width max-width
+;; 			  height min-height max-height)
+;; 	(space-requirement-components sr)
+;;       (when (or (and (logtest rm x11:cwwidth)
+;; 		     (not (<= min-width
+;; 			      (tk::xt-widget-geometry-width intended)
+;; 			      max-width)))
+;; 		(and (logtest rm x11:cwheight)
+;; 		     (not (<= min-height
+;; 			      (tk::xt-widget-geometry-height intended)
+;; 			      max-height))))
+;; 	(return-from my-drawing-area-query-geometry tk::xt-geometry-no))
 
-      (when (and (logtest rm x11:cwheight) (logtest rm x11:cwwidth))
-	(return-from my-drawing-area-query-geometry tk::xt-geometry-yes))
+;;       (when (and (logtest rm x11:cwheight) (logtest rm x11:cwwidth))
+;; 	(return-from my-drawing-area-query-geometry tk::xt-geometry-yes))
 
-      (setf (tk::xt-widget-geometry-width desired) (fix-coordinate width)
-	    (tk::xt-widget-geometry-height desired) (fix-coordinate height)
-	    (tk::xt-widget-geometry-request-mode desired) (logior x11:cwwidth x11:cwheight)))
+;;       (setf (tk::xt-widget-geometry-width desired) (fix-coordinate width)
+;; 	    (tk::xt-widget-geometry-height desired) (fix-coordinate height)
+;; 	    (tk::xt-widget-geometry-request-mode desired) (logior x11:cwwidth x11:cwheight)))
 
 
-    (return-from my-drawing-area-query-geometry tk::xt-geometry-almost)))
+;;     (return-from my-drawing-area-query-geometry tk::xt-geometry-almost)))
 
 
 ;;; hacks for explicit focus

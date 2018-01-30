@@ -1781,14 +1781,14 @@
    (string (:pointer xchar2b))
    (length fixnum-int))
 
-(def-exported-foreign-function (XDrawChar (:name "XDrawString"))
-   (dpy (:pointer display))
-   (d fixnum-drawable)
-   (gc gc)
-   (x fixnum-int)
-   (y fixnum-int)
-   (string x11-char-string)
-   (length fixnum-int))
+;; (def-exported-foreign-function (XDrawChar (:name "XDrawString"))
+;;    (dpy (:pointer display))
+;;    (d fixnum-drawable)
+;;    (gc gc)
+;;    (x fixnum-int)
+;;    (y fixnum-int)
+;;    (string x11-char-string)
+;;    (length fixnum-int))
 
 
 (def-exported-foreign-function (lisp-xdrawstring (:name "lisp_XDrawString"))

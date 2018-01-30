@@ -89,33 +89,22 @@
      (:file "clim/design-recording")
      (:file "clim/interactive-protocol")
      (:file "clim/input-editor-commands")
-     ;; (:file "clim/formatted-output-defs")
      (:file "clim/db-menu")
-     ;; "clim/db-list.fasl"
-     ;; "clim/db-text.fasl"
-
      (:file "clim/incremental-redisplay")
      (:file "clim/r-tree")
      (:file "clim/window-stream")
      (:file "clim/pixmap-streams")
-     ;; (:file "clim/ptypes1")
-
      (:file "clim/completer")
-     ;;(:file "clim/translators")
      (:file "clim/histories")
-     ;;(:file "clim/ptypes2")
      (:file "clim/excl-presentations")
      (:file "clim/standard-types")
      (:file "clim/table-formatting")
-
      (:file "clim/graph-formatting")
      (:file "clim/surround-output")
      (:file "clim/text-formatting")
      (:file "clim/tracking-pointer")
      (:file "clim/dragging-output")
      (:file "clim/db-stream")
-     ;; (:file "clim/command")
-     ;; (:file "clim/command-processor")
      (:file "clim/gadget-output")
      (:file "clim/accept")
      (:file "clim/present")
@@ -123,15 +112,12 @@
      (:file "clim/panes")
      (:file "clim/default-frame")
      (:file "clim/activities")
-     ;;     (:file "clim/db-menu")
      (:file "clim/noting-progress")
      (:file "clim/menus")
      (:file "clim/accept-values")
-
      (:file "clim/drag-and-drop")
      (:file "clim/item-list-manager")
      (:file "clim/stream-trampolines")
-
      (:file "xlib/ffi")
      (:file "xlib/load-xlib")
      (:file "xlib/xlib-defs")
@@ -143,12 +129,14 @@
      (:file "tk/xt-defs")
      (:file "tk/xt-funs")
      (:file "tk/foreign-obj")
-      ;; Xlib stuff
+
+     ;; Xlib stuff
      (:file "tk/xlib")
      (:file "tk/font")
      (:file "tk/gcontext")
      (:file "tk/graphics")
-      ;; Toolkit stuff
+
+     ;; Toolkit stuff
      (:file "tk/meta-tk")
      (:file "tk/make-classes")
      (:file "tk/foreign")
@@ -162,6 +150,7 @@
 
      (:file "tk/xm-defs")
      (:file "tk/xm-funs")
+     (:file "tk/xm-funs-wrapper")
      (:file "tk/xm-classes")
      (:file "tk/xm-callbacks")
      (:file "tk/xm-init")

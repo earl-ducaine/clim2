@@ -3,6 +3,8 @@
 
 (in-package :x11)
 
+(defvar *trace-stream* (make-string-output-stream))
+
 ;; Note -- All exports are now done in pkg.lisp, for space/performance
 ;;         reasons.  jdi  (temporarily not true).
 
