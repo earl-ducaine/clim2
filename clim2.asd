@@ -4,7 +4,7 @@
 ;;; MIT license.
 
 (asdf:defsystem :clim2
-    :depends-on ()
+    :depends-on (:cffi :alexandria)
     :serial t
     :components
     (
@@ -184,6 +184,7 @@
 
      (:file "tk-silica/xt-pixmaps")
      (:file "tk-silica/gc-cursor")
+
      (:file "clim/japanese-input-editor")
 
      ;; system: testing
@@ -193,7 +194,7 @@
      (:file "test/test-demos")
 
      (:file "wnn/pkg")
-     (:file "wnn/load-wnn")
+;;     (:file "wnn/load-wnn")
      (:file "wnn/jl-defs")
      (:file "wnn/jl-funs")
      (:file "wnn/jserver")

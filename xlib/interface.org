@@ -1,0 +1,65 @@
+
+;;; Untranslated C preprocessor #define statements
+;;
+;; #define MinCmapsOfScreen(s) ((s)->min_maps)
+;; #define DoesSaveUnders(s) ((s)->save_unders)
+;; #define EventMaskOfScreen(s) ((s)->root_input_mask)
+;; #define ScreenCount(dpy) 	((dpy)->nscreens)
+;; #define HeightOfScreen(s) ((s)->height)
+;; #define RootWindowOfScreen(s) ((s)->root)
+;; #define BitmapUnit(dpy) 	((dpy)->bitmap_unit)
+;; #define MaxCmapsOfScreen(s) ((s)->max_maps)
+;; #define ProtocolVersion(dpy) 	((dpy)->proto_major_version)
+;; #define DoesBackingStore(s) ((s)->backing_store)
+;; #define WhitePixel(dpy, scr) 	(((dpy)->screens[(scr)]).white_pixel)
+;; #define PlanesOfScreen(s) ((s)->root_depth)
+;; #define DefaultGC(dpy, scr) 	(((dpy)->screens[(scr)]).default_gc)
+;; #define DefaultScreen(dpy) 	((dpy)->default_screen)
+;; #define DisplayHeightMM(dpy, scr) (((dpy)->screens[(scr)]).mheight)
+;; #define WidthMMOfScreen(s) ((s)->mwidth)
+;; #define DisplayWidthMM(dpy, scr) (((dpy)->screens[(scr)]).mwidth)
+;; #define ConnectionNumber(dpy) 	((dpy)->fd)
+;; #define ProtocolRevision(dpy) 	((dpy)->proto_minor_version)
+;; #define RootWindow(dpy, scr) 	(((dpy)->screens[(scr)]).root)
+;; #define DefaultScreenOfDisplay(dpy) (&((dpy)->screens[(dpy)->default_screen]))
+;; #define ScreenOfDisplay(dpy, scr) (&((dpy)->screens[(scr)]))
+;; #define XAllocID(dpy) ((*(dpy)->resource_alloc)((dpy)))
+;; #define BitmapPad(dpy) 		((dpy)->bitmap_pad)
+;; #define VendorRelease(dpy) 	((dpy)->release)
+;; #define DefaultDepth(dpy, scr) 	(((dpy)->screens[(scr)]).root_depth)
+;; #define ServerVendor(dpy) 	((dpy)->vendor)
+;; #define DefaultDepthOfScreen(s) ((s)->root_depth)
+;; #define DisplayPlanes(dpy, scr) (((dpy)->screens[(scr)]).root_depth)
+;; #define DisplayWidth(dpy, scr) 	(((dpy)->screens[(scr)]).width)
+;; #define DisplayOfScreen(s) ((s)->display)
+;; #define DefaultColormap(dpy, scr) (((dpy)->screens[(scr)]).cmap)
+;; #define BlackPixel(dpy, scr) 	(((dpy)->screens[(scr)]).black_pixel)
+;; #define HeightMMOfScreen(s) ((s)->mheight)
+;; #define DefaultVisualOfScreen(s) ((s)->root_visual)
+;; #define BitmapBitOrder(dpy) 	((dpy)->bitmap_bit_order)
+;; #define LastKnownRequestProcessed(dpy) ((dpy)->last_request_read)
+;; #define DisplayHeight(dpy, scr) (((dpy)->screens[(scr)]).height)
+;; #define NextRequest(dpy) ((dpy)->request + 1)
+;; #define DefaultVisual(dpy, scr) (((dpy)->screens[(scr)]).root_visual)
+;; #define BlackPixelOfScreen(s) ((s)->black_pixel)
+;; #define ImageByteOrder(dpy) 	((dpy)->byte_order)
+;; #define DisplayCells(dpy, scr) 	(DefaultVisual((dpy), (scr))->map_entries)
+;; #define DefaultColormapOfScreen(s) ((s)->cmap)
+;; #define CellsOfScreen(s) (DefaultVisualOfScreen((s))->map_entries)
+;; #define WidthOfScreen(s) ((s)->width)
+;; #define DefaultGCOfScreen(s) ((s)->default_gc)
+;; #define DefaultRootWindow(dpy) 	(((dpy)->screens[(dpy)->default_screen]).root)
+;; #define AllPlanes 		(~0)
+;; #define DisplayString(dpy) 	((dpy)->display_name)
+;; #define QLength(dpy) 		((dpy)->qlen)
+;; #define WhitePixelOfScreen(s) ((s)->white_pixel)
+
+
+#|
+typedef union { Display *display;
+		GC gc;
+		Visual *visual;
+		Screen *screen;
+		ScreenFormat *pixmap_format;
+		XFontStruct *font; } XEDataObject;
+|#
