@@ -1,0 +1,16 @@
+
+
+* Refactoring tk
+
+** Allegro CL foreign interface (Motif library)
+   All Allegro CL dependant Foreign interface stuff should be in this
+   folder.  The following functions need to be wrapped
+
+   - def-foreign-call
+
+
+** CFFI conversion
+
+   All Allegro CL C foreign function calls should be wrapped in files
+   called <alisp-fn>-wrapper.lisp.  The supcelia variable tk::use-cffi
+   should be set to t and the project then recompiled.
