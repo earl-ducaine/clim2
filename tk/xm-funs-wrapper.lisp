@@ -7,246 +7,119 @@
 (defun xm_string_create_localized (text)
   (alisp_xm_string_create_localized text))
 
-(def-foreign-call (xm_string_create_l_to_r "XmStringCreateLtoR")
-    ((x :foreign-address) (y :foreign-address))
-  :returning :foreign-address
-  :call-direct t)
+(defun xm_string_create_l_to_r (x y)
+  (alisp_xm_string_create_l_to_r x y))
 
-(def-foreign-call (xm_string_concat "XmStringConcat")
-    ((x :foreign-address) (y :foreign-address))
-  :returning :foreign-address
-  :call-direct t)
+(defun xm_string_concat (x y)
+  (alisp_xm_string_concat x y))
 
-(def-foreign-call (xm_string_copy "XmStringCopy")
-    ((x :foreign-address))
-  :returning :foreign-address
-  :call-direct t)
+(defun xm_string_copy (x)
+  (alisp_xm_string_copy x))
 
-(def-foreign-call (xm_string_unparse "XmStringUnparse")
-    ((string :foreign-address)
-     (tag :foreign-address)
-     (tag-type :foreign-address)
-     (output-type :foreign-address)
-     (parse-table :foreign-address)
-     (parse-count :int fixnum)
-     (parse-model :foreign-address)
-     )
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_string_unparse (string tag tag-type output-type parse-table
+			  parse-count parse-model)
+  (xm_string_unparse string tag tag-type output-type parse-table parse-count parse-model))
 
-(def-foreign-call (xm_string_get_l_to_r "XmStringGetLtoR")
-    ((x :foreign-address) (y :foreign-address) (z :foreign-address))
-  :returning (:int fixnum)
-  :call-direct t
-  :arg-checking nil)
+(defun  xm_string_get_l_to_r (x y z)
+  (alisp_xm_string_get_l_to_r x y z))
 
 ;;; New method to support Motif2.1
-(def-foreign-call (xm_string_free "XmStringFree")
-    ((x :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
 
-(def-foreign-call (xm_get_pixmap "XmGetPixmap")
-    ((w :foreign-address) (x :foreign-address) y z)
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_string_free (x)
+  (alisp_xm_string_free x))
 
-(def-foreign-call (xm_font_list_init_font_context "XmFontListInitFontContext")
-    ((x :foreign-address) (y :foreign-address))
-  :returning (:int fixnum)
-  :call-direct t
-  :arg-checking nil)
+(defun xm_get_pixmap (w x y z)
+  (alisp_xm_get_pixmap w x y z))
 
-(def-foreign-call (xm_font_list_free_font_context "XmFontListFreeFontContext")
-    ((x :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_init_font_context (x y)
+  (alisp_xm_font_list_init_font_context x y))
 
-(def-foreign-call (xm_font_list_get_next_font "XmFontListGetNextFont")
-    ((x :foreign-address) (y :foreign-address) (z :foreign-address))
-  :returning (:int fixnum)
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_free_font_context (x)
+  (alisp_xm_font_list_free_font_context x))
 
-(def-foreign-call (xm_font_list_create "XmFontListCreate")
-    ((x :foreign-address) (y :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_get_next_font (x y z)
+  (alisp_xm_font_list_free_font_context x y z))
 
-(def-foreign-call (xm_font_list_free "XmFontListFree")
-    ((x :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_create (x y)
+  (alisp_xm_font_list_create x y))
 
-(def-foreign-call (xm_font_list_entry_free "XmFontListEntryFree")
-    ((x :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_free (x)
+  (alisp_xm_font_list_free x))
 
-(def-foreign-call (xm_im_mb_lookup_string "XmImMbLookupString")
-    ((widget :foreign-address)
-     (event :foreign-address)
-     (buffer :foreign-address)
-     (bytes-in-buffer :int fixnum)
-     (keysym :foreign-address)
-     (status-return :foreign-address))
-  :returning :int
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_entry_free (x)
+  (alisp_xm_font_list_entry_free x))
 
-(def-foreign-call (xm_add_protocol_callback "XmAddProtocolCallback")
-    ((v :foreign-address) w x (y :foreign-address) (z :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_im_mb_lookup_string (widget event buffer bytes-in-buffer fixnum)
+  (alisp_xm_im_mb_lookup_string widget event buffer bytes-in-buffer fixnum))
 
-(def-foreign-call (xm_intern_atom "XmInternAtom")
-    ((x :foreign-address) (y :foreign-address) (z :int fixnum))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_add_protocol_callback (v w x y z)
+  (alisp_xm_add_protocol_callback v w x y z))
 
-(def-foreign-call (xm_main_window_set_area "XmMainWindowSetAreas")
-    ((a :foreign-address) (b :foreign-address) (c :foreign-address)
-     (d :foreign-address) (e :foreign-address) (f :foreign-address))
- :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_intern_atom (x y z)
+  (alisp_xm_intern_atom x y z))
 
-(def-foreign-call (xm_process_traversal "XmProcessTraversal")
-    ((x :foreign-address) y)
-  :returning (:int fixnum)
-  :call-direct t
-  :arg-checking nil)
+(defun xm_main_window_set_area (a b c d e f)
+  (alisp_xm_main_window_set_area a b c d e f))
 
-(def-foreign-call (xm-message-box-get-child "XmMessageBoxGetChild")
-    ((x :foreign-address) (y :int fixnum))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_process_traversal (x y)
+  (alisp_xm_process_traversal x y))
 
-(def-foreign-call (xm-selection-box-get-child "XmSelectionBoxGetChild")
-    ((x :foreign-address) (y :int fixnum))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm-message-box-get-child (x y)
+  (alisp_xm-message-box-get-child x y))
 
-(def-foreign-call (xm_file_selection_do_search "XmFileSelectionDoSearch")
-    ((x :foreign-address) (y :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm-selection-box-get-child (x y)
+  (alisp_xm-selection-box-get-child x y))
 
-(def-foreign-call (xm_option_label_gadget "XmOptionLabelGadget")
-    ((x :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_file_selection_do_search (x y)
+  (alisp_xm_file_selection_do_search x y))
 
-(def-foreign-call (xm_option_button_gadget "XmOptionButtonGadget")
-    ((x :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_option_label_gadget (x)
+  (alisp_xm_option_label_gadget x))
 
-(def-foreign-call (initializemydrawingareaquerygeometry "InitializeMyDrawingAreaQueryGeometry")
-    (x)
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_option_button_gadget (x)
+  (alisp_xm_option_button_gadget x))
 
-(def-foreign-call (xm_get_focus_widget "XmGetFocusWidget")
-    ((x :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun initializemydrawingareaquerygeometry (x)
+  (alisp_initializemydrawingareaquerygeometry x))
 
-(def-foreign-call (xm_is_traversable "XmIsTraversable")
-    ((x :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_get_focus_widget (x)
+  (alisp_xm_get_focus_widget x))
 
-(def-foreign-call (xm_font_list_append_entry "XmFontListAppendEntry")
-    ((x :foreign-address) (y :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_is_traversable (x)
+  (alisp_xm_is_traversable x))
 
-(def-foreign-call (xm_font_list_entry_create "XmFontListEntryCreate")
-    ((x :foreign-address) (y :foreign-address) (z :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_append_entry (x y)
+  (alisp_xm_font_list_append_entry x y))
 
-(def-foreign-call (xm_font_list_entry_get_font "XmFontListEntryGetFont")
-    ((x :foreign-address) (y :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_entry_create (x y z)
+  (alisp_xm_font_list_entry_create x y z))
 
-(def-foreign-call (xm_font_list_next_entry "XmFontListNextEntry")
-    ((x :foreign-address))
-  :returning :foreign-address
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_entry_get_font (x y)
+  (alisp_xm_font_list_entry_get_font x y))
 
-(def-foreign-call (xm_toggle_button_set_state "XmToggleButtonSetState")
-    ((x :foreign-address) (y :int fixnum) (z :int fixnum))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_font_list_next_entry (x)
+  (alisp_xm_font_list_next_entry x))
 
-(def-foreign-call (xm_toggle_button_get_state "XmToggleButtonGetState")
-    ((x :foreign-address))
-  :returning (:int fixnum)
-  :call-direct t
-  :arg-checking nil)
+(defun xm_toggle_button_set_state (x y z)
+  (alisp_xm_toggle_button_set_state x y z))
 
-(def-foreign-call (xm_text_field_get_selection "XmTextFieldGetSelection")
-    ((x :foreign-address))
-  :returning :int
-  :call-direct t
-  :arg-checking nil)
+(defun xm_toggle_button_get_state (x)
+  (alisp_xm_toggle_button_get_state x))
 
-(def-foreign-call (xm_text_get_selection "XmTextGetSelection")
-    ((x :foreign-address))
-  :returning :int
-  :call-direct t
-  :arg-checking nil)
+(defun xm_text_field_get_selection (x)
+  (alisp_xm_text_field_get_selection x))
 
-(def-foreign-call (xm_text_set_selection "XmTextSetSelection")
-    ((x :foreign-address)
-     (first :long)
-     (last :long)
-     (time :foreign-address))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_text_get_selection (x)
+  (alisp_xm_text_get_selection x))
 
-(def-foreign-call (xm_scale_set_value "XmScaleSetValue")
-    ((x :foreign-address) (y :int fixnum))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_text_set_selection (x first last time)
+  (alisp_xm_text_set_selection x first last time))
 
-(def-foreign-call (xm_get_display "XmGetXmDisplay")
-    ((x :foreign-address))
-  :returning :int
-  :call-direct t
-  :arg-checking nil)
+(defun xm_scale_set_value (x y)
+  (alisp_xm_scale_set_value x y))
 
-(def-foreign-call (xm_change_color "XmChangeColor")
-    ((x :foreign-address) (y :int fixnum))
-  :returning :void
-  :call-direct t
-  :arg-checking nil)
+(defun xm_get_display (x)
+  (alisp_xm_get_display x))
 
-(provide :clim-debugxm)
+(defun xm_change_color (x y)
+  (alisp_xm_change_color x y))

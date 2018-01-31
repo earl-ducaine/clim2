@@ -1,13 +1,15 @@
 ;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Package: CLIM-DEMO; Base: 10; Lowercase: Yes -*-
 ;; See the file LICENSE for the full license governing this code.
-;;
+
 
 (in-package :clim-demo)
 
-;;;"Copyright (c) 1990, 1991, 1992 Symbolics, Inc.  All rights reserved."
-
-;;; Simulates a mechanical toy finite-state-machine called "Thinkadot".
-
+;;; Copyright (c) 1990, 1991, 1992 Symbolics, Inc.  All rights
+;;; reserved.
+;;;
+;;; Simulates a mechanical toy finite-state-machine called
+;;; "Thinkadot".
+;;;
 ;;; in all node-state stuff, t = left, nil = right
 
 (defstruct td-node
@@ -26,7 +28,6 @@
 
 (define-presentation-type entry-node ())
 
-
 ;;;       1     2     3
 ;;;       |\   / \   /|
 ;;;       | \ /   \ / |
@@ -36,7 +37,6 @@
 ;;;       6     7     8
 ;;;      /|    / \    |\
 ;;;     LLL   RRR
-
 
 (define-application-frame thinkadot ()
     ((node1)
@@ -69,7 +69,7 @@
 	   (top (round h 6))
 	   (bot (- h top))
 	   (y-mid (round (+ top bot) 2)))
-      (with-slots (node1 node2 node3 node4 node5 node6 node7 node8 
+      (with-slots (node1 node2 node3 node4 node5 node6 node7 node8
 		   all-nodes lexit rexit initialized) frame
 	(setf lexit (make-td-exit :x (- left 25)  :y (+ bot 10)))
 	(setf rexit (make-td-exit :x (+ right 25) :y (+ bot 10)))
