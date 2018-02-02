@@ -128,6 +128,7 @@
      (:file "tk/macros")
      (:file "tk/xt-defs")
      (:file "tk/xt-funs")
+     (:file "tk/xt-funs-wrapper")
      (:file "tk/foreign-obj")
 
      ;; Xlib stuff

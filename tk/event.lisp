@@ -86,11 +86,6 @@
       ;; XXX/mp afuchs 2010-11-23: this isn't threadsafe.
       (setq *event-matching-event* (make-xevent))))
 
-(def-foreign-type event-match-info (:struct (display (* :void))
-                                            (seq-no :unsigned-long)
-                                            (n-types :int)
-                                            (event-types (:array :int 16))))
-
 (defun-foreign-callable match-event-sequence-and-types-using-structure
     ((display :foreign-address)
      (event :foreign-address)
@@ -173,5 +168,3 @@
 
 (defun build-event-mask (widget)
   (xt_build_event_mask widget))
-
-

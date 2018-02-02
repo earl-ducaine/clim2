@@ -4,34 +4,6 @@
 
 (in-package :tk)
 
-(defparameter *capture-args-return-results* t)
-
-(defparameter *sequential-calls* '())
-
-;; No doc strings!
-;; (defmacro instrumented-defun (name args &body body)
-;;   (let ((local-name (gensym))
-;; 	(local-args (gensym))
-;; 	(local-body (gensym)))
-;;     (eval `(let ((,local-name ',name)
-;; 		 (,local-args ',args)
-;; 		 (,local-body ',body))
-;; 	     (defun ,local-name ,local-args
-;; 	       (progn
-;; 		 ;; (push (list ,local-name ,local-args ,@local-body) *sequential-calls*)
-;; 		 ,@local-body))))))
-
-(defparameter *calls-to-methods* '())
-
-(defmacro instrumented-defun (method-name args &body body)
-  (let ((local-results (gensym)))
-  `(setf (fdefinition ',method-name)
-	 (lambda ,args
-	   (let ((,local-results (progn ,@body)))
-	     (push (list :args ,@args :results ,local-results)
-		   *calls-to-methods*)
-	     ,local-results)))))
-
 (instrumented-defun xm_string_create_localized (text)
 		    (alisp_xm_string_create_localized text))
 
@@ -46,7 +18,7 @@
 
 (instrumented-defun xm_string_unparse (string tag tag-type output-type parse-table
 					      parse-count parse-model)
-		    (xm_string_unparse string tag tag-type output-type parse-table parse-count parse-model))
+		    (alisp_xm_string_unparse string tag tag-type output-type parse-table parse-count parse-model))
 
 (instrumented-defun  xm_string_get_l_to_r (x y z)
 		     (alisp_xm_string_get_l_to_r x y z))
@@ -77,8 +49,8 @@
 (instrumented-defun xm_font_list_entry_free (x)
 		    (alisp_xm_font_list_entry_free x))
 
-(instrumented-defun xm_im_mb_lookup_string (widget event buffer bytes-in-buffer fixnum)
-		    (alisp_xm_im_mb_lookup_string widget event buffer bytes-in-buffer fixnum))
+(instrumented-defun xm_im_mb_lookup_string (widget event buffer bytes-in-buffer keysym status-return)
+		    (alisp_xm_im_mb_lookup_string widget event buffer bytes-in-buffer keysym status-return))
 
 (instrumented-defun xm_add_protocol_callback (v w x y z)
 		    (alisp_xm_add_protocol_callback v w x y z))
