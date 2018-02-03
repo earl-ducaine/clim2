@@ -1148,7 +1148,6 @@
 	(terpri stream)
 	(display-graph-pane *application-frame* stream)))))
 
-#+allegro
 (define-browser-command (com-hardcopy-graph :name t :menu "Hardcopy")
     (&key (printer '(member :|lw| :|lw2| :|lw3|)
 		    :display-default t
@@ -1156,9 +1155,7 @@
 	  (orientation '(member :landscape :portrait)
 		       :default :portrait
 		       :documentation "Orientation to use on the paper"))
-  #+mswindows (declare (ignore printer orientation))
-  #+mswindows
-  (notify-user *application-frame* "Not implemented for this platform")
+  (declare (ignore orientation printer))
   ;;#+unix
   ;; (with-open-stream
   ;;     (pipe (excl:run-shell-command  (format nil "lpr -P~A" printer) :input :stream :wait nil))

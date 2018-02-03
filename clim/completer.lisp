@@ -43,7 +43,6 @@
 (defun complete-input (stream function
                        &key partial-completers allow-any-input possibility-printer
                             (help-displays-possibilities t))
-  (declare (dynamic-extent function))
   (declare (values answer-object success string))
   (with-temporary-string (stuff-so-far :length 100 :adjustable t)
    (with-delimiter-gestures (partial-completers)
@@ -54,13 +53,13 @@
                 stream function stuff-so-far
                 :possibility-printer possibility-printer
                 :possibility-type
-                  (if (eq action :help) 
+                  (if (eq action :help)
                       (and help-displays-possibilities :possibilities)
                       action))))
       (declare (dynamic-extent #'completion-help))
       (with-accept-help ((:subhelp #'completion-help))
        ;; Keep the input editor from handling help and possibilities gestures.
-       ;; They will get treated as activation gestures, thus ensuring that 
+       ;; They will get treated as activation gestures, thus ensuring that
        ;; STUFF-SO-FAR will be accurate when we display the possibilities.
        (let ((*ie-help-enabled* nil)
              (location (stream-scan-pointer stream))
@@ -80,11 +79,11 @@
                (with-input-context (`(completer :stream ,stream
                                                 :function ,function
                                                 :possibility-printer
-                                                ,possibility-printer 
+                                                ,possibility-printer
                                                 :prefix ,stuff-so-far
                                                 :location ,location)) ()
                    (return-from get-input
-                     (progn 
+                     (progn
                        (setq token (read-token stream))
                        (setq ch (read-gesture :stream stream))))
                    (t nil))))
@@ -92,13 +91,13 @@
            (cond ((null ch)
                   (error "Null character?"))
                  ((keyboard-event-p ch)
-                  (cond ((member ch *help-gestures* 
+                  (cond ((member ch *help-gestures*
                                  :test #'keyboard-event-matches-gesture-name-p)
                          (setq completion-mode ':help))
-                        ((member ch *possibilities-gestures* 
+                        ((member ch *possibilities-gestures*
                                  :test #'keyboard-event-matches-gesture-name-p)
                          (setq completion-mode ':possibilities))
-                        ((member ch *apropos-possibilities-gestures* 
+                        ((member ch *apropos-possibilities-gestures*
                                  :test #'keyboard-event-matches-gesture-name-p)
                          (setq completion-mode ':apropos-possibilities))
                         ((member ch *completion-gestures*
@@ -109,7 +108,7 @@
                                ;; try the completion again.  For example, when
                                ;; several completion types are OR'ed together.
                                unread 'unless-completed))
-                        ((member ch partial-completers 
+                        ((member ch partial-completers
                                  :test #'keyboard-event-matches-gesture-name-p)
                          (setq completion-mode ':complete-limited
                                unread t extend t return 'if-completed))
@@ -118,10 +117,10 @@
                          (setq completion-mode (if allow-any-input nil ':complete)
                                unread t extend t return t))
                         ((activation-gesture-p ch)
-                         (setq completion-mode (if allow-any-input nil ':complete) 
+                         (setq completion-mode (if allow-any-input nil ':complete)
                                unread t return t))))
                  ((eq ch *end-of-file-marker*)
-                  (setq completion-mode (if allow-any-input nil ':complete) 
+                  (setq completion-mode (if allow-any-input nil ':complete)
                         return t))
                  (t                                ;mouse click?
                   (beep stream)))
@@ -219,7 +218,7 @@
 
 ;; DISPLAY-POSSIBILITIES
 (defun display-completion-possibilities (stream function stuff-so-far
-                                         &key possibility-printer 
+                                         &key possibility-printer
                                               (possibility-type :possibilities))
   (when possibility-type
     (fresh-line stream)
@@ -282,7 +281,7 @@
   (when (and (not (eq action :possibilities))
              (not (eq action :apropos-possibilities))
              (zerop (length string)))
-    (return-from complete-from-possibilities 
+    (return-from complete-from-possibilities
       (values nil nil nil 0 nil)))
   (let* ((best-completion nil)
          (best-length nil)
@@ -319,11 +318,10 @@
 (defun complete-from-generator (string generator delimiters
                                 &key (action :complete) predicate)
   (declare (values string success object nmatches possibilities))
-  (declare (dynamic-extent generator))
   (when (and (not (eq action :possibilities))
              (not (eq action :apropos-possibilities))
              (zerop (length string)))
-    (return-from complete-from-generator 
+    (return-from complete-from-generator
       (values nil nil nil 0 nil)))
   (let* ((best-completion nil)
          (best-length nil)
