@@ -14,17 +14,17 @@
 
 (defmethod initialize-instance :after ((c application-context) &key context)
   (let ((context (or context (xt_create_application_context))))
-    (setf (foreign-pointer-address c) context)
+    (setf (ff:foreign-pointer-address c) context)
     (xt_app_set_error_handler
      context
      (or *error-handler-function-address*
 	 (setq *error-handler-function-address*
-	   (register-foreign-callable 'toolkit-error-handler))))
+	   (ff:register-foreign-callable 'toolkit-error-handler))))
     (xt_app_set_warning_handler
      context
      (or *warning-handler-function-address*
 	 (setq *warning-handler-function-address*
-	   (register-foreign-callable 'toolkit-warning-handler))))))
+	   (ff:register-foreign-callable 'toolkit-warning-handler))))))
 
 (defun create-application-context ()
   (make-instance 'application-context))
@@ -66,7 +66,7 @@
 				       &key display
 				       &allow-other-keys)
   (push d (application-context-displays (slot-value d 'context)))
-  (setf (foreign-pointer-address d)
+  (setf (ff:foreign-pointer-address d)
     (or display
 	(apply #'open-display args)))
   (register-address d))
@@ -82,4 +82,3 @@
     (xt_get_application_name_and_class display &name &class)
     (values (excl:native-to-string name)
 	    (excl:native-to-string class))))
-

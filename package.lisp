@@ -1,10 +1,7 @@
 ;; See the file LICENSE for the full license governing this code.
-;;
 
 (defpackage :tk
-  ;;-- No we really need
-  ;; to use the x11 package?
-  (:use :common-lisp :ff #+ignore :x11)
+  (:use :common-lisp)
   (:nicknames :xt)
   (:import-from :excl #:if*)
   (:import-from :clim-utils #:fintern #:package-fintern)
@@ -27,7 +24,6 @@
    #:int16
    #:int8
    #:with-server-grabbed
-   #:window-property-list
-   ))
+   #:window-property-list))
 
 (setf (package-definition-lock (find-package :tk)) t)

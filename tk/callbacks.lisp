@@ -7,7 +7,7 @@
 (defun has-callbacks-p (w name)
   (> (xt_has_callbacks w name) 1))
 
-(defun-foreign-callable callback-handler ((widget :foreign-address)
+(ff:defun-foreign-callable callback-handler ((widget :foreign-address)
 					  (client-data :foreign-address)
 					  (call-data :foreign-address))
   (callback-handler-1 widget client-data call-data))
@@ -42,13 +42,13 @@
      widget
      name
      (or *callback-handler-address*
-	 (setq *callback-handler-address* (register-foreign-callable 'callback-handler)))
+	 (setq *callback-handler-address* (ff:register-foreign-callable 'callback-handler)))
      (caar (push
 	    (list (new-callback-id) (cons function args) type)
 	    (widget-callback-data widget))))))
 
 
-(defun-foreign-callable create-popup-child-proc-function ((widget :foreign-address))
+(ff:defun-foreign-callable create-popup-child-proc-function ((widget :foreign-address))
   (create-popup-child-proc-function-1 widget))
 
 (defun create-popup-child-proc-function-1 (widget)
@@ -156,4 +156,3 @@
   (declare (ignore widget))
   (values (x-drawing-area-callback-window call-data)
 	  (x-drawing-area-callback-event call-data)))
-

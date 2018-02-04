@@ -1130,14 +1130,24 @@ setup."
 
 (defvar *trying-fallback* nil)
 
+
+(defparameter my-port nil)
+(defparameter my-name nil)
+
+
 (defmethod find-named-font ((port xt-port) name character-set)
   (with-slots (font-cache) port
     (or (gethash name font-cache)
 	(setf (gethash name font-cache)
-	  (handler-case
-	      (make-instance 'tk::font
-			     :display (port-display port)
-			     :name name)
+	      (handler-case
+		  (progn
+		    ;; (break)
+		    ;; (setf my-port port)
+		    ;; (setf my-name name)
+		    (make-instance 'tk::font
+				   :display (port-display port)
+				   :name name)
+		    )
 	    (error ()
 	      (if *trying-fallback*
 		  (error "Failed to open fallback ~S" name)

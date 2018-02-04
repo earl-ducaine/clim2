@@ -4,27 +4,27 @@
 
 (in-package :tk)
 
-(def-foreign-call (alisp_xm_string_create_localized "XmStringCreateLocalized")
+(ff:def-foreign-call (alisp_xm_string_create_localized "XmStringCreateLocalized")
     ((text :foreign-address))
   :returning :foreign-address
   :call-direct t)
 
-(def-foreign-call (alisp_xm_string_create_l_to_r "XmStringCreateLtoR")
+(ff:def-foreign-call (alisp_xm_string_create_l_to_r "XmStringCreateLtoR")
     ((x :foreign-address) (y :foreign-address))
   :returning :foreign-address
   :call-direct t)
 
-(def-foreign-call (alisp_xm_string_concat "XmStringConcat")
+(ff:def-foreign-call (alisp_xm_string_concat "XmStringConcat")
     ((x :foreign-address) (y :foreign-address))
   :returning :foreign-address
   :call-direct t)
 
-(def-foreign-call (alisp_xm_string_copy "XmStringCopy")
+(ff:def-foreign-call (alisp_xm_string_copy "XmStringCopy")
     ((x :foreign-address))
   :returning :foreign-address
   :call-direct t)
 
-(def-foreign-call (alisp_xm_string_unparse "XmStringUnparse")
+(ff:def-foreign-call (alisp_xm_string_unparse "XmStringUnparse")
     ((string :foreign-address)
      (tag :foreign-address)
      (tag-type :foreign-address)
@@ -37,62 +37,62 @@
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_string_get_l_to_r "XmStringGetLtoR")
+(ff:def-foreign-call (alisp_xm_string_get_l_to_r "XmStringGetLtoR")
     ((x :foreign-address) (y :foreign-address) (z :foreign-address))
   :returning (:int fixnum)
   :call-direct t
   :arg-checking nil)
 
 ;;; New method to support Motif2.1
-(def-foreign-call (alisp_xm_string_free "XmStringFree")
+(ff:def-foreign-call (alisp_xm_string_free "XmStringFree")
     ((x :foreign-address))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_get_pixmap "XmGetPixmap")
+(ff:def-foreign-call (alisp_xm_get_pixmap "XmGetPixmap")
     ((w :foreign-address) (x :foreign-address) y z)
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_init_font_context "XmFontListInitFontContext")
+(ff:def-foreign-call (alisp_xm_font_list_init_font_context "XmFontListInitFontContext")
     ((x :foreign-address) (y :foreign-address))
   :returning (:int fixnum)
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_free_font_context "XmFontListFreeFontContext")
+(ff:def-foreign-call (alisp_xm_font_list_free_font_context "XmFontListFreeFontContext")
     ((x :foreign-address))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_get_next_font "XmFontListGetNextFont")
+(ff:def-foreign-call (alisp_xm_font_list_get_next_font "XmFontListGetNextFont")
     ((x :foreign-address) (y :foreign-address) (z :foreign-address))
   :returning (:int fixnum)
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_create "XmFontListCreate")
+(ff:def-foreign-call (alisp_xm_font_list_create "XmFontListCreate")
     ((x :foreign-address) (y :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_free "XmFontListFree")
+(ff:def-foreign-call (alisp_xm_font_list_free "XmFontListFree")
     ((x :foreign-address))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_entry_free "XmFontListEntryFree")
+(ff:def-foreign-call (alisp_xm_font_list_entry_free "XmFontListEntryFree")
     ((x :foreign-address))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_im_mb_lookup_string "XmImMbLookupString")
+(ff:def-foreign-call (alisp_xm_im_mb_lookup_string "XmImMbLookupString")
     ((widget :foreign-address)
      (event :foreign-address)
      (buffer :foreign-address)
@@ -103,128 +103,128 @@
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_add_protocol_callback "XmAddProtocolCallback")
+(ff:def-foreign-call (alisp_xm_add_protocol_callback "XmAddProtocolCallback")
     ((v :foreign-address) w x (y :foreign-address) (z :foreign-address))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_intern_atom "XmInternAtom")
+(ff:def-foreign-call (alisp_xm_intern_atom "XmInternAtom")
     ((x :foreign-address) (y :foreign-address) (z :int fixnum))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_main_window_set_area "XmMainWindowSetAreas")
+(ff:def-foreign-call (alisp_xm_main_window_set_area "XmMainWindowSetAreas")
     ((a :foreign-address) (b :foreign-address) (c :foreign-address)
      (d :foreign-address) (e :foreign-address) (f :foreign-address))
  :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_process_traversal "XmProcessTraversal")
+(ff:def-foreign-call (alisp_xm_process_traversal "XmProcessTraversal")
     ((x :foreign-address) y)
   :returning (:int fixnum)
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm-message-box-get-child "XmMessageBoxGetChild")
+(ff:def-foreign-call (alisp_xm-message-box-get-child "XmMessageBoxGetChild")
     ((x :foreign-address) (y :int fixnum))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm-selection-box-get-child "XmSelectionBoxGetChild")
+(ff:def-foreign-call (alisp_xm-selection-box-get-child "XmSelectionBoxGetChild")
     ((x :foreign-address) (y :int fixnum))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_file_selection_do_search "XmFileSelectionDoSearch")
+(ff:def-foreign-call (alisp_xm_file_selection_do_search "XmFileSelectionDoSearch")
     ((x :foreign-address) (y :foreign-address))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_option_label_gadget "XmOptionLabelGadget")
+(ff:def-foreign-call (alisp_xm_option_label_gadget "XmOptionLabelGadget")
     ((x :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_option_button_gadget "XmOptionButtonGadget")
+(ff:def-foreign-call (alisp_xm_option_button_gadget "XmOptionButtonGadget")
     ((x :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_initializemydrawingareaquerygeometry "InitializeMyDrawingAreaQueryGeometry")
+(ff:def-foreign-call (alisp_initializemydrawingareaquerygeometry "InitializeMyDrawingAreaQueryGeometry")
     (x)
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_get_focus_widget "XmGetFocusWidget")
+(ff:def-foreign-call (alisp_xm_get_focus_widget "XmGetFocusWidget")
     ((x :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_is_traversable "XmIsTraversable")
+(ff:def-foreign-call (alisp_xm_is_traversable "XmIsTraversable")
     ((x :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_append_entry "XmFontListAppendEntry")
+(ff:def-foreign-call (alisp_xm_font_list_append_entry "XmFontListAppendEntry")
     ((x :foreign-address) (y :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_entry_create "XmFontListEntryCreate")
+(ff:def-foreign-call (alisp_xm_font_list_entry_create "XmFontListEntryCreate")
     ((x :foreign-address) (y :foreign-address) (z :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_entry_get_font "XmFontListEntryGetFont")
+(ff:def-foreign-call (alisp_xm_font_list_entry_get_font "XmFontListEntryGetFont")
     ((x :foreign-address) (y :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_font_list_next_entry "XmFontListNextEntry")
+(ff:def-foreign-call (alisp_xm_font_list_next_entry "XmFontListNextEntry")
     ((x :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_toggle_button_set_state "XmToggleButtonSetState")
+(ff:def-foreign-call (alisp_xm_toggle_button_set_state "XmToggleButtonSetState")
     ((x :foreign-address) (y :int fixnum) (z :int fixnum))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_toggle_button_get_state "XmToggleButtonGetState")
+(ff:def-foreign-call (alisp_xm_toggle_button_get_state "XmToggleButtonGetState")
     ((x :foreign-address))
   :returning (:int fixnum)
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_text_field_get_selection "XmTextFieldGetSelection")
+(ff:def-foreign-call (alisp_xm_text_field_get_selection "XmTextFieldGetSelection")
     ((x :foreign-address))
   :returning :int
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_text_get_selection "XmTextGetSelection")
+(ff:def-foreign-call (alisp_xm_text_get_selection "XmTextGetSelection")
     ((x :foreign-address))
   :returning :int
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_text_set_selection "XmTextSetSelection")
+(ff:def-foreign-call (alisp_xm_text_set_selection "XmTextSetSelection")
     ((x :foreign-address)
      (first :long)
      (last :long)
@@ -233,19 +233,19 @@
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_scale_set_value "XmScaleSetValue")
+(ff:def-foreign-call (alisp_xm_scale_set_value "XmScaleSetValue")
     ((x :foreign-address) (y :int fixnum))
   :returning :void
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_get_display "XmGetXmDisplay")
+(ff:def-foreign-call (alisp_xm_get_display "XmGetXmDisplay")
     ((x :foreign-address))
   :returning :int
   :call-direct t
   :arg-checking nil)
 
-(def-foreign-call (alisp_xm_change_color "XmChangeColor")
+(ff:def-foreign-call (alisp_xm_change_color "XmChangeColor")
     ((x :foreign-address) (y :int fixnum))
   :returning :void
   :call-direct t

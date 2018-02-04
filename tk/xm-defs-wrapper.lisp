@@ -5,10 +5,6 @@
 
 (in-package :tk)
 
-;; (ff:def-c-type (alisp-xm-proto-callback-info :in-foreign-space :no-defuns :no-constructor) :struct
-;;   (handle :int)
-;;   (data :int))
-
 ;; (ff:def-c-type (alisp-xm-protocol :no-defuns :no-constructor) :struct
 ;;   (object * :char)
 ;;   (ext * :char)

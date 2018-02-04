@@ -316,11 +316,11 @@
       new)))
 
 
-(defun-foreign-callable toolkit-error-handler ((message :foreign-address))
+(ff:defun-foreign-callable toolkit-error-handler ((message :foreign-address))
   (let ((*error-output* excl:*initial-terminal-io*))
     (error "Xt: ~a" (excl:native-to-string message))))
 
-(defun-foreign-callable toolkit-warning-handler ((message :foreign-address))
+(ff:defun-foreign-callable toolkit-warning-handler ((message :foreign-address))
   (let ((*error-output* excl:*initial-terminal-io*))
     (warn "Xt: ~a" (excl:native-to-string message))))
 
@@ -377,4 +377,3 @@
 		 (setf (ff::foreign-pointer-address class) new-addr))
 	       (register-address class ))))
      root)))
-

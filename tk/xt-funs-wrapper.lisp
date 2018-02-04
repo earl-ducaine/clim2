@@ -20,11 +20,6 @@
 		   *calls-to-methods*)
 	     ,local-results)))))
 
-(def-foreign-type event-match-info (:struct (display (* :void))
-                                            (seq-no :unsigned-long)
-                                            (n-types :int)
-                                            (event-types (:array :int 16))))
-
 (instrumented-defun xt_get_resource_list (x y z)
   (alisp_xt_get_resource_list x y z))
 

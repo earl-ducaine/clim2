@@ -49,7 +49,7 @@
 	 #'xt-create-managed-widget name widget-class parent
 	 args))
 
-;;; bug11282 --pnc 
+;;; bug11282 --pnc
 ;;; We are running into a somewhat rare race-condition here on the irix platform.
 ;;; (Specifically it shows up when you run the benchmarks-to-dummy-file
 ;;; in the test-suite.  The breakage occurs when the simple-dialog benchmark
@@ -147,8 +147,8 @@
 ;;; after the frame was created; i.e. before the X-server had finished
 ;;; setting things up (the specify bug was that xt_window was
 ;;; returning 0).  See (raise-mirror (xt-port top-level-sheet)) in
-;;; tk-silica/xt-silica.lisp. 
-;;; 
+;;; tk-silica/xt-silica.lisp.
+;;;
 ;;; The following method provides a "retry-loop" around the call to
 ;;; widget-window until the X-side frame is actually ready to go.
 ;;;
@@ -167,7 +167,7 @@
 	(count 0))
     (loop while t
 	for widg-wind = (tk::widget-window widget nil)
-	do (when widg-wind 
+	do (when widg-wind
 	     (setq val widg-wind)
 	     (loop-finish))
 	   (cond ((null num-retries)
@@ -227,7 +227,7 @@
        (remf args :foreign-address)
        (remf args :name)
        (remf args :parent)
-       (setf (foreign-pointer-address w)
+       (setf (ff:foreign-pointer-address w)
 	 (apply #'make-widget w (tkify-lisp-name name) parent args))))))
 
 
@@ -252,12 +252,12 @@
 	(add-callback widget :destroy-callback #'destroy-widget-cleanup))
       widget)))
 
-(defun register-widget (widget &optional (handle (foreign-pointer-address widget)))
+(defun register-widget (widget &optional (handle (ff:foreign-pointer-address widget)))
   (register-address widget handle)
   (add-callback widget :destroy-callback #'destroy-widget-cleanup))
 
 (defun unintern-widget (widget)
-  (unintern-object-address (foreign-pointer-address widget)))
+  (unintern-object-address (ff:foreign-pointer-address widget)))
 
 (defmethod widget-parent ((widget xt-root-class))
   (let ((x (xt_parent widget)))
@@ -394,7 +394,7 @@
 	   v))))
     (excl:ics-target-case
       (:+ics
-       (xt_set_language_proc 0 (register-foreign-callable
+       (xt_set_language_proc 0 (ff:register-foreign-callable
                                 'xt-current-locale-for-acl :reuse t)
                              0)
        (set-supported-x-locale)))
@@ -408,7 +408,7 @@
       (values context display app))))
 
 (defun xt-name (w) (values (excl:native-to-string (xt_name w))))
-(defun xt-class (w) (values (excl:native-to-string 
+(defun xt-class (w) (values (excl:native-to-string
 			     (xt-class-name (xt_class w)))))
 
 (defun widget-resource-name-and-class (w)

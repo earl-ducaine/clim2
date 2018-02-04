@@ -86,7 +86,7 @@
       ;; XXX/mp afuchs 2010-11-23: this isn't threadsafe.
       (setq *event-matching-event* (make-xevent))))
 
-(defun-foreign-callable match-event-sequence-and-types-using-structure
+(ff:defun-foreign-callable match-event-sequence-and-types-using-structure
     ((display :foreign-address)
      (event :foreign-address)
      (arg :foreign-address))
@@ -112,7 +112,7 @@
 	 (resulting-event (event-matching-event))   ; XXX/mp: this isn't threadsafe (bind *e-m-e*?)
 	 (addr (or *match-event-sequence-and-types-address*
 		   (setq *match-event-sequence-and-types-address*
-		     (register-foreign-callable 'match-event-sequence-and-types-using-structure)))))
+		     (ff:register-foreign-callable 'match-event-sequence-and-types-using-structure)))))
     (let ((data (allocate-fobject 'event-match-info :c)))
       (unwind-protect
           (progn
@@ -135,7 +135,7 @@
 
 (defvar *event* nil)
 
-(defun-foreign-callable event-handler ((widget :foreign-address)
+(ff:defun-foreign-callable event-handler ((widget :foreign-address)
 				       (client-data :foreign-address)
 				       (event :foreign-address)
 				       (continue-to-dispatch :foreign-address))
@@ -161,7 +161,7 @@
    (encode-event-mask events)
    maskable
    (or *event-handler-address*
-       (setq *event-handler-address* (register-foreign-callable 'event-handler)))
+       (setq *event-handler-address* (ff:register-foreign-callable 'event-handler)))
    (caar (push
 	  (list (new-callback-id) (cons function args))
 	  (widget-event-handler-data widget)))))

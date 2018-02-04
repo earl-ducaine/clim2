@@ -128,7 +128,7 @@
       (error ":drawable must be specified when creating gcontext"))
     (let ((display (object-display drawable)))
       (setf foreign-address (x11::xcreategc display drawable 0 0)
-	    (foreign-pointer-address gcontext) foreign-address
+	    (ff:foreign-pointer-address gcontext) foreign-address
 	    (slot-value gcontext 'display) display))
     (register-address gcontext foreign-address))
 

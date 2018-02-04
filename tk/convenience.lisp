@@ -46,7 +46,7 @@
 			       (lispify-tk-name entry-point :package nil)))))
       `(progn
 	 (eval-when (eval compile)
-	   (def-foreign-call (,c-function-name ,entry-point)
+	   (ff:def-foreign-call (,c-function-name ,entry-point)
 	       ((w :foreign-address) (x :foreign-address) (y :foreign-address) (z :int fixnum))
 	     :returning :foreign-address
 	     :call-direct t

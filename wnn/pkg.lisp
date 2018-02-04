@@ -1,6 +1,6 @@
 ;; -*- mode: common-lisp; package: cl-user -*-
 ;;
-;; 
+;;
 ;; See the file LICENSE for the full license governing this code.
 ;;
 
@@ -25,7 +25,3 @@
    #:henkan-begin
    #:henkan-end
    ))
-
-(setf (package-definition-lock (find-package :wnn)) t)
-
-(in-package :wnn)

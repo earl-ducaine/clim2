@@ -18,7 +18,7 @@
     (let ((x (x11:xloadqueryfont display
 				 (lisp-string-to-string8 name))))
       (when (zerop x) (error "Cannot find font: ~S" name))
-      (setf (foreign-pointer-address f) x)
+      (setf (ff:foreign-pointer-address f) x)
       (register-address f))))
 
 
@@ -186,7 +186,7 @@
                 :charsets missing
                 :created-for base-names)))
       (when (zerop x) (error "Cannot create fontset for ~S" base-names))
-      (setf (foreign-pointer-address fs) x)
+      (setf (ff:foreign-pointer-address fs) x)
       (register-address fs))))
 
 (defun fonts-of-font-set (font-set)

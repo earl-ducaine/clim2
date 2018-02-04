@@ -159,7 +159,7 @@
   (with-slots (display) p
     (setf display (object-display drawable))
     (unless foreign-address
-      (setf (foreign-pointer-address p)
+      (setf (ff:foreign-pointer-address p)
 	(x11:xcreatepixmap
 	 display
 	 drawable
@@ -173,7 +173,7 @@
 (defmethod initialize-instance :after
 	   ((db resource-database) &key foreign-address)
   (unless foreign-address
-    (setf (foreign-pointer-address db) (x11:xrmgetstringdatabase ""))))
+    (setf (ff:foreign-pointer-address db) (x11:xrmgetstringdatabase ""))))
 
 (defun make-xrmvalue ()
   (clim-utils::allocate-cstruct 'x11::xrmvalue :initialize t))
@@ -247,7 +247,7 @@
 		  (clim-utils::system-free s))))
 	    resourceid)))
 
-(defun-foreign-callable x-error-handler ((display :foreign-address)
+(ff:defun-foreign-callable x-error-handler ((display :foreign-address)
 					 (event :foreign-address))
   (error 'x-error
 	 :display display
@@ -269,7 +269,7 @@
 
 (defvar *x-io-error-hook* nil)
 
-(defun-foreign-callable x-io-error-handler ((display :foreign-address))
+(ff:defun-foreign-callable x-io-error-handler ((display :foreign-address))
   (when *x-io-error-hook*
     (funcall *x-io-error-hook* display))
   (error 'x-connection-lost :display display))
@@ -287,10 +287,10 @@
 (defun setup-error-handlers ()
   (x11:xseterrorhandler (or *x-error-handler-address*
 			    (setq *x-error-handler-address*
-			      (register-foreign-callable 'x-error-handler))))
+			      (ff:register-foreign-callable 'x-error-handler))))
   (x11:xsetioerrorhandler (or *x-io-error-handler-address*
 			      (setq *x-io-error-handler-address*
-				(register-foreign-callable 'x-io-error-handler)))))
+				(ff:register-foreign-callable 'x-io-error-handler)))))
 
 (eval-when (load)
   (setup-error-handlers))
@@ -349,7 +349,7 @@
 	  (x11:xcolor-blue foreign-address) blue
 	  (x11:xcolor-flags foreign-address) 255
 	  (x11:xcolor-pixel foreign-address) pixel)
-    (setf (foreign-pointer-address x) foreign-address)))
+    (setf (ff:foreign-pointer-address x) foreign-address)))
 
 (defmethod print-object ((o color) s)
   (print-unreadable-object
@@ -697,7 +697,7 @@
 				  height
 				  bitmap-pad
 				  bytes-per-line)))
-	(setf (foreign-pointer-address image) x)
+	(setf (ff:foreign-pointer-address image) x)
 	(when data
 	  (case depth
 	    (8
@@ -744,7 +744,7 @@
 			   ((= depth 8)
 			    #xff)
 			   ((= depth 16)
-			    #xffff) 
+			    #xffff)
 			   ((= depth 24)
 			    #xffffff)
 			   (t
