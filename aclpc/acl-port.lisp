@@ -161,20 +161,20 @@
    (pointer-sheet :initform nil)
    (motion-pending :initform nil)
    ;; Cached mapping of CLIM text styles to operating system fonts:
-   (text-style->acl-font-mapping :initform (make-hash-table)) 
+   (text-style->acl-font-mapping :initform (make-hash-table))
    ;; Drawing text at an angle is implemented by asking the
    ;; operating system to rotate a font to the required angle:
    (rotated-font-htable :initform (make-hash-table)
-			:accessor port-rotated-font-htable)   
+			:accessor port-rotated-font-htable)
    ;; Pixmaps
    (pixmaps :initform nil :accessor port-pixmaps)
 
    ;; automatically transformed from special vars.
 
    ;; this will grow indefinitely as menu-ids are never removed (cim 9/10/96)
-   (menu-id->command-table :initform (make-array 256 
+   (menu-id->command-table :initform (make-array 256
 						 :element-type t
-						 :adjustable t 
+						 :adjustable t
 						 :fill-pointer 0
 						 :initial-element nil)
 			   :accessor menu-id->command-table)
@@ -200,11 +200,11 @@
    (win-scroll-grain :initform (1- (expt 2 16))
 		     :accessor win-scroll-grain)
 
-   (wres :initform  (ct:callocate :long) 	
+   (wres :initform  (ct:callocate :long)
 	 :accessor wres)
    (wmsg :initform  (ct:ccallocate win:msg)
 	 :accessor wmsg)
-   (clim-class :initform "ClimClass" 
+   (clim-class :initform "ClimClass"
 	       :accessor clim-class)
    (win-name :initform "CLIM"
 	     :accessor win-name)
@@ -228,14 +228,14 @@
 	      :accessor lpcmdline)
    (hinst :initform 0
 	  :accessor hinst)
-   (screen-device :initform nil 
+   (screen-device :initform nil
 		  :accessor screen-device)
    (msg :initform (ct:ccallocate win:msg)
 	:accessor msg)
    (arrow-cursor :initform
 		 (ff:allocate-fobject 'win:hcursor :foreign-static-gc nil)
 		 :accessor arrow-cursor)
-   (application-icon :initform 
+   (application-icon :initform
 		     (ff:allocate-fobject 'win:hicon  :foreign-static-gc nil)
 		     :accessor application-icon)
    (current-window :initform nil
@@ -275,7 +275,7 @@
   t)
 
 (defmethod port-event-wait ((port acl-port) waiter
-			    &key (wait-reason 
+			    &key (wait-reason
 				  #+Genera si:*whostate-awaiting-user-input*
 				  #-Genera "CLIM Input")
 				 timeout)
@@ -297,20 +297,20 @@
 (defmethod port-type ((port acl-port))
   ':aclnt)
 
-;;; some work to do better 
+;;; some work to do better
 (defclass acl-palette (basic-palette) ())
 
 (defmethod make-palette ((port acl-port) &key color-p dynamic-p)
   (make-instance 'acl-palette
-    :port port 
+    :port port
     :color-p color-p
     :dynamic-p dynamic-p))
 
-(defclass acl-device-color (device-color) 
+(defclass acl-device-color (device-color)
   ((color :initform nil)))
 
 (defmethod make-device-color ((palette acl-palette) pixel)
-  (make-instance 'acl-device-color 
+  (make-instance 'acl-device-color
     :palette palette
     :pixel pixel))
 
@@ -364,7 +364,7 @@
     ;; Panes that have a direct mirror will get initialized from
     ;; get-sheet-resources:
     (setf (port-default-resources port)
-      `(:background 
+      `(:background
 	,+ltgray+
 	:foreground
 	,(wincolor->color (win:GetSysColor win:COLOR_WINDOWTEXT))))
@@ -374,14 +374,14 @@
     ))
 
 (defmethod destroy-port :before ((port acl-port))
-  ;; This method should release all open handles 
+  ;; This method should release all open handles
   ;; and "uninitialize" clim.  This is very useful
   ;; for tracking down resource leaks, because any
   ;; handles left open after this were leaked.
   (declare (special *port-mirror-sheet-alist*))
-  (without-scheduling 
+  (without-scheduling
     (let ((hash (port-dc-cache port)))
-      (maphash #'(lambda (ink dc-image) 
+      (maphash #'(lambda (ink dc-image)
 		   (declare (ignore ink))
 		   (destroy-dc-image dc-image))
 	       hash)
@@ -410,7 +410,7 @@
 (defmethod destroy-port :after ((port acl-port))
   ;; spr25546
   ;; See documentation for the :before method above.
-  ;; Do this as an :after method to avoid collisions during 
+  ;; Do this as an :after method to avoid collisions during
   ;; other clean-up operations.
   (reset-aclpc-clim))
 
@@ -453,7 +453,7 @@
 		(:very-large 18)
 		(:huge       24)))
 
-(defmethod port-find-rotated-font ((port acl-port) 
+(defmethod port-find-rotated-font ((port acl-port)
 				   plain-font font-rotation-angle)
   ;; Find the rotated-font corresponding to plain-font
   ;; rotated at the appropriate angle.
@@ -462,33 +462,33 @@
   (let ((htable (port-rotated-font-htable port)))
     (let ((base-font-list (gethash plain-font htable)))
       (let ((font-pair (and base-font-list
-			    (find font-rotation-angle base-font-list 
+			    (find font-rotation-angle base-font-list
 				  :test #'=
 				  :key #'first))))
 	(cond (font-pair
 	       (second font-pair))
 	      (t
-	       (let ((new-font (port-duplicate-rotated-windows-font 
+	       (let ((new-font (port-duplicate-rotated-windows-font
 				port plain-font font-rotation-angle)))
 		 (push (list font-rotation-angle new-font)
 		       (gethash plain-font htable))
 		 new-font)))))))
 
-(defmethod port-duplicate-rotated-windows-font 
+(defmethod port-duplicate-rotated-windows-font
     ((port acl-port) plain-font font-rotation-angle)
   (let ((text-style (port-acl-font->text-style port plain-font)))
-    (cond (text-style 
-	   (text-style-mapping-1 
-	    port text-style 
+    (cond (text-style
+	   (text-style-mapping-1
+	    port text-style
 	    :font-rotation-angle font-rotation-angle))
-	  (t 
+	  (t
 	   ;;; Make a best guess.
 	   (let ((old-height (acl-font-height plain-font))
 		 (italic-flag (acl-font-italic plain-font))
 		 (underline-flag (acl-font-underlined plain-font))
 		 (weight-flag (acl-font-weight plain-font)))
-	     (make-windows-font 
-	      old-height 
+	     (make-windows-font
+	      old-height
 	      :escapement font-rotation-angle
 	      :orientation font-rotation-angle
 	      :italic (not (= italic-flag 0))
@@ -515,7 +515,7 @@
 (defmethod port-acl-font->text-style ((port acl-port) acl-font)
   (with-slots (text-style->acl-font-mapping) port
     (when text-style->acl-font-mapping
-      (catch :font-found 
+      (catch :font-found
 	(maphash #'(lambda (key val)
 		     (if (eql val acl-font)
 			 (throw :font-found key)))
@@ -523,6 +523,7 @@
 
 (defmethod text-style-mapping-1
     ((port acl-port) (style text-style) &key font-rotation-angle)
+  (break)
   (multiple-value-bind (weight italic)
       (let ((face (text-style-face style)))
 	(typecase face
@@ -558,24 +559,24 @@
 	  (format *trace-output*
 		  "~& Warning: ~S does not specify size, using 12" style)
 	  (setq point-size 12))
-	(if font-rotation-angle 
-	    (make-windows-font 
+	(if font-rotation-angle
+	    (make-windows-font
 	     (- (round (* point-size (slot-value port 'logpixelsy)) 72))
-	     :weight weight 
+	     :weight weight
 	     :italic italic
-	     :pitch-and-family family 
-	     :face face-name	  
+	     :pitch-and-family family
+	     :face face-name
 	     :escapement font-rotation-angle
 	     :orientation font-rotation-angle)
-	  (make-windows-font 
+	  (make-windows-font
 	   (- (round (* point-size (slot-value port 'logpixelsy)) 72))
-	   :weight weight 
+	   :weight weight
 	   :italic italic
-	   :pitch-and-family family 
-	   :face face-name	  
+	   :pitch-and-family family
+	   :face face-name
 	   ))))))
 
-(defmethod text-style-mapping 
+(defmethod text-style-mapping
     ((port acl-port) (style list)
      &optional (character-set *standard-character-set*) etc)
   (text-style-mapping port (apply #'make-text-style style)
@@ -639,11 +640,11 @@ or (:style . (family face size))")
 			(progn
 			  (warn "~S does not specify a size, using :normal"
 				size)
-			  (second (assoc ':normal 
+			  (second (assoc ':normal
 					 *acl-logical-size-alist*))))))
     (multiple-value-bind (weight italic)
 	(etypecase face
-	  (cons 
+	  (cons
 	   (values (if (member ':bold face) win:FW_BOLD win:FW_NORMAL)
 		   (member ':italic face)))
 	  (symbol
@@ -687,44 +688,45 @@ or (:style . (family face size))")
 
 (defun make-windows-font
     (height &key (width 0) (escapement 0) (orientation 0)
-		 (weight win:FW_NORMAL) 
-		 (italic nil) (underline nil) (strikeout nil)
-		 (charset win:ANSI_CHARSET) 
-		 (output-precision OUT_TT_PRECIS)
-		 (clip-precision win:CLIP_DEFAULT_PRECIS)
-		 (quality win:PROOF_QUALITY) 
-		 (pitch-and-family (logior win:DEFAULT_PITCH win:FF_DONTCARE)) 
-		 (face nil) 
-		 win-font) 
+	      (weight win:FW_NORMAL)
+	      (italic nil) (underline nil) (strikeout nil)
+	      (charset win:ANSI_CHARSET)
+	      (output-precision OUT_TT_PRECIS)
+	      (clip-precision win:CLIP_DEFAULT_PRECIS)
+	      (quality win:PROOF_QUALITY)
+	      (pitch-and-family (logior win:DEFAULT_PITCH win:FF_DONTCARE))
+	      (face nil)
+	      win-font)
+  (break)
   (unless win-font
     (setq win-font
-      (excl:with-native-string (vface (or face ""))
-	(win:CreateFont height		; logical height
-			width		; logical average width
-			escapement	; angle of escapement (tenths of degrees)
-			orientation	; normally the same as escapement
-			weight		; font weight (FW_NORMAL=400, FW_BOLD=700)
-			(if italic 1 0) 
-			(if underline 1 0)
-			(if strikeout 1 0) 
-			charset		; if you want chinese or greek
-			output-precision
-			clip-precision
-			quality
-			pitch-and-family 
-			vface
-			))))
+	  (excl:with-native-string (vface (or face ""))
+	    (win:CreateFont height		; logical height
+			    width		; logical average width
+			    escapement	; angle of escapement (tenths of degrees)
+			    orientation	; normally the same as escapement
+			    weight		; font weight (FW_NORMAL=400, FW_BOLD=700)
+			    (if italic 1 0)
+			    (if underline 1 0)
+			    (if strikeout 1 0)
+			    charset		; if you want chinese or greek
+			    output-precision
+			    clip-precision
+			    quality
+			    pitch-and-family
+			    vface
+			    ))))
   (when (zerop win-font)
     (check-last-error "CreateFont"))
   (make-device-font win-font))
 
-(defun make-device-font (win-font) 
+(defun make-device-font (win-font)
   (let ((cw (and *application-frame*
 		 (frame-top-level-sheet *application-frame*)
 		 (sheet-mirror (frame-top-level-sheet *application-frame*))))
 	(tmstruct (ct:ccallocate win:textmetric)))
     (unless cw (setf cw (current-window *acl-port*)))
-    (unless (win:IsWindow cw) 
+    (unless (win:IsWindow cw)
       ;; This clause is for the rare case that you are doing drawing
       ;; from a background process the first time you attempt to use
       ;; this font.  It doesn't really matter which frame you pick.
@@ -738,7 +740,7 @@ or (:style . (family face size))")
 			    (frame-manager-frames framem)))))
 	(when frame
 	  (setq cw (sheet-mirror (frame-top-level-sheet frame))))))
-    (unless (win:IsWindow cw) 
+    (unless (win:IsWindow cw)
       (error "No window found for calculating text font metrics."))
     (with-dc (cw dc)
       (win:SetMapMode dc win:MM_TEXT)
@@ -759,20 +761,20 @@ or (:style . (family face size))")
 	       (make-font-width-table dc last-character first-character
 				      maximum-character-width)))
 	(make-acl-font
-	 :index win-font 
+	 :index win-font
 	 :height (ct:cref win:textmetric tmstruct tmHeight)
 	 :ascent (ct:cref win:textmetric tmstruct tmAscent)
 	 :descent (ct:cref win:textmetric tmstruct tmDescent)
 	 :internal-leading (ct:cref win:textmetric tmstruct tmInternalLeading)
 	 :external-leading (ct:cref win:textmetric tmstruct tmExternalLeading)
-	 :average-character-width average-character-width        
-	 :maximum-character-width maximum-character-width 
+	 :average-character-width average-character-width
+	 :maximum-character-width maximum-character-width
 	 :weight (ct:cref win:textmetric tmstruct tmWeight)
 	 :italic (ct:cref win:textmetric tmstruct tmItalic)
 	 :underlined (ct:cref win:textmetric tmstruct tmUnderlined)
 	 :struckout (ct:cref win:textmetric tmstruct tmStruckOut)
-	 :first-character first-character 
-	 :last-character last-character 
+	 :first-character first-character
+	 :last-character last-character
 	 :default-character (ct:cref win:textmetric tmstruct tmDefaultChar)
 	 :break-character (ct:cref win:textmetric tmstruct tmBreakChar)
 	 :overhang (ct:cref win:textmetric tmstruct tmOverhang)
@@ -808,7 +810,7 @@ or (:style . (family face size))")
 	   (bb-y (if acl-font (+ (acl-font-height acl-font)
 		    (acl-font-external-leading acl-font)) 15))
 	   (bb-x escapement-x))
-      (when italic (setf clim-internals::*wd40italic* origin-x)) 
+      (when italic (setf clim-internals::*wd40italic* origin-x))
       (values index acl-font escapement-x escapement-y
 	      origin-x origin-y bb-x bb-y))))
 
@@ -858,7 +860,7 @@ or (:style . (family face size))")
 (defmethod realize-cursor ((port acl-port) (cursor number))
   (let* ((result (second (assoc cursor *loaded-cursors*))))
     (unless result
-      (setq result 
+      (setq result
 	(win:LoadCursor 0 cursor))
       (when (zerop result)
 	;; Suppress the error for now to be compatible with
@@ -868,7 +870,7 @@ or (:style . (family face size))")
       (push (list cursor result) *loaded-cursors*))
     result))
 
-(defmethod realize-cursor ((port acl-port) (cursor t)) 
+(defmethod realize-cursor ((port acl-port) (cursor t))
   cursor)
 
 (defmethod realize-cursor :around ((port acl-port) cursor)
@@ -916,7 +918,7 @@ or (:style . (family face size))")
 	    (setq keysym (svref *char->keysym* (char-code char)))))
     keysym))
 
-(defmethod port-canonicalize-gesture-spec 
+(defmethod port-canonicalize-gesture-spec
 	   ((port acl-port) gesture-spec &optional modifier-state)
   (with-slots (vk->keysym) port
     (multiple-value-bind (keysym shifts)
@@ -964,7 +966,7 @@ or (:style . (family face size))")
 	   nil)
 	  (t
 	  #+debug
-	   (format *trace-output* 
+	   (format *trace-output*
 		   "~% Was ~A ~A ~A IS ~A ~A ~A~%"
 		   pointer-sheet pointer-x pointer-y
 		   sheet x y)
@@ -981,7 +983,7 @@ or (:style . (family face size))")
       (let ((pointer (port-pointer port)))
 	(when pointer
 	  #+debug
-	  (format *trace-output* 
+	  (format *trace-output*
 		  "~% IS ~A ~A ~A~%"
 		  pointer-x pointer-y pointer-sheet)
 	  (queue-put event-queue
@@ -996,7 +998,7 @@ or (:style . (family face size))")
 
 ;;; Convert a MS Windows shift mask into a CLIM modifier-state
 (defun windows-mask->modifier-state (mask &optional double)
-  (let ((state 
+  (let ((state
 	 (if (logtest win:MK_SHIFT mask)
 	     (if (logtest win:MK_CONTROL mask)
 		 (make-modifier-state :shift :control)
@@ -1004,7 +1006,7 @@ or (:style . (family face size))")
 	   (if (logtest win:MK_CONTROL mask)
 	       (make-modifier-state :control)
 	     (make-modifier-state)))))
-    (if double 
+    (if double
 	(logior state (make-modifier-state :double))
       state)))
 
@@ -1030,11 +1032,11 @@ or (:style . (family face size))")
 ;; that we have addressed the symptom and not the cause.  The
 ;; default method does some port-trace-thing which sometimes
 ;; generates the wrong sheet.  There are no comments regarding
-;; port-trace-thing, so there no way to know if it is broken.  
+;; port-trace-thing, so there no way to know if it is broken.
 ;; For example, SHEET might be a spacing pane, which is unable
 ;; to queue an event and therefore fails to distribute it.
 ;; JPM 10/98.
-(defmethod silica::distribute-event-1 ((port acl-port) 
+(defmethod silica::distribute-event-1 ((port acl-port)
 				       (event silica::window-change-event))
   (declare (optimize (speed 3)))
   (let ((sheet (or (silica::event-mswin-control event) (event-sheet event))))
@@ -1047,7 +1049,7 @@ or (:style . (family face size))")
 
 ;; Redefine function from utils/processes.lisp.
 (defun clim-utils::process-wait (state function &rest args)
-  (declare 
+  (declare
    (dynamic-extent function args)
    (optimize (speed 3) (safety 0)))
   ;; 11/30/2006 afuchs acl 8.0
@@ -1067,21 +1069,21 @@ or (:style . (family face size))")
       ;; events, which apparently wake up the scheduler.
       ;; The workaround is to wake up every so often and
       ;; run the test function.
-      (when (setq result (apply #'mp:process-wait-with-timeout 
-				state *clim-pulse-rate* 
+      (when (setq result (apply #'mp:process-wait-with-timeout
+				state *clim-pulse-rate*
 				function args))
 	(return result)))))
 
 #+ignore
 (defmethod process-next-event ((port acl-port)
-			       &key (timeout nil) 
+			       &key (timeout nil)
 				    (wait-function nil)
 				    (state "Windows Event"))
   (with-slots (event-queue motion-pending) port
     (let ((event (queue-get event-queue))
 	  (sheet (frame-top-level-sheet *application-frame*))
 	  (reason nil))
-      (unless event 
+      (unless event
 	(flet ((wait-for-event ()
 		 (process-pending-messages t (and sheet (sheet-mirror sheet)))
 		 ;;(sys::process-pending-events t)
@@ -1105,7 +1107,7 @@ or (:style . (family face size))")
 ;; recoded for wait-function constraints ....
 ;; assume wait-function is a 'nice' test of state only
 (defmethod process-next-event ((port acl-port)
-			       &key (timeout nil) 
+			       &key (timeout nil)
 			       (wait-function nil)
 			       (state "Windows Event"))
   (with-slots
@@ -1151,7 +1153,7 @@ or (:style . (family face size))")
         (let ((native-region (mirror-region port sheet)))
 	  (setf (slot-value event 'silica::native-region) native-region)
 	  (setf (slot-value event 'silica::region)
-	        (untransform-region (sheet-native-transformation sheet) 
+	        (untransform-region (sheet-native-transformation sheet)
 				    native-region)))
         (call-next-method)))))
 
@@ -1162,7 +1164,7 @@ or (:style . (family face size))")
   (or *system-version*
       (setq *system-version*
 	(let ((v (ff:allocate-fobject 'win::osversioninfo)))
-	  (setf (ct:cref win::osversioninfo v dwOSVersionInfoSize) 
+	  (setf (ct:cref win::osversioninfo v dwOSVersionInfoSize)
 	    (ct:sizeof win::osversioninfo))
 	  (win::GetVersionEx v)
 	  (case (ct:cref win::osversioninfo v dwPlatformId)
@@ -1220,7 +1222,7 @@ or (:style . (family face size))")
 				       )))
 		   for rgb-list-index = (position rgb rgb-list :test #'equal)
 		   for color-index = (cond (rgb-list-index
-					    ;; Color was found 
+					    ;; Color was found
 					    (- color-count rgb-list-index))
 					   (t
 					    (push rgb rgb-list)
@@ -1234,5 +1236,5 @@ or (:style . (family face size))")
 	  ;; if item is not a cons, it must be +transparent-ink+
 	  ;;    so let it be
 	  (setf (car tl) (apply #'make-rgb-color (car tl)))))
-      
+
       (make-pattern pattern-data rgb-list))))

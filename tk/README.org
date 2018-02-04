@@ -14,8 +14,88 @@
    - register-foreign-callable
 
 
+** All ff functions appearing in project
+   Complete list of all ff functions that appear (possibly somm are
+   never actualy used)
+
+   allocate-fobject
+   allocate-fobject-c
+   compile-foreign-type
+   convert-foreign-name
+   cstruct
+   cstruct-prop
+   cstruct-property-initialize
+   cstruct-property-length 
+   def-c-atype
+   def-c-type
+   def-c-typedef
+   def-foreign-call
+   def-foreign-type
+   defforeign-list 
+   defun-c-callable
+   defun-foreign-callable
+   euc-to-char*
+   foreign-address
+   foreign-pointer
+   foreign-pointer-address
+   free-fobject-c
+   fslot-address-typed
+   fslot-value
+   fslot-value-typed
+   get-entry-point
+   get-extern-data-address
+   make-cstruct
+   register-foreign-callable
+   sizeof-fobject
+   with-stack-fobject
+
+
+
+
+
+
 ** CFFI conversion
 
    All Allegro CL C foreign function calls should be wrapped in files
    called <alisp-fn>-wrapper.lisp.  The supcelia variable tk::use-cffi
    should be set to t and the project then recompiled.
+
+
+** Files containing Allegro Foreign function calls
+
+   aclpc/acl-class.lisp
+   aclpc/acl-frames.lisp
+   aclpc/acl-medium.lisp
+   aclpc/acl-port.lisp
+   aclpc/acl-prel.lisp
+   aclpc/winwidgh.lisp
+   tk-silica/ol-gadgets.lisp
+   tk-silica/xm-gadgets.lisp
+   tk-silica/xm-silica.lisp
+   tk/callbacks.lisp
+   tk/convenience.lisp
+   tk/event.lisp
+   tk/font.lisp
+   tk/foreign-obj.lisp
+   tk/foreign.lisp
+   tk/gcontext.lisp
+   tk/load-ol.lisp
+   tk/macros.lisp
+   tk/make-classes.lisp
+   tk/meta-tk.lisp
+   tk/ol-funs.lisp
+   tk/resources.lisp
+   tk/widget.lisp
+   tk/xlib.lisp
+   tk/xm-defs-wrapper.lisp
+   tk/xm-defs.lisp
+   tk/xm-funs.lisp
+   tk/xt-defs.lisp
+   tk/xt-funs.lisp
+   utils/lisp-utilities.lisp
+   wnn/jl-defs.lisp
+   wnn/jl-funs.lisp
+   xlib/def-exported-foreign-struct-cffi.lisp
+   xlib/ffi.lisp
+   xlib/load-xlib.lisp
+   xlib/xlib-defs-lab.lisp
