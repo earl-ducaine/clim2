@@ -9,13 +9,13 @@
 ;;; Portions copyright (c) 1992, 1993 Franz, Inc."
 
 
-;;; Locks 
+;;; Locks
 
 (eval-when (compile load eval)
 ;;;  (require :mdproc)
   (require :process))
 
-(defvar *multiprocessing-p* 
+(defvar *multiprocessing-p*
   #{
     (or allegro Genera Lucid Lispworks Minima) t
     otherwise nil
@@ -36,7 +36,7 @@
 #+(and allegro mswindows)
 (excl:defun-proto process-wait (wait-reason predicate &rest args)
   (declare (dynamic-extent predicate args)))
-  
+
 ;;-- I dont think we need this
 ;#+Allegro
 ;(unless (excl::scheduler-running-p)
@@ -123,7 +123,7 @@
 (defmacro without-scheduling (&body forms)
   "Evaluate the forms w/o letting any other process run."
   #{
-    allegro    `(excl:without-interrupts ,@forms) 
+    allegro    `(excl:with-delayed-interrupts ,@forms)
     lispworks  `(sys::without-scheduling ,@forms)
     Lucid      `(lcl:with-scheduling-inhibited ,@forms)
     Xerox      `(progn ,@forms)
@@ -153,7 +153,7 @@
 (defmacro atomic-incf (reference &optional (delta 1))
   (let ((value '#:value))
     (if (= delta 1)
-        `(without-scheduling 
+        `(without-scheduling
            (let ((,value ,reference))
              (if (eq ,value most-positive-fixnum)
                  (setf ,reference most-negative-fixnum)
@@ -189,7 +189,7 @@
 (defmacro atomic-decf (reference &optional (delta 1))
   (let ((value '#:value))
     (if (= delta 1)
-        `(without-scheduling 
+        `(without-scheduling
            (let ((,value ,reference))
              (if (eq ,value most-negative-fixnum)
                  (setf ,reference most-positive-fixnum)
@@ -279,7 +279,7 @@
        otherwise  (all-processes)
   }
   )
-  
+
 (eval-when (compile load eval) (proclaim '(inline process-yield)))
 (defun process-yield ()
   #{
@@ -320,7 +320,7 @@
 (defun process-wait-with-timeout (wait-reason timeout predicate)
   #+(or Genera Minima) (declare (dynamic-extent predicate))
   "Cause the current process to go to sleep until the predicate returns TRUE or
-   timeout seconds have gone by." 
+   timeout seconds have gone by."
   (when (null timeout)
     ;; ensure genera semantics, timeout = NIL means indefinite timeout
     (return-from process-wait-with-timeout

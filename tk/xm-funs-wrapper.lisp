@@ -38,7 +38,7 @@
 		    (alisp_xm_font_list_free_font_context x))
 
 (instrumented-defun xm_font_list_get_next_font (x y z)
-		    (alisp_xm_font_list_free_font_context x y z))
+		    (alisp_xm_font_list_get_next_font x y z))
 
 (instrumented-defun xm_font_list_create (x y)
 		    (alisp_xm_font_list_create x y))

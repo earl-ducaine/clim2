@@ -302,7 +302,7 @@
 	  (push (cadr rvs) values))
 	(setq resources (nreverse resources))
 	(setq values (nreverse values))
-	(excl::without-interrupts
+	(clim-utils::without-scheduling
 	  ;; We don't really want anyone else to grab the same cache entry.
 	  (let* ((class (class-of widget))
 		 (parent-class (let ((p (tk::widget-parent widget)))
@@ -429,11 +429,11 @@
     (int :signed-long)
     (boolean :unsigned-byte)
     (ol-define :unsigned-word)
-    
+
     ;; rfe4722
     #+(and big-endian 64bit)
     (cardinal :unsigned-long32)
-    
+
     (t :unsigned-natural)))
 
 

@@ -10,12 +10,11 @@
     (
      (:file "cat")
      (:file "utils/excl-verification")
-     (:file "package")
      (:file "utils/packages")
      (:file "demo/packages")
      (:file "test/test-pkg")
+     (:file "package")
      (:file "load-clim")
-     (:file "tk/pkg")
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
 
@@ -127,6 +126,8 @@
 
      (:file "tk/macros")
      (:file "tk/xt-defs")
+     (:file "tk/xt-defs-wrapper")
+
      (:file "tk/xt-funs")
      (:file "tk/xt-funs-wrapper")
      (:file "tk/foreign-obj")

@@ -184,7 +184,7 @@
 	  :data (make-sample-data 1000 0.0 25.0 #'sin 0.75 #'make-simple-datum)))
 
 (defmacro elapsed-time (&body body)
-  `(without-interrupts
+  `(without-scheduling
      (let ((.start. (get-internal-run-time)))
        (values
 	 (progn ,@body)
@@ -204,7 +204,7 @@
 (defclass datum (presentation displayed-output-record-element simple-datum)
     (;; XY -- stream coordinates (relative to output-record-parent)
      (x :initarg :x)
-     (y :initarg :y)     
+     (y :initarg :y)
      (parent :initform nil :accessor output-record-parent)
      (type :initform 'expression :reader presentation-type)))
 
@@ -260,7 +260,7 @@
     ;; the higher level functions, which is OK during REPLAY.
     ;; This is what all the REPLAY methods do for standard output records.
     #-ignore
-    (draw-point-internal stream x-offset y-offset x y 
+    (draw-point-internal stream x-offset y-offset x y
 			 (medium-ink stream) (medium-line-style stream))))
 
 (defmethod output-record-refined-sensitivity-test ((datum datum) x y)
@@ -308,7 +308,7 @@
 ;;;**********************
 
 ;;; This optimization provides a new type of output record that is
-;;; very similar to linear-output-record.  
+;;; very similar to linear-output-record.
 
 (defclass dataset-output-record (output-record-mixin output-record-element-mixin dataset)
     ())
@@ -345,7 +345,7 @@
   (when errorp (error "Can't do that")))
 
 (defmethod map-over-output-record-elements-overlapping-region
-	   ((record dataset-output-record) region continuation 
+	   ((record dataset-output-record) region continuation
 	    &optional (x-offset 0) (y-offset 0) &rest continuation-args)
   (declare (dynamic-extent continuation continuation-args))
   (declare (fixnum x-offset y-offset))
@@ -375,7 +375,7 @@
   nil)
 
 (defmethod map-over-output-record-elements-containing-point*
-	   ((record dataset-output-record) x y continuation 
+	   ((record dataset-output-record) x y continuation
 	    &optional (x-offset 0) (y-offset 0) &rest continuation-args)
   (declare (dynamic-extent continuation continuation-args))
   (declare (fixnum x y x-offset y-offset))
@@ -453,4 +453,3 @@
   ;; About 2x faster than GRAPH2.
   (terpri stream)
   (elapsed-time (display-data *dataset3* stream)))
-
