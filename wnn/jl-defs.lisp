@@ -1,6 +1,6 @@
 ;; -*- mode: common-lisp; package: wnn -*-
 ;;
-;; 
+;;
 ;; See the file LICENSE for the full license governing this code.
 ;;
 
@@ -22,22 +22,21 @@
 (defconstant wnn_yomi 0)
 (defconstant wnn_kanji 1)
 
-(def-c-type (wnn-buf :no-defuns) :struct
-	    (env * wnn-env)
-	    (bun-suu :unsigned-int)
-	    (zenkouho-suu :unsigned-int)
-	    (bun * * wnn-bun)
-	    (down-bnst * * wnn-bun)
-	    (zenkouho * * wnn-bun)
-	    (zenkouho-dai * :unsigned-int)
-	    (zenkouho-dai-suu :unsigned-int)
-	    (c-zenkouho :short)
-	    (zenkouho-daip :short)
-	    (zenkouho-bun :signed-int)
-	    (zenkouho-end-bun :signed-int)
-	    (zenkouho-endvect :signed-int)
-	    (free-heap * wnn-bun)
-	    (heap * char)
-	    (msize-bun :unsigned-int)
-	    (msize-zenkouho :unsigned-int))
-
+(ff:def-c-type (wnn-buf :no-defuns) :struct
+  (env * wnn-env)
+  (bun-suu :unsigned-int)
+  (zenkouho-suu :unsigned-int)
+  (bun * * wnn-bun)
+  (down-bnst * * wnn-bun)
+  (zenkouho * * wnn-bun)
+  (zenkouho-dai * :unsigned-int)
+  (zenkouho-dai-suu :unsigned-int)
+  (c-zenkouho :short)
+  (zenkouho-daip :short)
+  (zenkouho-bun :signed-int)
+  (zenkouho-end-bun :signed-int)
+  (zenkouho-endvect :signed-int)
+  (free-heap * wnn-bun)
+  (heap * char)
+  (msize-bun :unsigned-int)
+  (msize-zenkouho :unsigned-int))
