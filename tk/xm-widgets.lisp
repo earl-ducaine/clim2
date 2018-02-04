@@ -65,7 +65,7 @@
 
 ;;-- This is a problem cos we dont know the number of items
 
-(defconstant xm-font-list-default-tag 
+(defconstant xm-font-list-default-tag
     ;; This must be converted to a native string before being passed
     ;; to any of the XmString functions.
     "FONTLIST_DEFAULT_TAG_STRING")
@@ -107,11 +107,11 @@
 
 (excl:ics-target-case
  (:+ics
-  
+
   (defvar *empty-compound-string* nil)
 
   (eval-when (compile) (declaim (special *font-list-tags*)))
-  
+
   (defun partition-compound-string (s f &key (start 0) (end (length s)))
     (unless (eql (length s) 0)
       (let ((c 0)
@@ -126,7 +126,7 @@
             (if break
                 (setq index break)
                 (return-from partition-compound-string)))))))
-  
+
   (defmethod convert-resource-out ((parent t) (type (eql 'xm-string)) value)
     (let ((result nil))
       (flet ((extract-element (codeset start end)
@@ -152,10 +152,10 @@
             *empty-compound-string*
             (setq *empty-compound-string*
                   (xm_string_create_l_to_r (clim-utils:string-to-foreign "")
-                                           (clim-utils:string-to-foreign 
+                                           (clim-utils:string-to-foreign
                                             xm-font-list-default-tag))))))
     ;; this would be nice instead, but isn't happening anytime soon (spr30362):
-    #+xm-string-supports-utf-8 
+    #+xm-string-supports-utf-8
     (let ((native-string (clim-utils:string-to-foreign value)))
       (let ((xm-string (xm_string_create_localized native-string)))
         (tk::add-widget-cleanup-function parent #'destroy-generated-xm-string
@@ -183,7 +183,7 @@
 		   s2)))
 	(tk::add-widget-cleanup-function parent
 					 #'destroy-generated-xm-string
-					 temp) 
+					 temp)
 	temp))
     )))
 
@@ -295,11 +295,11 @@
 (defvar *lookup-string-buffer-size* 256)
 
 (defmacro with-lookup-string-buffer ((var) &body body)
-  `(let ((,var (or (excl:without-interrupts (pop *lookup-string-buffers*))
+  `(let ((,var (or (clim-utils::without-scheduling (pop *lookup-string-buffers*))
                    (excl::aclmalloc *lookup-string-buffer-size*))))
      (multiple-value-prog1
        (progn ,@body)
-       (excl:without-interrupts (push buffer *lookup-string-buffers*)))))
+       (clim-utils::without-scheduling (push buffer *lookup-string-buffers*)))))
 
 (defun lookup-multibyte-string (event widget)
   (declare (optimize (speed 3) (safety 0)))

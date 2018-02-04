@@ -12,8 +12,8 @@
      (:file "utils/excl-verification")
      (:file "utils/packages")
      (:file "demo/packages")
-     (:file "test/test-pkg")
      (:file "package")
+     (:file "test/test-pkg")
      (:file "load-clim")
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
@@ -151,6 +151,7 @@
 
 
      (:file "tk/xm-defs")
+     (:file "tk/xm-defs-wrapper")
      (:file "tk/xm-funs")
      (:file "tk/xm-funs-wrapper")
      (:file "tk/xm-classes")

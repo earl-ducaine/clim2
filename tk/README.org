@@ -6,7 +6,12 @@
    All Allegro CL dependant Foreign interface stuff should be in this
    folder.  The following functions need to be wrapped
 
+   - def-c-type
+   - def-c-typedef
    - def-foreign-call
+   - def-foreign-type
+   - defun-foreign-callable
+   - register-foreign-callable
 
 
 ** CFFI conversion

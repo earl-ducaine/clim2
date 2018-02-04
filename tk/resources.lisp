@@ -479,7 +479,7 @@
   (declare (optimize (speed 3))
 	   (dynamic-extent resources))
   (with-malloced-objects
-      (excl::without-interrupts
+      (clim-utils::without-scheduling
 	;; We don't really want anyone else to grab the same cache entry.
 	(let* ((class (class-of widget))
 	       (parent-class (let ((p (tk::widget-parent widget)))

@@ -208,6 +208,7 @@
 	(y (random 200)))
     (position-sheet-carefully (frame-top-level-sheet *application-frame*) x y)
     (multiple-value-bind (nx ny)
+	(declare (ignore nx ny))
 	;; (tk::get-values (silica:frame-shell *application-frame*) :x :y)
       ;; this tends to fail because the window decoration appears to
       ;; be taken into consideration in the position-sheet-carefully

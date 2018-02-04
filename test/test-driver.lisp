@@ -96,6 +96,7 @@
 (defun wait-for-clim-input-state (invocation &optional (timeout *default-input-state-timeout*))
   (let ((process (invocation-process invocation)))
     (let ((port (port (invocation-frame invocation))))
+      (declare (ignore port))
       ;; (when port #-acl86win32 (xm-silica::port-finish-output port))
       )
     (mp:process-allow-schedule)

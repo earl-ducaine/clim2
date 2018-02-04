@@ -125,7 +125,7 @@
 	(initialize-xlib-port port display)))))
 
 (defun xt-fatal-error-handler (d)
-  (excl:without-interrupts
+  (clim-utils::without-scheduling
     (let* ((display (tk::find-object-from-address d))
 	   (context (tk::display-context display)))
       (block done
@@ -2294,7 +2294,7 @@ the geometry of the children. Instead the parent has control. "))
 ;;; why don't we use the default in silica/port.lisp???
 
 (defmethod destroy-port ((port xt-port))
-  (excl:without-interrupts
+  (clim-utils::without-scheduling
     (tk::xt_destroy_application_context (port-context port))
     (when (port-process port)
       (clim-sys:destroy-process (port-process port)))

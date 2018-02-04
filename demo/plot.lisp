@@ -626,6 +626,7 @@
     ((printer '(member :|lw| :|lw2| :|lw3|)
 	      :display-default t
 	      :default :lw2))
+  (declare (ignore printer))
   #+mswindows (declare (ignore printer))
   #+mswindows
   (notify-user *application-frame* "Not implemented on this platform")
