@@ -79,7 +79,7 @@
 (defvar *event-matching-event* nil)
 
 (defun make-xevent ()
-  (clim-utils::allocate-cstruct 'x11::xevent :initialize t))
+  (allocate-cstruct 'x11::xevent :initialize t))
 
 (defun event-matching-event ()
   (or *event-matching-event*
@@ -113,7 +113,7 @@
 	 (addr (or *match-event-sequence-and-types-address*
 		   (setq *match-event-sequence-and-types-address*
 		     (ff:register-foreign-callable 'match-event-sequence-and-types-using-structure)))))
-    (let ((data (allocate-fobject 'event-match-info :c)))
+    (let ((data (ff:allocate-fobject 'event-match-info :c)))
       (unwind-protect
           (progn
             (setf (fslot-value-typed 'event-match-info :c data 'display) (ff:foreign-pointer-address display)

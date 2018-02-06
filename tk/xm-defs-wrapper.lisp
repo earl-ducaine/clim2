@@ -5,11 +5,6 @@
 
 (in-package :tk)
 
-;; (ff:def-c-type (alisp-xm-protocol :no-defuns :no-constructor) :struct
-;;   (object * :char)
-;;   (ext * :char)
-;;   (protocol * :char))
-
 ;; (ff:def-c-typedef alisp-xm-string :int)
 ;; (ff:def-c-typedef alisp-xm-text-position :long)
 

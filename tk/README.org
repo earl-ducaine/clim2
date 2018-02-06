@@ -15,43 +15,65 @@
 
 
 ** All ff functions appearing in project
+   
+
+** Raw list of ff functions
    Complete list of all ff functions that appear (possibly somm are
    never actualy used)
 
-   allocate-fobject
-   allocate-fobject-c
-   compile-foreign-type
-   convert-foreign-name
-   cstruct
-   cstruct-prop
-   cstruct-property-initialize
-   cstruct-property-length 
-   def-c-atype
-   def-c-type
-   def-c-typedef
-   def-foreign-call
-   def-foreign-type
-   defforeign-list 
-   defun-c-callable
-   defun-foreign-callable
-   euc-to-char*
-   foreign-address
-   foreign-pointer
-   foreign-pointer-address
-   free-fobject-c
-   fslot-address-typed
-   fslot-value
-   fslot-value-typed
-   get-entry-point
-   get-extern-data-address
-   make-cstruct
-   register-foreign-callable
-   sizeof-fobject
-   with-stack-fobject
+   - allocate-fobject
+   - allocate-fobject-c
+   - compile-foreign-type
+   - convert-foreign-name
+   - cstruct
+   - cstruct-prop
+   - cstruct-property-initialize
+   - cstruct-property-length 
+   - def-c-atype
+   - def-c-type
+   - def-c-typedef
+   - def-foreign-call
+   - def-foreign-type
+   - defforeign-list 
+   - defun-c-callable
+   - defun-foreign-callable
+   - euc-to-char*
+   - foreign-address
+   - foreign-pointer
+   - foreign-pointer-address
+   - free-fobject-c
+   - fslot-address-typed
+   - fslot-value
+   - fslot-value-typed
+   - get-entry-point
+   - get-extern-data-address
+   - make-cstruct
+   - register-foreign-callable
+   - sizeof-fobject
+   - with-stack-fobject
 
 
+   
+** Steps for convesion
+   In general try tackle this in in a lower level to higher-level
+   approach.  But a good start might be types, then structs, then
+   functions, then classes?
 
+   Strings might cause special problems because of the way that Motif
+   prefers to be responsible for alocating and destroying them.
 
+   1. Rename function with alist-<function-name>, e.g.
+      allocate-fobject --> alisp-allocate-fobject
+
+   2. Create a new function with the same name and signature that
+      calls the old function, but can conditionally record calls for
+      playback and can conditionall switch to the cffi implementation.
+
+   3. Create a playback function that call the recorded script.
+
+   4. Create cffi replacement and test that interface out.
+
+   5. Refactor any incompatabilities.
 
 
 ** CFFI conversion

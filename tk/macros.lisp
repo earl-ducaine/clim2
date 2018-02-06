@@ -58,7 +58,7 @@
 
 (defvar *malloced-objects*)
 
-(defun note-malloced-object (obj &optional (free #'clim-utils::system-free))
+(defun note-malloced-object (obj &optional (free #'system-free))
   (push (cons free obj) *malloced-objects*)
   obj)
 

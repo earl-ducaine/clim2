@@ -56,7 +56,7 @@
 					  :name :menu-pane
 					  :type 'widget
 					  :original-name
-					  (clim-utils:string-to-foreign
+					  (string-to-foreign
 					   "menuPane")))
 
 (add-resource-to-class (find-class 'abbrev-menu-button)
@@ -64,7 +64,7 @@
 				      :name :menu-pane
 				      :type 'widget
 				      :original-name
-				      (clim-utils:string-to-foreign
+				      (string-to-foreign
 				       "menuPane")))
 
 #+dlfcn

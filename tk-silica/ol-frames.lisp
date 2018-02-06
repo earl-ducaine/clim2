@@ -17,7 +17,7 @@
     (let ((shell (frame-shell frame)))
       (tk::add-ol-callback
        shell
-       (clim-utils:string-to-foreign "wmProtocol")
+       (string-to-foreign "wmProtocol")
        :wm-protocol
        'ol-frame-wm-protocol-callback
        frame))))
@@ -25,9 +25,6 @@
 (defun ol-frame-wm-protocol-callback (shell value frame)
   (when (eq value :wm-delete-window)
     (frame-wm-protocol-callback shell frame)))
-
-
-;;;;
 
 (defmethod frame-manager-construct-menu
 	   ((framem openlook-frame-manager)

@@ -76,7 +76,7 @@
 	(multiple-value-bind (arglist n)
 	    (make-arglist-for-class class parent args)
 	  (funcall fn
-		   (note-malloced-object (clim-utils:string-to-foreign name))
+		   (note-malloced-object (string-to-foreign name))
 		   handle
 		   parent
 		   arglist
@@ -131,7 +131,7 @@
 	(multiple-value-bind (arglist n)
 	    (make-arglist-for-class class parent args)
 	  (incf *widget-count*)
-	  (xt_create_popup_shell (note-malloced-object (clim-utils:string-to-foreign name))
+	  (xt_create_popup_shell (note-malloced-object (string-to-foreign name))
 				 handle
 				 parent
 				 arglist
@@ -270,8 +270,8 @@
 (defconstant xt-geometry-done 3)
 
 (defun make-xt-widget-geometry ()
-  (clim-utils::allocate-cstruct 'xt-widget-geometry
-				:number 1 :initialize t))
+  (allocate-cstruct 'xt-widget-geometry
+		    :number 1 :initialize t))
 
 (defmethod widget-best-geometry (widget &key width height)
   (let ((preferred (make-xt-widget-geometry)))
@@ -331,7 +331,7 @@
  (:+ics
   (defun setlocale (&optional (category 0) locale)
     (let ((r (setlocale-1 category (or (and locale
-					    (clim-utils:string-to-foreign locale))
+					    (string-to-foreign locale))
 				       0))))
       (unless (zerop r)
 	(values (excl:native-to-string r)))))))
@@ -389,7 +389,7 @@
 	 (with-*-array (v (1+ n))
 	   (dotimes (i n)
 	     (setf (*-array v i)
-                   (clim-utils:string-to-foreign (nth i *fallback-resources*))))
+                   (string-to-foreign (nth i *fallback-resources*))))
 	   (setf (*-array v n) 0)
 	   v))))
     (excl:ics-target-case

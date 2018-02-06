@@ -1663,7 +1663,7 @@
 	(let ((x (tk::make-ol-list-item :in-foreign-space t))
 	      (selected-p (list-pane-selected-item-p sheet item)))
 	  (setf (tk::ol-list-item-label-type x) tk::ol-string
-		(tk::ol-list-item-label x) (clim-utils:string-to-foreign (funcall name-key item))
+		(tk::ol-list-item-label x) (string-to-foreign (funcall name-key item))
 		(tk::ol-list-item-mnemonic x) 0
 		(tk::ol-list-item-attr x)
 		(dpb (if selected-p 1 0)

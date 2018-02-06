@@ -35,7 +35,7 @@
   (:documentation "The port for X intrinsics based ports"))
 
 (defun make-xcomposestatus ()
-  (clim-utils::allocate-cstruct 'x11::xcomposestatus :initialize t))
+  (tk::allocate-cstruct 'x11::xcomposestatus :initialize t))
 
 (defmethod port-type ((port xt-port))
   ':xt)

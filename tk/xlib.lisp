@@ -41,10 +41,10 @@
       '(x y width height border-width sibling stacking-mode)))
 
 (defun make-xsetwindowattributes ()
-  (clim-utils::allocate-cstruct 'x11::xsetwindowattributes :initialize t))
+  (allocate-cstruct 'x11::xsetwindowattributes :initialize t))
 
 (defun make-xwindowattributes ()
-  (clim-utils::allocate-cstruct 'x11::xwindowattributes :initialize t))
+  (allocate-cstruct 'x11::xwindowattributes :initialize t))
 
 (eval-when (compile eval)
   (defmacro define-window-reader (name &optional decoder &rest args)
@@ -176,7 +176,7 @@
     (setf (ff:foreign-pointer-address db) (x11:xrmgetstringdatabase ""))))
 
 (defun make-xrmvalue ()
-  (clim-utils::allocate-cstruct 'x11::xrmvalue :initialize t))
+  (allocate-cstruct 'x11::xrmvalue :initialize t))
 
 (defun get-resource (db name class)
   (with-ref-par ((type 0 *))
@@ -337,8 +337,8 @@
 
 (defun make-xcolor (&key in-foreign-space (number 1))
   (declare (ignore in-foreign-space))
-  (clim-utils::allocate-cstruct 'x11::xcolor
-				:number number :initialize t))
+  (allocate-cstruct 'x11::xcolor
+		    :number number :initialize t))
 
 (defmethod initialize-instance :after
 	   ((x color) &key foreign-address (in-foreign-space t) red green blue (pixel 0))
@@ -465,27 +465,27 @@
 
 (defun make-xcolor-array (&key (number 1) in-foreign-space (initialize t))
   (declare (ignore in-foreign-space))
-  (clim-utils::allocate-cstruct 'x11::xcolor-array
+  (allocate-cstruct 'x11::xcolor-array
 				:number number :initialize initialize))
 
 (defun make-xsegment-array (&key (number 1) in-foreign-space (initialize t))
   (declare (ignore in-foreign-space))
-  (clim-utils::allocate-cstruct 'x11::xsegment-array
+  (allocate-cstruct 'x11::xsegment-array
 				:number number :initialize initialize))
 
 (defun make-xpoint-array (&key (number 1) in-foreign-space (initialize t))
   (declare (ignore in-foreign-space))
-  (clim-utils::allocate-cstruct 'x11::xpoint-array
+  (allocate-cstruct 'x11::xpoint-array
 				:number number :initialize initialize))
 
 (defun make-xrectangle-array (&key (number 1) in-foreign-space (initialize t))
   (declare (ignore in-foreign-space))
-  (clim-utils::allocate-cstruct 'x11::xrectangle-array
-				:number number :initialize initialize))
+  (allocate-cstruct 'x11::xrectangle-array
+		    :number number :initialize initialize))
 
 (defun make-xarc-array (&key (number 1) in-foreign-space (initialize t))
   (declare (ignore in-foreign-space))
-  (clim-utils::allocate-cstruct 'x11::xarc-array
+  (allocate-cstruct 'x11::xarc-array
 				:number number :initialize initialize))
 
 (def-foreign-array-resource xcolor-array make-xcolor-array)

@@ -123,6 +123,8 @@
      (:file "xlib/xlib-funs")
      (:file "xlib/x11-keysyms")
      (:file "xlib/last")
+     (:file "xlib/xlib-defs-lab")
+     (:file "xlib/def-exported-foreign-struct-cffi")
 
      (:file "tk/macros")
      (:file "tk/xt-defs")
@@ -181,8 +183,8 @@
 
      ;; system: testing
      (:file "test/test-driver")
-     (:file "test/test-clim-tests")
      (:file "test/test-clim")
+     (:file "test/test-clim-tests")
      (:file "test/test-demos")
 
      (:file "wnn/pkg")

@@ -106,12 +106,12 @@
 	   (setf (getf initargs :label-string) (or label "")))
 	 (when (typep sheet 'tk-silica::motif-toggle-button)
 	   ;; SPR25487 -- P&C
-	   ;; Under Motif2.1  a toggle-button, with an empty 
-	   ;; label is drawn too small (Motif1.2 had a 
+	   ;; Under Motif2.1  a toggle-button, with an empty
+	   ;; label is drawn too small (Motif1.2 had a
 	   ;; more reasonable size for the label-less toggle.)
 	   ;; Since Clim  can draw its own prompts (especially in
 	   ;; accepting-values) this can cause display-misalignments.
-	   ;; I can find no direct way to over-ride this, 
+	   ;; I can find no direct way to over-ride this,
 	   ;; so the work-around is to given the label-less
 	   ;; toggle-button a blank-space as a label.
 	   (let ((old-label-string (getf initargs :label-string)))
@@ -877,9 +877,8 @@
 	    (subseq silica::value end-pos))))
       (unless (zerop length)
 	(setf (tk::xm-text-block-rec-ptr text-block)
-	  (clim-utils:string-to-foreign (text-field-echoed-value sheet text)))))))
+	  (string-to-foreign (text-field-echoed-value sheet text)))))))
 
-
 ;;; New definitions to support specifying width and height in terms of
 ;;; lines and characters.
 

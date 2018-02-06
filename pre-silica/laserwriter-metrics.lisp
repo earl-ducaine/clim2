@@ -2062,7 +2062,7 @@
 
 #||
 %!
-% Postscript program to print out the widths of a representative set of 
+% Postscript program to print out the widths of a representative set of
 % characters in each of several fonts.
 
 % By Mark Nahabedian, 1/8/90, Symbolics Inc.
@@ -2074,7 +2074,7 @@
 /TheseFonts [ /Helvetica-BoldOblique /Times-Roman ] def
 /CourierFonts [ /Courier /Courier-Bold /Courier-Oblique /Courier-BoldOblique ] def
 
-% Text 'cursor' positioning stuff:
+% Text 'cursor' positioning stuff :
 /StartPage { /y 700 def } def
 /NextLine { /y y 20 sub def } def
 /Space { (  ) show } def
@@ -2123,7 +2123,7 @@
 } def
 
 % fontname
-/DoFont { 
+/DoFont {
 	dup FontSetup
 	    scaled setfont Tab0
 	    stringbuf cvs show Tab1

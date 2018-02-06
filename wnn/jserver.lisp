@@ -131,14 +131,14 @@
 (defmethod jie-get-kanji ((js jserver) bunsetu kouho)
   (get-kouho-kanji js bunsetu kouho))
 
-(defmethod jie-end-kanji-conversion ((js jserver) kouhos)
-  (let ((bunsetu 0)
-	(r ""))
-    (dolist (kouho kouhos)
-      (setq r
-	(concatenate 'string r (get-kouho-kanji bunsetu kouho t)))
-      (incf bunsetu))
-    r))
+;; (defmethod jie-end-kanji-conversion ((js jserver) kouhos)
+;;   (let ((bunsetu 0)
+;; 	(r ""))
+;;     (dolist (kouho kouhos)
+;;       (setq r
+;; 	(concatenate 'string r (get-kouho-kanji bunsetu kouho t)))
+;;       (incf bunsetu))
+;;     r))
 
 (defmethod find-kanji-server-type ((type (eql ':jserver)))
   'jserver)

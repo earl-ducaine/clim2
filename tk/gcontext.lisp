@@ -39,7 +39,7 @@
 	arc-mode)))
 
 (defun make-xgcvalues ()
-  (clim-utils::allocate-cstruct 'x11::xgcvalues :initialize t))
+  (allocate-cstruct 'x11::xgcvalues :initialize t))
 
 (eval-when (compile eval)
   #+ignore

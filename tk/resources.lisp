@@ -259,11 +259,9 @@
       (call-next-method)))
 
 
-
-
 (defun make-xt-arglist (&key (number 1))
-  (clim-utils::allocate-cstruct 'xt-arglist
-				:number number :initialize t))
+  (allocate-cstruct 'xt-arglist
+		    :number number :initialize t))
 
 (defun fill-sv-cache (parent-class class resources)
   (let* ((len (length resources))
@@ -450,7 +448,7 @@
     ;; pointer but is really just the value.
     (dotimes (j len)
       (setf (xt-arglist-value arglist j)
-	(clim-utils::allocate-memory #-64bit 8 #+64bit 16 0)))
+	(allocate-memory #-64bit 8 #+64bit 16 0)))
     (dolist (r resources)
       (let ((resource (or (find-class-resource class r)
 			  (psetq constraint-resource-used t)
@@ -617,12 +615,8 @@
      ;;     type xm-string, which works.
      ;; If you make a change here, you can test it by creating
      ;; a text-field pane whose :value is an international string.
-     #+ignore
-     (let ((euc (excl:string-to-euc value)))
-       (ff:euc-to-char* euc))
-     (clim-utils:string-to-foreign value); sorry
-     )
-    (:-ics (clim-utils:string-to-foreign value)))))
+     (string-to-foreign value))
+    (:-ics (string-to-foreign value)))))
 
 (defvar *font-counter* 0)
 (defmethod convert-resource-out ((parent t) (type (eql 'font-struct)) value)
@@ -783,7 +777,7 @@
 
 (defmethod convert-resource-out ((parent  t) (type (eql 'ol-str)) value)
   (note-malloced-object
-   (clim-utils:string-to-foreign value)))
+   (string-to-foreign value)))
 
 (defmethod convert-resource-in ((parent t) (type (eql 'ol-str)) value)
   (unless (zerop value)

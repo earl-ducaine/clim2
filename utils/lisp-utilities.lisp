@@ -73,12 +73,12 @@
 
 
 ;; rfe5546 - evaluate the from-end argument at run-time
-;;   This is a deviation from the old definition which evaluated from-end 
+;;   This is a deviation from the old definition which evaluated from-end
 ;;   (twice) at compile-time.
-;;   All CLIM uses are compile-time constants. 
+;;   All CLIM uses are compile-time constants.
 ;;   Any non-contant usage would have generaed a compiler error or very
 ;;   incorrect code.
-(defmacro dovector ((var vector &key (start 0) end from-end simple-p) 
+(defmacro dovector ((var vector &key (start 0) end from-end simple-p)
 		    &body body)
   (unless (constantp simple-p)
     (setq simple-p nil)
@@ -96,8 +96,8 @@
     `(block nil
        (let* ((,fvector ,vector)
 	      (,startd ,start)
-	      (,endd ,(if simple-p 
-			  `,end 
+	      (,endd ,(if simple-p
+			  `,end
 			`(or ,end (length ,fvector))))
 	      (,fromend ,from-end)
 	      (,index (if ,fromend (1- ,endd) ,startd))
@@ -1632,75 +1632,3 @@
     (nreverse forms)))
 
 ||#
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Foreign Structure Constructors
-;;;
-
-;;; This is here to limit need for FF package to compile time.
-(defun system-free (x) (excl:free x))
-
-;;; ALLOCATE-CSTRUCT was adapted from ff:make-cstruct.
-;;; We aren't using ff:make-cstruct because it uses excl:aclmalloc.
-#-mswindows
-(defun allocate-cstruct (name &key
-			      (number 1)
-			      (initialize
-			       (ff::cstruct-property-initialize
-				(ff::cstruct-prop name)))
-			      )
-  (declare (optimize (speed 3)))
-  (let* ((prop (ff::cstruct-prop name))
-	 (size (* number (ff::cstruct-property-length prop))))
-    (when initialize (setq initialize 0))
-    (allocate-memory size initialize)))
-
-(defun allocate-memory (size init)
-  ;; Used only by ALLOCATE-CSTRUCT.
-  (let ((pointer (excl:malloc size)))
-    (when init
-      (do ((i 0 (+ i #-64bit 4 #+64bit 8)))
-	  ((>= i size))
-	(declare (fixnum i))
-	(setf (sys:memref-int pointer i 0 :unsigned-natural) 0)))
-    pointer))
-
-;;; We aren't using excl:string-to-native by default because it uses
-;;; excl:aclmalloc.
-;;; aclmalloc is bad because Motif tries to free certain values
-;;; itself, and will then crash and burn if they were allocated with
-;;; aclmalloc.
-;; This now uses the slightly slower (locale-correct) way of
-;; converting to octets first, then copying to foreign space.
-(defun string-to-foreign (string &optional address)
-  "Convert a Lisp string to a C string, by copying."
-  (declare (optimize (speed 3))
-                (type string string)
-                (type integer address))
-  (unless (stringp string)
-    (excl::.type-error string 'string))
-  (if address
-      (excl:string-to-native string :address address)
-      (let* ((octets (excl:string-to-octets string :null-terminate t))
-             (length (length octets)))
-        (declare (optimize (safety 0))
-                      (type fixnum length))
-        (setf address (excl:malloc length))
-        (dotimes (i length)
-          (declare (fixnum i))
-          (setf (sys:memref-int address 0 i :unsigned-byte)
-                (aref octets i)))
-        #+clim-utils::extra-careful(let ((re-char-ed (excl:octets-to-string octets)))
-          (assert (equal re-char-ed string)
-                  (re-char-ed string)
-                  "string isn't equal to re-chared octets~%~S~%~S!" string re-char-ed))))
-  
-  #+clim-utils::extra-careful(let ((re-lisped (excl:native-to-string address)))
-    (assert (equal re-lisped string)
-            (re-lisped string)
-            "string isn't equal to re-chared foreign mem ~%~S~%~S!" string re-lisped))
-  address)

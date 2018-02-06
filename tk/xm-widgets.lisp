@@ -257,7 +257,7 @@
 					   "wordWrap")))
 
 (defun make-xm-string-table (&key (number 1))
-  (clim-utils::allocate-cstruct 'xm-string-table
+  (allocate-cstruct 'xm-string-table
 				:number number :initialize t))
 
 (defmethod convert-resource-out ((parent t) (type (eql 'xm-string-table)) value)

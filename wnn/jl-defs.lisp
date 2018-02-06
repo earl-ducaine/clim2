@@ -1,8 +1,8 @@
 ;; -*- mode: common-lisp; package: wnn -*-
-;;
-;;
+
 ;; See the file LICENSE for the full license governing this code.
-;;
+
+;; Japanese character stuff.
 
 (in-package :wnn)
 

@@ -153,7 +153,7 @@
 		 (missing-count 0 :int)
 		 (def-string 0 *))
     (let ((font-set (x11:xcreatefontset display
-					(clim-utils:string-to-foreign base-font-names)
+					(string-to-foreign base-font-names)
 					&missing-list
 					&missing-count
 					&def-string))
@@ -209,7 +209,7 @@
       (nreverse fonts))))
 
 (defun make-xrectangle (&key (number 1))
-  (clim-utils::allocate-cstruct 'x11::xrectangle
+  (allocate-cstruct 'x11::xrectangle
 				:initialize t
 				:number number))
 

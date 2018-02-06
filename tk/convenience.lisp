@@ -32,7 +32,7 @@
 					   args)
 	       (let ((o (,c-function-name
 			 parent
-			 (note-malloced-object (clim-utils:string-to-foreign name))
+			 (note-malloced-object (string-to-foreign name))
 			 arglist
 			 n)))
 		 (when managed
@@ -65,7 +65,7 @@
 					   args)
 	       (let ((o (,c-function-name
 			 parent
-			 (note-malloced-object (clim-utils:string-to-foreign name))
+			 (note-malloced-object (string-to-foreign name))
 			 arglist
 			 n)))
 		 (when managed
