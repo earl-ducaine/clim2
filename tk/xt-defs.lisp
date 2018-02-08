@@ -143,9 +143,13 @@
       (push (list (xt-offset-rec-name x)
 		  (xt-offset-rec-offset x)) r))))
 
-(def-c-type (xt-widget :no-defuns :no-constructor) :struct
+(ff:def-c-type (xt-widget :no-defuns :no-constructor) :struct
   (self :unsigned-long)
   (widget-class :unsigned-long))
+
+;; (def-c-type (xt-widget :no-defuns :no-constructor) :struct
+;;   (self :unsigned-long)
+;;   (widget-class :unsigned-long))
 
 (ff:def-c-type (xt-resource-list :in-foreign-space :no-defuns :no-constructor) 1 xt-resource)
 
@@ -177,7 +181,7 @@
 
 (ff:def-c-type (xt-widget-list :no-defuns :no-constructor) 1 * xt-widget)
 
-(def-c-type (xt-widget-geometry :no-defuns :no-constructor) :struct
+(ff:def-c-type (xt-widget-geometry :no-defuns :no-constructor) :struct
   (request-mode xt-geometry-mask)
   (x xt-position)
   (y xt-position)
