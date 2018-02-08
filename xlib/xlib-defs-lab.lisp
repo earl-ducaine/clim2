@@ -185,6 +185,26 @@
 	   :initial-value '()))))
     `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
 
+(defmacro def-c-typedef (lisp-type c-type)
+  `(progn
+     (ff:def-c-typedef ,lisp-type ,c-type)
+     (cffi:defctype ,lisp-type ,c-type)))
+
+(defmacro def-c-type (type-spec storage-type &body body)
+
+  `(progn
+     (ff:def-c-typedef ,type-spec ,storage-type ,@body)
+     (,(if (eq storage-type :struct) 'cffi:defcstruct 'cffi:defctype)
+       ,(if (consp type-spec) (car type-spec) type-spec)
+       ,@body)))
+
+  ;; `(progn
+  ;;    (ff:def-c-typedef ,lisp-type ,storage-type ,@body)
+  ;;    (,(if (eq storage-type :struct) 'cffi:defcstruct 'cffi:defctype)
+  ;;      ,lisp-type
+  ;;      ,c-type
+  ;;      ,@body)))
+
 ;; (def-exported-foreign-struct-cffi xextdata-cffi
 ;;     (number :type int)
 ;;   (next :type (:pointer xextdata))

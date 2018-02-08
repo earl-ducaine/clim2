@@ -1,5 +1,5 @@
 ;; See the file LICENSE for the full license governing this code.
-;;
+
 
 (in-package :xm-silica)
 
@@ -8,7 +8,7 @@
 (defvar *gc-after*  nil)
 
 (defun init-gc-cursor (frame &optional force)
-  
+
   (let ((pointer-type (first
                        (list #+(and 64bit (not alpha)) '(unsigned-byte 64)
                              ;; otherwise, use 32 bits:
@@ -22,7 +22,7 @@
           (pushnew (make-array 1 :element-type pointer-type
                                :initial-element *gc-before*)
                    (excl:gc-before-c-hooks))
-	
+
           (pushnew (make-array 1 :element-type pointer-type
                                :initial-element *gc-after*)
                    (excl:gc-after-c-hooks))))
@@ -54,5 +54,3 @@
   ;; so that it gets restored appropriately.
   (unless (eq (pointer-boundary-event-kind gesture) :inferior)
     (init-gc-cursor (pane-frame stream))))
-
-

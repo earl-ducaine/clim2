@@ -151,12 +151,12 @@
         (or result
             *empty-compound-string*
             (setq *empty-compound-string*
-                  (xm_string_create_l_to_r (clim-utils:string-to-foreign "")
-                                           (clim-utils:string-to-foreign
+                  (xm_string_create_l_to_r (string-to-foreign "")
+                                           (string-to-foreign
                                             xm-font-list-default-tag))))))
     ;; this would be nice instead, but isn't happening anytime soon (spr30362):
     #+xm-string-supports-utf-8
-    (let ((native-string (clim-utils:string-to-foreign value)))
+    (let ((native-string (string-to-foreign value)))
       (let ((xm-string (xm_string_create_localized native-string)))
         (tk::add-widget-cleanup-function parent #'destroy-generated-xm-string
                                          xm-string)
@@ -170,8 +170,8 @@
     (funcall f nil start end))
 
   (defmethod convert-resource-out ((parent t) (type (eql 'xm-string)) value)
-    (let ((s1 (clim-utils:string-to-foreign value))
-	  (s2 (clim-utils:string-to-foreign "")))
+    (let ((s1 (string-to-foreign value))
+	  (s2 (string-to-foreign "")))
       (tk::add-widget-cleanup-function parent
 				       #'destroy-generated-string
 				       s1)

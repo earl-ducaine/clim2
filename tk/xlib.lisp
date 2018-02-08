@@ -203,7 +203,7 @@
     (setf (x11:xrmvalue-size from) (1+ (length string))
 	  (x11:xrmvalue-addr from)
 	  (note-malloced-object
-	   (clim-utils:string-to-foreign string))
+	   (string-to-foreign string))
 	  (x11:xrmvalue-addr to-in-out) 0)
     (unless (zerop (xt::xt_convert_and_store widget "String" from to-type
 				      to-in-out))

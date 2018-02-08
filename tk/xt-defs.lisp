@@ -83,9 +83,9 @@
 (ff:def-c-typedef xrm-class  xrm-quark)
 (ff:def-c-typedef xt-enum   :unsigned-char)
 (ff:def-c-typedef xt-version-type :long)
-(ff:def-c-typedef xt-geometry-mask :unsigned-int)
-(ff:def-c-typedef xt-position :short)
-(ff:def-c-typedef xt-dimension :unsigned-short)
+(def-c-typedef xt-geometry-mask :unsigned-int)
+(def-c-typedef xt-position :short)
+(def-c-typedef xt-dimension :unsigned-short)
 (ff:def-c-typedef xt-pointer * char)
 
 (ff:def-c-type (xt-class :no-defuns :no-constructor) :struct
@@ -143,14 +143,11 @@
       (push (list (xt-offset-rec-name x)
 		  (xt-offset-rec-offset x)) r))))
 
-(ff:def-c-type (xt-widget :no-defuns :no-constructor) :struct
+(def-c-type (xt-widget :no-defuns :no-constructor) :struct
   (self :unsigned-long)
-  (widget-class :unsigned-long)
-  )
+  (widget-class :unsigned-long))
 
 (ff:def-c-type (xt-resource-list :in-foreign-space :no-defuns :no-constructor) 1 xt-resource)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (ff:def-c-type (x-push-button-callback-struct :no-defuns :no-constructor) :struct
   (reason :int)
@@ -180,7 +177,7 @@
 
 (ff:def-c-type (xt-widget-list :no-defuns :no-constructor) 1 * xt-widget)
 
-(ff:def-c-type (xt-widget-geometry :no-defuns :no-constructor) :struct
+(def-c-type (xt-widget-geometry :no-defuns :no-constructor) :struct
   (request-mode xt-geometry-mask)
   (x xt-position)
   (y xt-position)
@@ -190,10 +187,9 @@
   (sibling xt-widget)
   (stack-mode :int))
 
-
 ;; general pointer-array
 
-(ff:def-c-type (pointer-array :no-defuns :no-constructor) 1 * char)
+;;(ff:def-c-type (pointer-array :no-defuns :no-constructor) 1 * char)
 
 (x11::def-exported-constant lc-ctype 0)
 (x11::def-exported-constant lc-all 6)

@@ -1,10 +1,22 @@
 ;; See the file LICENSE for the full license governing this code.
 
+
+(defpackage :x11
+  ;; I don't know if this is OK (can we assume clim-utils?).  In any
+  ;; case we want that definition of fintern.
+  (:import-from :clim-utils :fintern)
+
+  ;; These next two import symbols when loading from clim.fasl.
+  (:export #:int #:short)
+  (:export #:int def-c-type def-c-typedef)
+  (:export #:screen #:depth #:visual #:colormap
+	   #:pixmap #:window #:display))
 (defpackage :tk
   (:use :common-lisp)
   (:nicknames :xt)
   (:import-from :excl #:if*)
   (:import-from :clim-utils #:fintern #:package-fintern)
+  (:import-from :x11 def-c-type def-c-typedef)
   (:export
    #:initialize-motif-toolkit
    #:widget-parent
