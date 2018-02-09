@@ -1,5 +1,5 @@
 
-(in-package :user)
+(in-package :cl-user)
 
 (defpackage :clim-test
   (:use :clim-lisp :clim)
@@ -42,4 +42,3 @@
    #:with-test-success-expected
    #:with-waiting
    ))
-

@@ -4,11 +4,10 @@
 ;;; MIT license.
 
 (asdf:defsystem :clim2
-    :depends-on (:cffi :alexandria)
+    :depends-on (cffi alexandria bordeaux-threads)
     :serial t
     :components
-    (
-     (:file "cat")
+    ((:file "cat")
      (:file "utils/excl-verification")
      (:file "utils/packages")
      (:file "demo/packages")

@@ -1,4 +1,5 @@
-(in-package :sys)
+#+allegro
+ (in-package :sys)
 
 
 (eval-when (compile load eval)

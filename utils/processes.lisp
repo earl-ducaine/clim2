@@ -11,9 +11,11 @@
 
 ;;; Locks
 
-(eval-when (compile load eval)
+(eval-when (:execute :load-toplevel :compile-toplevel)
 ;;;  (require :mdproc)
-  (require :process))
+  #+allegro
+  (require :process)
+  )
 
 (defvar *multiprocessing-p*
   #{
@@ -43,19 +45,21 @@
 ;  (mp:start-scheduler))
 
 (defmacro with-lock-held ((place &optional state) &body forms)
-  #+(or allegro Xerox Genera ccl Minima)
+  #+(or allegro Xerox Genera ccl Minima sbcl)
   (declare (ignore state #+ccl place))
   #{
     allegro        `(mp:with-process-lock (,place) ,@forms)
     Lucid        `(lcl:with-process-lock (,place ,@(if state (cons state nil)))
                    ,@forms)
-    lispworks        `(mp::with-lock (,place) ,@forms)
+    lispworks    `(mp::with-lock (,place) ,@forms)
     Xerox        `(il:with.monitor ,place ,@forms)
     Cloe-Runtime `(progn ,@forms)
     aclpc       `(progn ,@forms)
     Genera        `(process:with-lock (,place) ,@forms)
     Minima        `(minima:with-lock (,place) ,@forms)
     CCL-2        `(progn ,@forms)
+    SBCL        `(bt:with-lock-held (,place)
+                   ,@forms)
     }
   )
 
@@ -71,6 +75,7 @@
     aclpc       nil
     Genera        (process:make-lock lock-name)
     Minima        (minima:make-lock lock-name)
+    SBCL        `(bt:make-lock lock-name)
    }
   )
 
@@ -102,10 +107,12 @@
   #+(or Xerox Genera ccl Minima)
   (declare (ignore state #+ccl place))
   #{Genera `(process:with-lock (,place) ,@forms)
-    Minima `(minima:with-lock (,place) ,@forms)
-    CCL-2 `(progn ,@forms)
-    otherwise `(with-simple-recursive-lock (,place ,state) ,@forms)
-    }
+  Minima `(minima:with-lock (,place) ,@forms)
+  CCL-2 `(progn ,@forms)
+  SBCL  `(bt:with-recursive-lock-held (,place)
+		 ,@forms)
+  otherwise `(with-simple-recursive-lock (,place ,state) ,@forms)
+  }
   )
 
 (defun make-recursive-lock (&optional (lock-name "a recursive CLIM lock"))
@@ -113,6 +120,7 @@
   #{CCL-2 nil
     Genera (process:make-lock lock-name :recursive T)
     Minima (minima:make-lock lock-name :recursive T)
+    SBCL        (bt:make-recursive-lock lock-name)
     otherwise (cons nil nil)
    }
   )
@@ -134,6 +142,8 @@
     Genera     `(scl:without-interrupts ,@forms)
     Minima     `(minima:with-no-other-processes ,@forms)
     CCL-2      `(ccl:without-interrupts ,@forms) ; slh
+    sbcl       `(sb-sys:without-interrupts ,@forms)
+
    }
    )
 
@@ -196,7 +206,6 @@
                  (setf ,reference (the fixnum (1- (the fixnum ,value)))))))
         (warn "Implement ~S for the case when delta is not 1" 'atomic-decf))))
 
-
 ;;; Processes
 
 (defun make-process (function &key name)
@@ -209,10 +218,13 @@
     Xerox      (il:add.process (funcall function) 'il:name name)
     Genera     (scl:process-run-function name function)
     Minima     (minima:make-process name :initial-function function)
+    sbcl       (bt:make-thread function :name name)
     otherwise  (warn "No implementation of MAKE-PROCESS for this system.")
     }))
 
-(eval-when (compile load eval) (proclaim '(inline processp)))
+(eval-when (:execute :load-toplevel :compile-toplevel)
+  (proclaim '(inline processp)))
+
 (defun processp (object)
   #{
   ccl        (member object '(:user :event :interrupt))
@@ -222,6 +234,7 @@
   ;; In 7.3 and after it is `(process:process-p ,object)
   Genera     (process:process-p object)
   Minima     (typep object 'minima-internals::basic-process)
+  sbcl       (bt:threadp object)
   otherwise  (progn (warn "No implementation of PROCESSP for this system.")
                     nil)
   }
@@ -237,6 +250,7 @@
   Genera     (scl:process-kill process)
   Minima     (minima:process-kill process)
   CCL-2             nil
+  sbcl       (destroy-thread process)
   otherwise  (warn "No implementation of DESTROY-PROCESS for this system.")
   }
   )
@@ -244,7 +258,8 @@
 #+CCL-2
 (defvar *current-process* :user)
 
-(eval-when (compile load eval) (proclaim '(inline current-process)))
+(eval-when (:execute :load-toplevel :compile-toplevel)
+  (proclaim '(inline current-process)))
 (defun current-process ()
   #{
   Lucid      lcl:*current-process*
@@ -256,10 +271,13 @@
   CCL-2             *current-process*
   Cloe-Runtime nil
   aclpc      nil
+  sbcl       (bt:current-thread)
   }
   )
 
-(eval-when (compile load eval) (proclaim '(inline all-processes)))
+(eval-when (:execute :load-toplevel :compile-toplevel)
+  (proclaim '(inline all-processes)))
+
 (defun all-processes ()
   #{
   Lucid      lcl:*all-processes*
@@ -269,6 +287,7 @@
   CCL-2             (adjoin *current-process* '(:user))
   Cloe-Runtime nil
   aclpc      nil
+  sbcl       (bt:all-threads)
   }
   )
 
@@ -280,7 +299,9 @@
   }
   )
 
-(eval-when (compile load eval) (proclaim '(inline process-yield)))
+(eval-when (:execute :load-toplevel :compile-toplevel)
+  (proclaim '(inline process-yield)))
+
 (defun process-yield ()
   #{
   Lucid      (lcl:process-allow-schedule)
@@ -292,6 +313,7 @@
   CCL-2             (ccl:event-dispatch)
   Cloe-Runtime nil
   aclpc      nil
+  sbcl       (bt:thread-yield)
   }
   )
 
@@ -314,6 +336,7 @@
   Genera     (scl:process-wait wait-reason predicate)
   Minima     (minima:process-wait wait-reason predicate)
   otherwise  (warn "No implementation of PROCESS-WAIT for this system.")
+  sbcl       (sb-thread:grab-mutex wait-reason :waitp predicate)
   }
   )
 
@@ -331,6 +354,7 @@
   Lucid             (lcl:process-wait-with-timeout wait-reason timeout predicate)
   Genera     (sys:process-wait-with-timeout wait-reason (* timeout 60.) predicate)
   CCL-2             (ccl::process-wait-with-timeout wait-reason timeout predicate)
+  sbcl       (sb-thread:grab-mutex wait-reason :waitp predicate :timeout timeout)
   otherwise  (warn "No implementation of PROCESS-WAIT-WITH-TIMEOUT for this system.")
   }
   )
@@ -345,6 +369,7 @@
   CCL-2     (let ((*current-process* :interrupt))
               (funcall function))
   Minima    (minima:process-interrupt process function)
+  sbcl      (bt:interrupt-thread wait-reason :waitp predicate :timeout timeout)
   otherwise (warn "No implementation of PROCESS-INTERRUPT for this system.")
   }
   )

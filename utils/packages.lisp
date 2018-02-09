@@ -14,8 +14,7 @@
   ;; 28Jan97 added allegro package for aclpc since mop stuff was moved
   ;; there in 3.0.1 -tjm
   (:use common-lisp #+allegro clos
-	#+(and (version>= 9 0) allegro) excl
-	#-(and (version>= 9 0) allegro) stream
+	#+(and allegro (version>= 9 0) ) excl
 	#+aclpc allegro)
 
  ;; Import these symbols so that we can define methods for them.
@@ -3292,13 +3291,14 @@
 
 (in-package :clim)
 
+#+allegro
 (cl:defparameter *clim-version* excl::*common-lisp-version-number*)
 
-#+(version>= 5 0)
+#+(and allegro( version>= 5 0))
 (cl:locally (cl:declare (cl:special excl::*version-info*))
   (cl:when (cl:boundp 'excl::*version-info*)
     (cl:push (cl:cons "CLIM" *clim-version*) excl::*version-info*)))
 
 
-;; #+(version>= 6 0 pre-final 0)
+;; #+(and allegro (version>= 6 0 pre-final 0))
 ;; (excl::lb1215005) ;; rfe4046

@@ -15,7 +15,9 @@
     flet labels
     defgeneric defmethod
     #+(and allegro (not (version>= 4 1))) with-slots
-    dynamic-extent non-dynamic-extent)
+    dynamic-extent
+    #+allegro
+    non-dynamic-extent)
 
   (:export
     *demo-root*
@@ -23,7 +25,7 @@
     start-demo))
 
 
-(#-ansi-90 clim-lisp::defpackage #+ansi-90 defpackage clim-graphics-editor
+(defpackage clim-graphics-editor
   (:use clim-lisp clim clim-demo)
 
   (:shadowing-import-from clim-utils
@@ -31,7 +33,8 @@
     flet labels
     defgeneric defmethod
     #+(and allegro (not (version>= 4 1))) with-slots
-    dynamic-extent non-dynamic-extent))
+    dynamic-extent
+    #+allegro non-dynamic-extent))
 
 ;;; this little gem results in the japanese-graphics-editor package
 ;;; always being created at compile time (the defpackage is processed
@@ -74,5 +77,6 @@
     flet labels
     defgeneric defmethod
     #+(and allegro (not (version>= 4 1))) with-slots
-    dynamic-extent non-dynamic-extent))
-
+    dynamic-extent
+    #+allegro
+    non-dynamic-extent))

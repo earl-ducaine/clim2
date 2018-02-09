@@ -14,7 +14,10 @@
 (defpackage :tk
   (:use :common-lisp)
   (:nicknames :xt)
-  (:import-from :excl #:if*)
+  #+allegro
+  (:import-from
+   :excl
+   #:if*)
   (:import-from :clim-utils #:fintern #:package-fintern)
   (:import-from :x11 def-c-type def-c-typedef)
   (:export
@@ -38,4 +41,5 @@
    #:with-server-grabbed
    #:window-property-list))
 
+#+allegro
 (setf (package-definition-lock (find-package :tk)) t)
