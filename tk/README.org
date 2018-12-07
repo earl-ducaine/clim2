@@ -53,8 +53,17 @@
    - with-stack-fobject
 
 
-   
 ** Steps for convesion
+
+   Taking a new stab at this
+
+   1. Create a wriapping package for alegro foreign function interface
+   2. Do some package magic to swap in to ff
+   3. Create a test suite that stesses those functions used.
+   4. Get test suite working with cffi
+   5. Get clim2 working
+   
+** Steps for convesion (old)
    In general try tackle this in in a lower level to higher-level
    approach.  But a good start might be types, then structs, then
    functions, then classes?

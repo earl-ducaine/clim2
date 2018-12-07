@@ -116,12 +116,12 @@
     (let ((data (ff:allocate-fobject 'event-match-info :c)))
       (unwind-protect
           (progn
-            (setf (fslot-value-typed 'event-match-info :c data 'display) (ff:foreign-pointer-address display)
-                  (fslot-value-typed 'event-match-info :c data 'seq-no) seq-no
-                  (fslot-value-typed 'event-match-info :c data 'n-types) (length types))
+            (setf (ff:fslot-value-typed 'event-match-info :c data 'display) (ff:foreign-pointer-address display)
+                  (ff:fslot-value-typed 'event-match-info :c data 'seq-no) seq-no
+                  (ff:fslot-value-typed 'event-match-info :c data 'n-types) (length types))
             (loop for i from 0
                   for type in types
-                  do (setf (fslot-value-typed 'event-match-info :c data 'event-types i)
+                  do (setf (ff:fslot-value-typed 'event-match-info :c data 'event-types i)
                            (position type *event-types*)))
             (cond (block
                       (x11:xifevent display resulting-event addr data)
