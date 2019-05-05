@@ -97,7 +97,7 @@
     (if (and (eql desired-display display)
 	     (eql desired-sequence (x11:xanyevent-serial event))
              (loop for i upfrom 0 below n-types
-                   for desired-type = (fslot-value-typed 'event-match-info :c arg 'event-types i)
+                   for desired-type = (ff:fslot-value-typed 'event-match-info :c arg 'event-types i)
                    if (eql desired-type event-type)
                      do (return t)))
 	1

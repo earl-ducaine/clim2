@@ -1,5 +1,6 @@
 
 
+
 * Refactoring tk
 
 ** Allegro CL foreign interface (Motif library)
@@ -58,6 +59,17 @@
    Taking a new stab at this
 
    1. Create a wriapping package for alegro foreign function interface
+
+      Below are the Allegro functions
+      - foreign-pointer
+      - foreign-pointer-address
+      - def-c-atype
+      - def-c-type
+      - def-c-typedef
+      - def-foreign-call
+      - defun-foreign-callable
+      - foreign-pointer-address
+
    2. Do some package magic to swap in to ff
    3. Create a test suite that stesses those functions used.
    4. Get test suite working with cffi

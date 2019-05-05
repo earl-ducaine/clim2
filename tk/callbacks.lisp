@@ -7,7 +7,7 @@
 (defun has-callbacks-p (w name)
   (> (xt_has_callbacks w name) 1))
 
-(ff:defun-foreign-callable callback-handler ((widget :foreign-address)
+(ff-wrapper::defun-foreign-callable callback-handler ((widget :foreign-address)
 					  (client-data :foreign-address)
 					  (call-data :foreign-address))
   (callback-handler-1 widget client-data call-data))
@@ -42,13 +42,13 @@
      widget
      name
      (or *callback-handler-address*
-	 (setq *callback-handler-address* (ff:register-foreign-callable 'callback-handler)))
+	 (setq *callback-handler-address* (ff-wrapper::register-foreign-callable 'callback-handler)))
      (caar (push
 	    (list (new-callback-id) (cons function args) type)
 	    (widget-callback-data widget))))))
 
 
-(ff:defun-foreign-callable create-popup-child-proc-function ((widget :foreign-address))
+(ff-wrapper::defun-foreign-callable create-popup-child-proc-function ((widget :foreign-address))
   (create-popup-child-proc-function-1 widget))
 
 (defun create-popup-child-proc-function-1 (widget)
@@ -67,7 +67,7 @@
   (set-values widget :create-popup-child-proc
 	      (or *create-popup-child-proc-function-address*
 		  (setq *create-popup-child-proc-function-address*
-		    (ff:register-foreign-callable 'create-popup-child-proc-function))))
+		    (ff-wrapper::register-foreign-callable 'create-popup-child-proc-function))))
   function)
 
 (defun remove-all-callbacks (widget callback-name)

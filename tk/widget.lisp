@@ -103,7 +103,7 @@
     (with-*-array (v n)
       (dotimes (i n)
 	(setf (*-array v i)
-	  (ff:foreign-pointer-address (pop children))))
+	  (ff-wrapper::foreign-pointer-address (pop children))))
       (xt_manage_children v n))))
 
 (defun unmanage-children (children)
@@ -112,7 +112,7 @@
     (with-*-array (v n)
       (dotimes (i n)
 	(setf (*-array v i)
-	  (ff:foreign-pointer-address (pop children))))
+	  (ff-wrapper::foreign-pointer-address (pop children))))
       (xt_unmanage_children v n))))
 
 (defun destroy-widget (widget)
@@ -227,7 +227,7 @@
        (remf args :foreign-address)
        (remf args :name)
        (remf args :parent)
-       (setf (ff:foreign-pointer-address w)
+       (setf (ff-wrapper::foreign-pointer-address w)
 	 (apply #'make-widget w (tkify-lisp-name name) parent args))))))
 
 
@@ -252,12 +252,12 @@
 	(add-callback widget :destroy-callback #'destroy-widget-cleanup))
       widget)))
 
-(defun register-widget (widget &optional (handle (ff:foreign-pointer-address widget)))
+(defun register-widget (widget &optional (handle (ff-wrapper::foreign-pointer-address widget)))
   (register-address widget handle)
   (add-callback widget :destroy-callback #'destroy-widget-cleanup))
 
 (defun unintern-widget (widget)
-  (unintern-object-address (ff:foreign-pointer-address widget)))
+  (unintern-object-address (ff-wrapper::foreign-pointer-address widget)))
 
 (defmethod widget-parent ((widget xt-root-class))
   (let ((x (xt_parent widget)))
@@ -372,7 +372,7 @@
           ;; didn't find any locale.
           (try-setting-x-locale "C")))))
 
-(ff:defun-foreign-callable xt-current-locale-for-acl ((display (* :void)) (xnl (* :char)) (client-data (* :void)))
+(ff-wrapper::defun-foreign-callable xt-current-locale-for-acl ((display (* :void)) (xnl (* :char)) (client-data (* :void)))
   (declare (:convention :c)
            (ignore display client-data xnl))
   (set-supported-x-locale))
@@ -394,7 +394,7 @@
 	   v))))
     (excl:ics-target-case
       (:+ics
-       (xt_set_language_proc 0 (ff:register-foreign-callable
+       (xt_set_language_proc 0 (ff-wrapper::register-foreign-callable
                                 'xt-current-locale-for-acl :reuse t)
                              0)
        (set-supported-x-locale)))

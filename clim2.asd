@@ -126,6 +126,7 @@
      (:file "xlib/xlib-defs-lab")
      (:file "xlib/def-exported-foreign-struct-cffi")
 
+     (:file "tk/ff-wrapper-for-ff")
      (:file "tk/macros")
      (:file "tk/xt-defs")
      (:file "tk/xt-defs-wrapper")

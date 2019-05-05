@@ -22,17 +22,17 @@
 
 
 
-;;; allocate-cstruct was adapted from ff:make-cstruct.  We aren't
-;;; using ff:make-cstruct because it uses excl:aclmalloc.
+;;; allocate-cstruct was adapted from ff-wrapper::make-cstruct.  We aren't
+;;; using ff-wrapper::make-cstruct because it uses excl:aclmalloc.
 (defun allocate-cstruct (name &key
 			      (number 1)
 			      (initialize
-			       (ff::cstruct-property-initialize
-				(ff::cstruct-prop name)))
+			       (ff-wrapper::cstruct-property-initialize
+				(ff-wrapper::cstruct-prop name)))
 			      )
   (declare (optimize (speed 3)))
-  (let* ((prop (ff::cstruct-prop name))
-	 (size (* number (ff::cstruct-property-length prop))))
+  (let* ((prop (ff-wrapper::cstruct-prop name))
+	 (size (* number (ff-wrapper::cstruct-property-length prop))))
     (when initialize
       (setq initialize 0))
     (allocate-memory size initialize)))
@@ -73,22 +73,22 @@
   address)
 
 
-(ff:def-c-typedef :cardinal :unsigned-int)
-(ff:def-c-typedef xt-proc * :unsigned-long)
-(ff:def-c-typedef action-list * :char)
-(ff:def-c-typedef resource-list * :char)
-(ff:def-c-typedef xrm-quark :int)
-(ff:def-c-typedef xrm-quark-list * :int)
-(ff:def-c-typedef boolean :char)
-(ff:def-c-typedef xrm-class  xrm-quark)
-(ff:def-c-typedef xt-enum   :unsigned-char)
-(ff:def-c-typedef xt-version-type :long)
+(ff-wrapper::def-c-typedef :cardinal :unsigned-int)
+(ff-wrapper::def-c-typedef xt-proc * :unsigned-long)
+(ff-wrapper::def-c-typedef action-list * :char)
+(ff-wrapper::def-c-typedef resource-list * :char)
+(ff-wrapper::def-c-typedef xrm-quark :int)
+(ff-wrapper::def-c-typedef xrm-quark-list * :int)
+(ff-wrapper::def-c-typedef boolean :char)
+(ff-wrapper::def-c-typedef xrm-class  xrm-quark)
+(ff-wrapper::def-c-typedef xt-enum   :unsigned-char)
+(ff-wrapper::def-c-typedef xt-version-type :long)
 (def-c-typedef xt-geometry-mask :unsigned-int)
 (def-c-typedef xt-position :short)
 (def-c-typedef xt-dimension :unsigned-short)
-(ff:def-c-typedef xt-pointer * char)
+(ff-wrapper::def-c-typedef xt-pointer * char)
 
-(ff:def-c-type (xt-class :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (xt-class :no-defuns :no-constructor) :struct
 	    (superclass :long)
 	    (name * :char)
 	    (widget-size :cardinal)
@@ -118,7 +118,7 @@
 	    (version xt-version-type)
 	    (callback-private * :char))
 
-(ff:def-c-type (xt-resource :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (xt-resource :no-defuns :no-constructor) :struct
   (name * :char)
   (class * :char)
   (type * :char)
@@ -130,7 +130,7 @@
 
 ;; Horrible internal stuff
 
-(ff:def-c-type (xt-offset-rec :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (xt-offset-rec :no-defuns :no-constructor) :struct
 	    (next * :char)
 	    (name xrm-quark)
 	    (offset :int))
@@ -143,7 +143,7 @@
       (push (list (xt-offset-rec-name x)
 		  (xt-offset-rec-offset x)) r))))
 
-(ff:def-c-type (xt-widget :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (xt-widget :no-defuns :no-constructor) :struct
   (self :unsigned-long)
   (widget-class :unsigned-long))
 
@@ -151,37 +151,37 @@
 ;;   (self :unsigned-long)
 ;;   (widget-class :unsigned-long))
 
-(ff:def-c-type (xt-resource-list :in-foreign-space :no-defuns :no-constructor) 1 xt-resource)
+(ff-wrapper::def-c-type (xt-resource-list :in-foreign-space :no-defuns :no-constructor) 1 xt-resource)
 
-(ff:def-c-type (x-push-button-callback-struct :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (x-push-button-callback-struct :no-defuns :no-constructor) :struct
   (reason :int)
   (event * x11:xevent)
   (click-count :int))
 
-(ff:def-c-type (x-drawing-area-callback :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (x-drawing-area-callback :no-defuns :no-constructor) :struct
   (reason :int)
   (event * x11:xevent)
   (window x11:window))
 
-(ff:def-c-type (xcharstruct-vector :no-defuns :no-constructor) 1 x11:xcharstruct)
+(ff-wrapper::def-c-type (xcharstruct-vector :no-defuns :no-constructor) 1 x11:xcharstruct)
 
-(ff:def-c-type (xfontname-list :no-defuns :no-constructor) 1 * :char)
+(ff-wrapper::def-c-type (xfontname-list :no-defuns :no-constructor) 1 * :char)
 
-(ff:def-c-type (xfontstruct-array :no-defuns :no-constructor) 1 x11::xfontstruct)
+(ff-wrapper::def-c-type (xfontstruct-array :no-defuns :no-constructor) 1 x11::xfontstruct)
 
-(ff:def-c-type (class-array :no-defuns :no-constructor) 1 :unsigned-long)
+(ff-wrapper::def-c-type (class-array :no-defuns :no-constructor) 1 :unsigned-long)
 
-(ff:def-c-type (xt-arg-val :no-defuns :no-constructor) :long)
+(ff-wrapper::def-c-type (xt-arg-val :no-defuns :no-constructor) :long)
 
-(ff:def-c-type (xt-arg :in-foreign-space :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (xt-arg :in-foreign-space :no-defuns :no-constructor) :struct
   (name  * :char)
   (value xt-arg-val))
 
-(ff:def-c-type (xt-arglist :in-foreign-space :no-defuns :no-constructor) 1 xt-arg)
+(ff-wrapper::def-c-type (xt-arglist :in-foreign-space :no-defuns :no-constructor) 1 xt-arg)
 
-(ff:def-c-type (xt-widget-list :no-defuns :no-constructor) 1 * xt-widget)
+(ff-wrapper::def-c-type (xt-widget-list :no-defuns :no-constructor) 1 * xt-widget)
 
-(ff:def-c-type (xt-widget-geometry :no-defuns :no-constructor) :struct
+(ff-wrapper::def-c-type (xt-widget-geometry :no-defuns :no-constructor) :struct
   (request-mode xt-geometry-mask)
   (x xt-position)
   (y xt-position)
@@ -193,7 +193,7 @@
 
 ;; general pointer-array
 
-;;(ff:def-c-type (pointer-array :no-defuns :no-constructor) 1 * char)
+;;(ff-wrapper::def-c-type (pointer-array :no-defuns :no-constructor) 1 * char)
 
 (x11::def-exported-constant lc-ctype 0)
 (x11::def-exported-constant lc-all 6)
