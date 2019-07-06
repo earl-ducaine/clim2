@@ -11,6 +11,7 @@
   (:export #:int def-c-type def-c-typedef)
   (:export #:screen #:depth #:visual #:colormap
 	   #:pixmap #:window #:display))
+
 (defpackage :tk
   (:use :common-lisp)
   (:nicknames :xt)

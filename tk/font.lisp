@@ -4,7 +4,7 @@
 
 (in-package :tk)
 
-(defclass font (ff:foreign-pointer)
+(defclass font (ff-wrapper:foreign-pointer)
   ((name :initarg :name :reader font-name)))
 
 (defmethod print-object ((x font) stream)
@@ -18,7 +18,7 @@
     (let ((x (x11:xloadqueryfont display
 				 (lisp-string-to-string8 name))))
       (when (zerop x) (error "Cannot find font: ~S" name))
-      (setf (ff:foreign-pointer-address f) x)
+      (setf (ff-wrapper:foreign-pointer-address f) x)
       (register-address f))))
 
 
@@ -145,7 +145,7 @@
 (excl:ics-target-case
 (:+ics
 
-(defclass font-set (ff:foreign-pointer)
+(defclass font-set (ff-wrapper:foreign-pointer)
   ((base-names :initarg :base-names :reader font-set-base-names)))
 
 (defun create-font-set (display base-font-names)
@@ -186,7 +186,7 @@
                 :charsets missing
                 :created-for base-names)))
       (when (zerop x) (error "Cannot create fontset for ~S" base-names))
-      (setf (ff:foreign-pointer-address fs) x)
+      (setf (ff-wrapper:foreign-pointer-address fs) x)
       (register-address fs))))
 
 (defun fonts-of-font-set (font-set)

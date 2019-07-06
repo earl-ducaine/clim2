@@ -516,7 +516,7 @@
   (let ((result (call-next-method)))
     (if (integerp result)
 	result
-      (ff:foreign-pointer-address result))))
+      (ff-wrapper:foreign-pointer-address result))))
 
 (defmethod convert-resource-out ((parent t) (type (eql 'orientation)) value)
   (ecase value

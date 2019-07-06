@@ -86,7 +86,7 @@
       ;; XXX/mp afuchs 2010-11-23: this isn't threadsafe.
       (setq *event-matching-event* (make-xevent))))
 
-(ff:defun-foreign-callable match-event-sequence-and-types-using-structure
+(ff-wrapper:defun-foreign-callable match-event-sequence-and-types-using-structure
     ((display :foreign-address)
      (event :foreign-address)
      (arg :foreign-address))
@@ -97,7 +97,7 @@
     (if (and (eql desired-display display)
 	     (eql desired-sequence (x11:xanyevent-serial event))
              (loop for i upfrom 0 below n-types
-                   for desired-type = (ff:fslot-value-typed 'event-match-info :c arg 'event-types i)
+                   for desired-type = (ff-wrapper:fslot-value-typed 'event-match-info :c arg 'event-types i)
                    if (eql desired-type event-type)
                      do (return t)))
 	1
@@ -112,16 +112,16 @@
 	 (resulting-event (event-matching-event))   ; XXX/mp: this isn't threadsafe (bind *e-m-e*?)
 	 (addr (or *match-event-sequence-and-types-address*
 		   (setq *match-event-sequence-and-types-address*
-		     (ff:register-foreign-callable 'match-event-sequence-and-types-using-structure)))))
-    (let ((data (ff:allocate-fobject 'event-match-info :c)))
+		     (ff-wrapper:register-foreign-callable 'match-event-sequence-and-types-using-structure)))))
+    (let ((data (ff-wrapper:allocate-fobject 'event-match-info :c)))
       (unwind-protect
           (progn
-            (setf (ff:fslot-value-typed 'event-match-info :c data 'display) (ff:foreign-pointer-address display)
-                  (ff:fslot-value-typed 'event-match-info :c data 'seq-no) seq-no
-                  (ff:fslot-value-typed 'event-match-info :c data 'n-types) (length types))
+            (setf (ff-wrapper:fslot-value-typed 'event-match-info :c data 'display) (ff-wrapper:foreign-pointer-address display)
+                  (ff-wrapper:fslot-value-typed 'event-match-info :c data 'seq-no) seq-no
+                  (ff-wrapper:fslot-value-typed 'event-match-info :c data 'n-types) (length types))
             (loop for i from 0
                   for type in types
-                  do (setf (ff:fslot-value-typed 'event-match-info :c data 'event-types i)
+                  do (setf (ff-wrapper:fslot-value-typed 'event-match-info :c data 'event-types i)
                            (position type *event-types*)))
             (cond (block
                       (x11:xifevent display resulting-event addr data)
@@ -135,7 +135,7 @@
 
 (defvar *event* nil)
 
-(ff:defun-foreign-callable event-handler ((widget :foreign-address)
+(ff-wrapper:defun-foreign-callable event-handler ((widget :foreign-address)
 				       (client-data :foreign-address)
 				       (event :foreign-address)
 				       (continue-to-dispatch :foreign-address))
@@ -161,7 +161,7 @@
    (encode-event-mask events)
    maskable
    (or *event-handler-address*
-       (setq *event-handler-address* (ff:register-foreign-callable 'event-handler)))
+       (setq *event-handler-address* (ff-wrapper:register-foreign-callable 'event-handler)))
    (caar (push
 	  (list (new-callback-id) (cons function args))
 	  (widget-event-handler-data widget)))))

@@ -19,7 +19,7 @@
 
 ;;; Pathetic clos interface to Xlib
 
-(defclass display-object (ff:foreign-pointer)
+(defclass display-object (ff-wrapper:foreign-pointer)
   ((display :initarg :display
 	    excl::fixed-index 0)))
 
@@ -159,7 +159,7 @@
   (with-slots (display) p
     (setf display (object-display drawable))
     (unless foreign-address
-      (setf (ff:foreign-pointer-address p)
+      (setf (ff-wrapper:foreign-pointer-address p)
 	(x11:xcreatepixmap
 	 display
 	 drawable
@@ -168,12 +168,12 @@
 	 depth))
       (register-xid p display))))
 
-(defclass resource-database (ff:foreign-pointer) ())
+(defclass resource-database (ff-wrapper:foreign-pointer) ())
 
 (defmethod initialize-instance :after
 	   ((db resource-database) &key foreign-address)
   (unless foreign-address
-    (setf (ff:foreign-pointer-address db) (x11:xrmgetstringdatabase ""))))
+    (setf (ff-wrapper:foreign-pointer-address db) (x11:xrmgetstringdatabase ""))))
 
 (defun make-xrmvalue ()
   (allocate-cstruct 'x11::xrmvalue :initialize t))
@@ -247,7 +247,7 @@
 		  (clim-utils::system-free s))))
 	    resourceid)))
 
-(ff:defun-foreign-callable x-error-handler ((display :foreign-address)
+(ff-wrapper:defun-foreign-callable x-error-handler ((display :foreign-address)
 					 (event :foreign-address))
   (error 'x-error
 	 :display display
@@ -269,7 +269,7 @@
 
 (defvar *x-io-error-hook* nil)
 
-(ff:defun-foreign-callable x-io-error-handler ((display :foreign-address))
+(ff-wrapper:defun-foreign-callable x-io-error-handler ((display :foreign-address))
   (when *x-io-error-hook*
     (funcall *x-io-error-hook* display))
   (error 'x-connection-lost :display display))
@@ -287,10 +287,10 @@
 (defun setup-error-handlers ()
   (x11:xseterrorhandler (or *x-error-handler-address*
 			    (setq *x-error-handler-address*
-			      (ff:register-foreign-callable 'x-error-handler))))
+			      (ff-wrapper:register-foreign-callable 'x-error-handler))))
   (x11:xsetioerrorhandler (or *x-io-error-handler-address*
 			      (setq *x-io-error-handler-address*
-				(ff:register-foreign-callable 'x-io-error-handler)))))
+				(ff-wrapper:register-foreign-callable 'x-io-error-handler)))))
 
 (eval-when (load)
   (setup-error-handlers))
@@ -333,7 +333,7 @@
    display
    :display display))
 
-(defclass color (ff:foreign-pointer) ())
+(defclass color (ff-wrapper:foreign-pointer) ())
 
 (defun make-xcolor (&key in-foreign-space (number 1))
   (declare (ignore in-foreign-space))
@@ -349,7 +349,7 @@
 	  (x11:xcolor-blue foreign-address) blue
 	  (x11:xcolor-flags foreign-address) 255
 	  (x11:xcolor-pixel foreign-address) pixel)
-    (setf (ff:foreign-pointer-address x) foreign-address)))
+    (setf (ff-wrapper:foreign-pointer-address x) foreign-address)))
 
 (defmethod print-object ((o color) s)
   (print-unreadable-object
@@ -697,7 +697,7 @@
 				  height
 				  bitmap-pad
 				  bytes-per-line)))
-	(setf (ff:foreign-pointer-address image) x)
+	(setf (ff-wrapper:foreign-pointer-address image) x)
 	(when data
 	  (case depth
 	    (8

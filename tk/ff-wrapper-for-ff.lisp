@@ -4,13 +4,22 @@
 (defpackage :ff-wrapper
   (:use cl)
   (:import-from :ff
-		foreign-pointer
-		foreign-pointer-address
+		allocate-fobject
+		cstruct-prop
+		cstruct-property-length
 		def-c-type
 		def-c-typedef
 		def-foreign-call
 		defun-foreign-callable
+		foreign-pointer
 		foreign-pointer-address
-		cstruct-prop
-		cstruct-property-length
-		register-foreign-callable))
+		foreign-pointer-address
+		fslot-value-typed
+		register-foreign-callable)
+  (:export
+   allocate-fobject
+   defun-foreign-callable
+   foreign-pointer
+   foreign-pointer-address
+   fslot-value-typed
+   register-foreign-callable))

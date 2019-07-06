@@ -1,76 +1,90 @@
-the two files that contain ff wrappers:
-xm-funs.lisp
-xt-funs.lisp
 
 
-InitializeMyDrawingAreaQueryGeometry
-obsolete?
-xm-silica::setup-mda
+* The two files that contain ff wrappers
+  tk/xm-funs.lisp
+  tk/xt-funs.lisp
 
-XCreateFontCursor
-xm-silica::realize-cursor
+** validation
+   To validate that only xm-funs.lisp and xt-funs.lisp contain
+   references to :FF functions we need to make sure that no other
+   packages USE :FF
 
-XDefineCursor
-port-set-sheet-pointer-cursor
-port-set-pointer-cursor
-enable-mirror
-
-XFindContext
-xfindcontext
-
-XFlush
-XSaveContext
-XmCreateMyDrawingArea
-XmImRegister
-XrmUniqueQuark
-XtAddCallback
-XtAppIntervalNextTimer
-XtCreateWidget
-XtDisplayOfObject
-XtRemoveCallback
-XtScreenOfObject
-XtStrings
-XtWindowOfObject
-_DYNAMIC
-_GLOBAL_OFFSET_TABLE_
-_ITM_deregisterTMCloneTable
-_ITM_registerTMCloneTable
-_Jv_RegisterClasses
-_XtInherit
-_XtInheritTranslations
-_edata
-_end
-_fini
-_init
-clim_starting_gc
-clim_stopping_gc
-deregister_tm_clones
-frame_dummy
-gc_widget
-gettimeofday
-gettimeofday@@GLIBC_2.0
-init_clim_gc_cursor_stuff
-libX11.so.6
-libXm.so.4
-lisp_XDrawString
-lisp_XDrawString16
-querygeometryfunction
-remove_gc_cursor
-set_clim_gc_cursor_widget
-widget_cursor
-xmDrawingAreaClassRec
-xmMyDrawingAreaClassRec
-xmMyDrawingAreaWidgetClass
-xt_widget_num_popups
+*** Packages using 
+    Here is a list of all 
 
 
-// from xmsupport.c
-// not used? crtstuff.c
 
-MyDrawingA.c
-climgccursor.c
-xtsupport.c
-xlib/xlibsupport.c
+
+
+
+  InitializeMyDrawingAreaQueryGeometry
+  obsolete?
+  xm-silica::setup-mda
+
+  XCreateFontCursor
+  xm-silica::realize-cursor
+
+  XDefineCursor
+  port-set-sheet-pointer-cursor
+  port-set-pointer-cursor
+  enable-mirror
+
+  XFindContext
+  xfindcontext
+
+  XFlush
+  XSaveContext
+  XmCreateMyDrawingArea
+  XmImRegister
+  XrmUniqueQuark
+  XtAddCallback
+  XtAppIntervalNextTimer
+  XtCreateWidget
+  XtDisplayOfObject
+  XtRemoveCallback
+  XtScreenOfObject
+  XtStrings
+  XtWindowOfObject
+  _DYNAMIC
+  _GLOBAL_OFFSET_TABLE_
+  _ITM_deregisterTMCloneTable
+  _ITM_registerTMCloneTable
+  _Jv_RegisterClasses
+  _XtInherit
+  _XtInheritTranslations
+  _edata
+  _end
+  _fini
+  _init
+  clim_starting_gc
+  clim_stopping_gc
+  deregister_tm_clones
+  frame_dummy
+  gc_widget
+  gettimeofday
+  gettimeofday@@GLIBC_2.0
+  init_clim_gc_cursor_stuff
+  libX11.so.6
+  libXm.so.4
+  lisp_XDrawString
+  lisp_XDrawString16
+  querygeometryfunction
+  remove_gc_cursor
+  set_clim_gc_cursor_widget
+  widget_cursor
+  xmDrawingAreaClassRec
+  xmMyDrawingAreaClassRec
+  xmMyDrawingAreaWidgetClass
+  xt_widget_num_popups
+
+
+  // from xmsupport.c
+  // not used? crtstuff.c
+
+  MyDrawingA.c
+  climgccursor.c
+  xtsupport.c
+  xlib/xlibsupport.c
 
 
 
