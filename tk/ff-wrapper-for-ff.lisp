@@ -4,6 +4,7 @@
 (defpackage :ff-wrapper
   (:use cl)
   (:import-from :ff
+		free-fobject
 		allocate-fobject
 		cstruct-prop
 		cstruct-property-length

@@ -130,7 +130,7 @@
                    nil)
                   (t
                    resulting-event)))
-        (free-fobject data)))))
+        (ff-wrapper:free-fobject data)))))
 
 
 (defvar *event* nil)
