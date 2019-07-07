@@ -1,6 +1,5 @@
 
 
-
 * Refactoring tk
 
 ** Allegro CL foreign interface (Motif library)
@@ -13,7 +12,6 @@
    - def-foreign-type
    - defun-foreign-callable
    - register-foreign-callable
-
 
 ** All ff functions appearing in project
    
@@ -58,7 +56,7 @@
 
    Taking a new stab at this
 
-   1. Create a wriapping package for alegro foreign function interface
+   1. Create a wrapping package for Alegro foreign function interface
 
       Below are the Allegro functions
       - foreign-pointer
