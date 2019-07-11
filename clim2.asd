@@ -128,7 +128,7 @@
 
      (:file "tk/ff-wrapper-for-ff")
      (:file "tk/macros")
-     (:file "tk/xt-defs")
+     (:file "tk/xt-defs" :depends-on ("tk/ff-wrapper-for-ff"))
      (:file "tk/xt-defs-wrapper")
 
      (:file "tk/xt-funs")
