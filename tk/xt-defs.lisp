@@ -20,19 +20,17 @@
 	(setf (sys:memref-int pointer i 0 :unsigned-natural) 0)))
     pointer))
 
-
-
 ;;; allocate-cstruct was adapted from ff-wrapper::make-cstruct.  We aren't
 ;;; using ff-wrapper::make-cstruct because it uses excl:aclmalloc.
 (defun allocate-cstruct (name &key
 			      (number 1)
 			      (initialize
-			       (ff-wrapper::cstruct-property-initialize
-				(ff-wrapper::cstruct-prop name)))
+			       (ff::cstruct-property-initialize
+				(ff::cstruct-prop name)))
 			      )
   (declare (optimize (speed 3)))
-  (let* ((prop (ff-wrapper::cstruct-prop name))
-	 (size (* number (ff-wrapper::cstruct-property-length prop))))
+  (let* ((prop (ff::cstruct-prop name))
+	 (size (* number (ff::cstruct-property-length prop))))
     (when initialize
       (setq initialize 0))
     (allocate-memory size initialize)))

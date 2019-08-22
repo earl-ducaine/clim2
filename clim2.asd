@@ -17,6 +17,7 @@
      (:file "load-clim")
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
+     (:file "tk/ff-wrapper-for-ff")
 
      (:file "utils/defun-utilities")
      (:file "utils/reader")
@@ -61,6 +62,8 @@
      (:file "silica/db-button")
      (:file "silica/db-slider")
      (:file "silica/db-label")
+     ;; Invalid
+     ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
      (:file "silica/db-scroll")
      (:file "clim/recording-defs")
      (:file "clim/gestures")
@@ -117,21 +120,32 @@
      (:file "clim/drag-and-drop")
      (:file "clim/item-list-manager")
      (:file "clim/stream-trampolines")
+     ;; Invalid here
+     ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
      (:file "xlib/ffi")
+     ;; valid here
+     ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
      (:file "xlib/load-xlib")
+     ; valid here
+     ; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
      (:file "xlib/xlib-defs")
      (:file "xlib/xlib-funs")
+     ;; Valid here
+     ; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
      (:file "xlib/x11-keysyms")
      (:file "xlib/last")
      (:file "xlib/xlib-defs-lab")
      (:file "xlib/def-exported-foreign-struct-cffi")
-
-     (:file "tk/ff-wrapper-for-ff")
+     ;; Valid here
+     ; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
      (:file "tk/macros")
      (:file "tk/xt-defs" :depends-on ("tk/ff-wrapper-for-ff"))
      (:file "tk/xt-defs-wrapper")
 
      (:file "tk/xt-funs")
+     ;; Valid here
+     ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
+
      (:file "tk/xt-funs-wrapper")
      (:file "tk/foreign-obj")
 

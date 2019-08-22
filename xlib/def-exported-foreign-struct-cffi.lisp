@@ -49,10 +49,10 @@
 	(t (convert-builtin-ctypes-to-keyword type)
 	   )))
 
-(defun compute-cffi-style-cstruct-slot-old (package-name cstruct-name slot)
-  (destructuring-bind (slot-name &key type overlays)
-      slot
-    (list slot-name (compute-cffi-style-cstruct-type type))))
+;; (defun compute-cffi-style-cstruct-slot-old (package-name cstruct-name slot)
+;;   (destructuring-bind (slot-name &key type overlays)
+;;       slot
+;;     (list slot-name (compute-cffi-style-cstruct-type type))))
 
 ;; create a string of the proper case to generate the accessor symbol
 (defun generate-slot-accessor-name (cstruct-name slot-name)
@@ -184,7 +184,7 @@
 	      ((fixnum-int fixnum-unsigned-int) '(:int fixnum))
 	      (fixnum-drawable '(:pointer))
 	      (t
-	       (if (get (cadr type) 'ff::cstruct)
+	       (if (get (cadr type) 'ff-wrapper::cstruct)
 		   '(:pointer)
 		   '(:lisp)))))))
 

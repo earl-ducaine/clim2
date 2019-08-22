@@ -22,7 +22,7 @@
 (defconstant wnn_yomi 0)
 (defconstant wnn_kanji 1)
 
-(ff:def-c-type (wnn-buf :no-defuns) :struct
+(ff-wrapper:def-c-type (wnn-buf :no-defuns) :struct
   (env * wnn-env)
   (bun-suu :unsigned-int)
   (zenkouho-suu :unsigned-int)

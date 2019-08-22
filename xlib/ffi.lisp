@@ -31,7 +31,7 @@
   `(progn
      (eval-when (eval load compile)
        (export ',new-name))
-     (ff::def-c-typedef ,new-name ,@(transmogrify-ff-type old-name))))
+     (ff-wrapper::def-c-typedef ,new-name ,@(transmogrify-ff-type old-name))))
 
 (defmacro def-exported-foreign-struct (name-and-options &rest slots)
   (let (name array-name (options nil))
@@ -143,23 +143,24 @@
 	    (t :unsigned-integer))))
 
 
-#-(version>= 6 1)
-(defmacro def-exported-foreign-function ((name &rest options) &rest args)
-  `(progn
-     (eval-when (eval load compile)
-       (export ',name))
-     (eval-when (compile eval load)
-       ,(let ((c-name (ff:convert-foreign-name (second (assoc :name options))))
-	      (return-type (or (second (assoc :return-type options))
-			       'void)))
-	  `(delayed-defforeign
-	    ',name
-	    :arguments ',(mapcar #'trans-arg-type (mapcar #'second args))
-	    :call-direct t
-	    :callback t
-	    :arg-checking nil
-	    :return-type ,(trans-return-type return-type)
-	    :entry-point ,c-name)))))
+;; #-(version>= 6 1)
+;; (defmacro def-exported-foreign-function ((name &rest options) &rest args)
+;;   `(progn
+;;      (eval-when (eval load compile)
+;;        (export ',name))
+;;      (eval-when (compile eval load)
+;;        ,(let ((c-name (ff:convert-foreign-name (second (assoc :name options))))
+;; 	      (return-type (or (second (assoc :return-type options))
+;; 			       'void)))
+
+;; 	  `(delayed-defforeign
+;; 	    ',name
+;; 	    :arguments ',(mapcar #'trans-arg-type (mapcar #'second args))
+;; 	    :call-direct t
+;; 	    :callback t
+;; 	    :arg-checking nil
+;; 	    :return-type ,(trans-return-type return-type)
+;; 	    :entry-point ,c-name)))))
 
 
 #+(version>= 6 1)
@@ -196,6 +197,7 @@
 
 #+(version>= 6 1)
 (defmacro def-exported-foreign-function ((name &rest options) &rest args)
+  (format t "def-exported-foreign-function: ~s ~%" name)
   `(progn
      (eval-when (eval load compile)
        (export ',name))
@@ -229,10 +231,10 @@
 (defmacro def-exported-foreign-macro ((name &rest options) &rest args)
   `(def-exported-foreign-function (,name  ,@options) ,@args))
 
-(foreign-functions:def-c-typedef :fixnum :int)
-(foreign-functions:def-c-typedef :signed-32bit :int)
-(foreign-functions:def-c-typedef :pointer * :char)
-(foreign-functions:def-c-typedef :signed-8bit :char)
+(ff-wrapper:def-c-typedef :fixnum :int)
+(ff-wrapper:def-c-typedef :signed-32bit :int)
+(ff-wrapper:def-c-typedef :pointer * :char)
+(ff-wrapper:def-c-typedef :signed-8bit :char)
 
 ;; Create non-keyword versions.
 (def-exported-foreign-synonym-type char :char)

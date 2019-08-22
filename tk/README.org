@@ -98,7 +98,7 @@
 ** CFFI conversion
 
    All Allegro CL C foreign function calls should be wrapped in files
-   called <alisp-fn>-wrapper.lisp.  The supcelia variable tk::use-cffi
+   called <alisp-fn>-wrapper.lisp.  The special variable tk::use-cffi
    should be set to t and the project then recompiled.
 
 

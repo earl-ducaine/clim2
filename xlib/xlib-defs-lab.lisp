@@ -39,25 +39,25 @@
   "Calculate the length of a string"
   (n :string))
 
-(ff:def-foreign-call
+(ff-wrapper:def-foreign-call
     (xallocsizehints "XAllocSizeHints") (:void)
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)
 
-(defmacro def-exported-foreign-function ((name &rest options) &rest args)
-  `(progn
-     (eval-when (eval load compile)
-       (export ',name))
-     (eval-when (compile eval load)
-       ,(let ((c-name (second (assoc :name options)))
-	      (return-type (or (second (assoc :return-type options))
-			       'void)))
-	  `(ff:def-foreign-call (,name ,c-name)
-	       ,(or (mapcar #'trans-arg-type args) '(:void))
-	     :returning ,(trans-return-type return-type)
-	     :call-direct t
-	     :arg-checking nil)))))
+;; (defmacro def-exported-foreign-function ((name &rest options) &rest args)
+;;   `(progn
+;;      (eval-when (eval load compile)
+;;        (export ',name))
+;;      (eval-when (compile eval load)
+;;        ,(let ((c-name (second (assoc :name options)))
+;; 	      (return-type (or (second (assoc :return-type options))
+;; 			       'void)))
+;; 	  `(ff-wrapper:def-foreign-call (,name ,c-name)
+;; 	       ,(or (mapcar #'trans-arg-type args) '(:void))
+;; 	     :returning ,(trans-return-type return-type)
+;; 	     :call-direct t
+;; 	     :arg-checking nil)))))
 
 (defun run-set-foreign-slot-value ()
   (set-foreign-slot-value size-hints 'xsizehints 'flags 1))
@@ -142,68 +142,62 @@
 
 ;; (eval-when (eval load compile)
 
-(defparameter *builtin-ctypes*
-  '(char unsigned-char short unsigned-short int unsigned-int long unsigned-long
-    long-long unsigned-long-long uchar ushort uint ulong llong llong ullong
-    int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double long-double
-    pointer void))
+;; (defparameter *builtin-ctypes*
+;;   '(char unsigned-char short unsigned-short int unsigned-int long unsigned-long
+;;     long-long unsigned-long-long uchar ushort uint ulong llong llong ullong
+;;     int8 uint8 int16 uint16 int32 uint32 int64 uint64 float double long-double
+;;     pointer void))
 
-(defun convert-builtin-ctypes-to-keyword (symbol)
-  (if (member symbol *builtin-ctypes*)
-      (alexandria:make-keyword (string-upcase (symbol-name symbol)))
-      symbol))
+;; (defun convert-builtin-ctypes-to-keyword (symbol)
+;;   (if (member symbol *builtin-ctypes*)
+;;       (alexandria:make-keyword (string-upcase (symbol-name symbol)))
+;;       symbol))
 
 ;; So, def-exported-foreign-struct-cffi has to render the old to the
 ;; new.
-(defun compute-cffi-style-cstruct-type (type)
-  (cond ((listp type) (if (eq (car type) :pointer)
-			  :pointer
-			  (mapcar (lambda (symbol)
-				    (convert-builtin-ctypes-to-keyword symbol))
-				  type)))
-	(t (convert-builtin-ctypes-to-keyword type))))
+;; (defun compute-cffi-style-cstruct-type (type)
+;;   (cond ((listp type) (if (eq (car type) :pointer)
+;; 			  :pointer
+;; 			  (mapcar (lambda (symbol)
+;; 				    (convert-builtin-ctypes-to-keyword symbol))
+;; 				  type)))
+;; 	(t (convert-builtin-ctypes-to-keyword type))))
 
-(defun compute-cffi-style-cstruct-slot-lab (slot)
-  (destructuring-bind (slot-name &key type overlays)
-      slot
-    (list slot-name (compute-cffi-style-cstruct-type type))))
+;; (defun compute-cffi-style-cstruct-slot-lab (slot)
+;;   (destructuring-bind (slot-name &key type overlays)
+;;       slot
+;;     (list slot-name (compute-cffi-style-cstruct-type type))))
 
-(defmacro def-exported-foreign-struct-cffi-lab (name-and-options &rest slots)
-  (let ((cffi-slots
-	 (reverse
-	  (reduce
-	   (lambda (slots slot)
-	     (cond  ((stringp slot)
-		     ;; documentation string
-		     (cons slot slots))
-		    ((or (listp slot)
-			 (symbolp slot)
-			 (keywordp slot))
-		     (cons (compute-cffi-style-cstruct-slot slot) slots))
-		    (t (error "unexpected slot type"))))
-	   slots
-	   :initial-value '()))))
-    `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
+;; (defmacro def-exported-foreign-struct-cffi-lab (name-and-options &rest slots)
+;;   (let ((cffi-slots
+;; 	 (reverse
+;; 	  (reduce
+;; 	   (lambda (slots slot)
+;; 	     (cond  ((stringp slot)
+;; 		     ;; documentation string
+;; 		     (cons slot slots))
+;; 		    ((or (listp slot)
+;; 			 (symbolp slot)
+;; 			 (keywordp slot))
+;; 		     (cons (compute-cffi-style-cstruct-slot slot) slots))
+;; 		    (t (error "unexpected slot type"))))
+;; 	   slots
+;; 	   :initial-value '()))))
+;;     `(cffi:defcstruct ,name-and-options ,@cffi-slots)))
 
 (defmacro def-c-typedef (lisp-type c-type)
   `(progn
-     (ff:def-c-typedef ,lisp-type ,c-type)
+     (ff-wrapper:def-c-typedef ,lisp-type ,c-type)
      (cffi:defctype ,lisp-type ,c-type)))
 
 (defmacro def-c-type (type-spec storage-type &body body)
 
   `(progn
-     (ff:def-c-typedef ,type-spec ,storage-type ,@body)
+     (ff-wrapper:def-c-typedef ,type-spec ,storage-type ,@body)
      (,(if (eq storage-type :struct) 'cffi:defcstruct 'cffi:defctype)
        ,(if (consp type-spec) (car type-spec) type-spec)
        ,@body)))
 
-  ;; `(progn
-  ;;    (ff:def-c-typedef ,lisp-type ,storage-type ,@body)
-  ;;    (,(if (eq storage-type :struct) 'cffi:defcstruct 'cffi:defctype)
-  ;;      ,lisp-type
-  ;;      ,c-type
-  ;;      ,@body)))
 
 ;; (def-exported-foreign-struct-cffi xextdata-cffi
 ;;     (number :type int)
@@ -269,10 +263,6 @@
 
 
 
-;; ;; (defclass display (ff:foreign-pointer)
-;; ;;   ((context :initarg :context :reader display-context)
-;; ;;    (xid->object-mapping :initform (make-hash-table :test #'equal)
-;; ;; 			excl::fixed-index 0)))
 
 ;; ;; (define-foreign-type curl-code-type ()
 ;; ;;   ()

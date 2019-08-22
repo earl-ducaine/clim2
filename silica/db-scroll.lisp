@@ -90,10 +90,10 @@
 
 (defun update-scroll-bars (viewport)
   (unless (or *inhibit-updating-scroll-bars*
-	      
+
 	      ;; bug12946 - dont do anything during the throw to change layouts
 	      (eq :new-layout clim-internals::*throw-to-frame-top-level*)
-	      
+
 	      )
     ;;--- This is not the most efficient thing in the world
     (let ((scroller (viewport-scroller-pane viewport))
@@ -102,7 +102,7 @@
       ;;--- text-output-record not considered [spr15933]
       (with-bounding-rectangle* (left top right bottom) contents
 	(when (output-recording-stream-p contents)
-	  (let ((pending-text 
+	  (let ((pending-text
 		 (slot-value contents 'clim-internals::text-output-record)))
 	    (when pending-text
 	      (with-bounding-rectangle* (tleft ttop tright tbottom)
@@ -122,12 +122,12 @@
 	    (maxf bottom vbottom)
 	    (when vertical-scroll-bar
 	      (update-scroll-bar vertical-scroll-bar
-				 top bottom 
+				 top bottom
 				 vtop vbottom
 				 :vertical))
 	    (when horizontal-scroll-bar
 	      (update-scroll-bar horizontal-scroll-bar
-				 left right 
+				 left right
 				 vleft vright
 				 :horizontal))))))))
 
@@ -194,7 +194,7 @@
                                                                         contents-range)))
                                                         (* size page-scroll)))))))))
 
-(defmethod value-changed-callback 
+(defmethod value-changed-callback
     ((sheet scroll-bar) (client scroller-pane) id value)
   (scroll-bar-value-changed-callback sheet client id value
                                      (scroll-bar-size sheet)))
@@ -283,7 +283,7 @@
                     (window-shift-visible-region sheet
                                                  left top right bottom
                                                  nleft ntop nright nbottom)
-                    ;; After we have finished shifting/copying, grow 
+                    ;; After we have finished shifting/copying, grow
                     ;; the "replay area" by one pixel up and to the left.
                     (setq nleft (1- nleft)
                           ntop (1- ntop))
