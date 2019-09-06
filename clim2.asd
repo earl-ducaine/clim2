@@ -8,7 +8,6 @@
     :serial t
     :components
     (
-     (:file "tk/ff-wrapper-for-ff")
      (:file "cat")
      (:file "utils/excl-verification")
      (:file "utils/packages")
@@ -18,7 +17,9 @@
      (:file "load-clim")
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
-
+     (:file "wnn/pkg")
+     (:file "tk/ff-wrapper-for-ff")
+     (:file "cat-alt")
      (:file "utils/defun-utilities")
      (:file "utils/reader")
      (:file "utils/processes")
@@ -202,7 +203,6 @@
      (:file "test/test-clim-tests")
      (:file "test/test-demos")
 
-     (:file "wnn/pkg")
 ;;     (:file "wnn/load-wnn")
      (:file "wnn/jl-defs")
      (:file "wnn/jl-funs")

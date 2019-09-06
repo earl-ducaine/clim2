@@ -32,6 +32,27 @@
     :unsigned-int :int :unsigned-long :long
     *)
 
+;; (macroexpand '(define-ref-par-types
+;;     :unsigned-int :int :unsigned-long :long
+;; 	       *))
+;;
+;; (progn (ff-wrapper:def-c-type unsigned-int-array 1 :unsigned-int)
+;;        (def-foreign-array-resource unsigned-int-array
+;; 	   make-unsigned-int-array)
+
+;;        (ff-wrapper:def-c-type int-array 1 :int)
+;;        (def-foreign-array-resource int-array make-int-array)
+
+;;        (ff-wrapper:def-c-type unsigned-long-array 1 :unsigned-long)
+;;        (def-foreign-array-resource unsigned-long-array
+;; 	   make-unsigned-long-array)
+
+;;        (ff-wrapper:def-c-type long-array 1 :long)
+;;        (def-foreign-array-resource long-array make-long-array)
+
+;;        (ff-wrapper:def-c-type *-array 1 *)
+;;        (def-foreign-array-resource *-array make-*-array))
+
 (defmacro with-ref-par (bindings &body body)
   (if (null bindings)
       `(progn ,@body)

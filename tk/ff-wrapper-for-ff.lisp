@@ -5,6 +5,97 @@
   (ff:def-c-typedef :anint :int)
   (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff)))
 
+;; (defpackage :wnn
+;;   (:export wnn-buf))
+
+;; (defpackage :tk
+;;   (:export
+;;    x-drawing-area-callback
+;;    x-push-button-callback-struct
+;;    xm-file-selection-box-callback-struct
+;;    xm-list-callback-struct
+;;    xm-text-block-rec
+;;    xm-text-field-callback-struct
+;;    xt-arg
+;;    xt-class
+;;    xt-offset-rec
+;;    xt-resource
+;;    xt-widget
+;;    xt-widget-geometry))
+
+;; (defpackage :x11
+;;   (:export
+;;    _xextension
+;;    _xgc
+;;    _xqevent
+;;    depth
+;;    display
+;;    funcs
+;;    screen
+;;    screenformat
+;;    visual
+;;    xanyevent
+;;    xarc
+;;    xbuttonevent
+;;    xchar2b
+;;    xcharstruct
+;;    xcirculateevent
+;;    xcirculaterequestevent
+;;    xclientmessageevent
+;;    xcolor
+;;    xcolormapevent
+;;    xcomposestatus
+;;    xconfigureevent
+;;    xconfigurerequestevent
+;;    xcreatewindowevent
+;;    xcrossingevent
+;;    xdestroywindowevent
+;;    xerrorevent
+;;    xexposeevent
+;;    xextcodes
+;;    xextdata
+;;    xfocuschangeevent
+;;    xfontprop
+;;    xfontstruct
+;;    xgcvalues
+;;    xgraphicsexposeevent
+;;    xgravityevent
+;;    xhostaddress
+;;    ximage
+;;    xkeyboardcontrol
+;;    xkeyboardstate
+;;    xkeyevent
+;;    xkeymapevent
+;;    xmapevent
+;;    xmappingevent
+;;    xmaprequestevent
+;;    xmodifierkeymap
+;;    xmotionevent
+;;    xnoexposeevent
+;;    xpoint
+;;    xpropertyevent
+;;    xrectangle
+;;    xreparentevent
+;;    xresizerequestevent
+;;    xrmoptiondescrec
+;;    xrmvalue
+;;    xsegment
+;;    xselectionclearevent
+;;    xselectionevent
+;;    xselectionrequestevent
+;;    xsetwindowattributes
+;;    xsizehints
+;;    xtextitem
+;;    xtextitem16
+;;    xtimecoord
+;;    xunmapevent
+;;    xvisibilityevent
+;;    xwindowattributes
+;;    xwindowchanges
+;;    xwmhints
+;;    ))
+
+
 (defpackage :ff-wrapper
   (:use cl)
   (:import-from :ff
@@ -49,7 +140,7 @@
 
 (in-package :ff-wrapper)
 
-(defparameter *structs* '())
+;; (defparameter *structs* '())
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; There are two namespaces for types in c (that we care about) one
   ;; for structs, enums, unions. and then the regular one for all
@@ -57,7 +148,7 @@
   (defun c-type-defined-p (type &optional (namespace :default))
     (gethash (cons namespace type) cffi::*type-parsers*))
 
-  (defun structp (type)
+  (defun c-struct-p (type)
     (member type *structs*))
 
   (defun nest-pointers-add-structs (type)
@@ -65,37 +156,81 @@
       ((and (> (length type) 1)
 	    (eq (car type) :pointer))
        (list :pointer (nest-pointers-add-structs (cdr type))))
-      ((structp (car type))
+      ((c-struct-p (car type))
        (list :struct  (car type)))
       (t
        (car type))))
 
-  (defun emit-cffi-type-specfier (types)
-    (nest-pointers-add-structs
-     (reverse
-      (let (converted-types)
-	(dolist (converted-type types converted-types)
-	  (cond
-	    ((eq :double-float converted-type)
-	     (push :double converted-types))
-	    ((eq :single-float converted-type)
-	     (push :float converted-types))
-	    ((eq 'char converted-type)
-	     (push :char converted-types))
-	    ((eq '* converted-type)
-	     (push :pointer converted-types))
-	    ;; ((and (numberp converted-type) (= converted-type 1))
-	    ;;  (push :pointer converted-types))
-	    (t
-	     (progn
-	       (unless (or (c-type-defined-p converted-type :default)
-			   (c-type-defined-p converted-type :struct))
-		 ;; Define it as a pointer for now and hope that its
-		 ;; real definition appears later
-		 (format t "defining stub: ~s~%"
-			 `(cffi:defctype ,converted-type :pointer))
-		 (eval `(cffi:defctype ,converted-type :pointer))))
-	     (push  converted-type converted-types))))))))
+  (defparameter *ff-base-type* '(:signed-int :short :unsigned-int
+				 :void :unsigned-long :int :cardinal
+				 :char :long :pointer))
+
+  (defparameter *ff-types* '())
+
+
+  (defun print-ffi-used-types (&optional (type :unidentified))
+    (reduce (lambda (definitions definition)
+	      (let ((definition-type
+		     (get-type-category (cadr (assoc :body definition)))))
+		(cond
+		  ((eq type definition-type)
+		   (cons definition definitions))
+		  (t
+		   definitions))))
+	    *ff-types* :initial-value '()))
+
+  (defun get-struct-types ()
+    (reduce (lambda (names definition)
+	      (let* ((body (cadr (assoc :body definition)))
+		     (name (if (consp (car body)) (caar body) (car body)))
+		     (definition-type
+		      (get-ffi-type-def-category body)))
+		(cond
+		  ((member definition-type '(:explicit-struct :implied-structure))
+		   (cons name names))
+		  (t
+		   names))))
+	    *ffi-c-definitions* :initial-value '()))
+
+
+  (defun get-type-category (type)
+    (pushnew type *ff-types*)
+    (cond
+      ((keywordp type)
+       :base-type)
+      (t
+       :unidentified)))
+
+  (defun emit-cffi-type-specfier (type)
+    ;; (push types *ff-types*)
+    (format t "type (~s) category: ~s~%" type (get-type-category type))
+    (cond
+      ((eq :double-float type)
+       :double)
+      ((eq :single-float type)
+       :float)
+      ((eq 'char type)
+       :char)
+      ((eq '* type)
+       :pointer)
+      ((c-struct-p type)
+       (unless (c-type-defined-p type :struct)
+	 ;; Define it as a pointer for now and hope that its
+	 ;; real definition appears later
+	 (let ((def `(cffi:defcstruct ,type)))
+	   (format t "defining stub: ~s~%" def)
+	   (eval def)))
+       (list :struct type))
+      (t
+       (progn
+	 (unless (or (c-type-defined-p type :default)
+		     (c-type-defined-p type :struct))
+	   ;; Define it as a pointer for now and hope that its
+	   ;; real definition appears later
+	   (format t "defining stub: ~s~%"
+		   `(cffi:defctype ,type :pointer))
+	   (eval `(cffi:defctype ,type :pointer))))
+       type)))
 
   (defun emit-cffi-def-c-typedef-simple (name body)
     (format t "emit-cffi-def-c-typedef-simple name:~s body:~s~%" name body)
@@ -103,11 +238,11 @@
       (cond
 	;; defines an array
 	((integerp (car body))
-	 `(defparameter ,name (cffi:foreign-alloc '(,@(emit-cffi-type-specfier (cdr body)))
-						  :count ,(car body))))
+	 `(defparameter ,name (cffi:foreign-alloc
+			       '(,(emit-cffi-type-specfier (cadr body)))
+			       :count ,(car body))))
 	(t
-	 `(cffi:defctype ,name ,(emit-cffi-type-specfier body))))))
-
+	 `(cffi:defctype ,name ,(emit-cffi-type-specfier (car body)))))))
 
   ;; ((:STRUCT
   ;;   (PTR * :CHAR)
@@ -132,7 +267,9 @@
 	   (intern accessor-name-string (symbol-package struct-name))))
       `(progn
 	 (defun ,accessor-name-symbol (struct-pointer)
-	   (cffi:foreign-slot-value struct-pointer (quote ,struct-name) (quote ,slot-name)))
+	   (cffi:foreign-slot-value struct-pointer
+				    (quote ,struct-name)
+				    (quote ,slot-name)))
 	 (defun (setf ,accessor-name-symbol) (struct-pointer value)
 	   (setf (cffi:foreign-slot-value struct-pointer
 					  (quote ,struct-name)
@@ -154,11 +291,11 @@
 	    ;; '(class-initialize xt-proc)
 	    (:define-slot-base-type
 	     (push (list slot-name
-			 (emit-cffi-type-specfier (list (cadr slot))))
+			 (emit-cffi-type-specfier (cadr slot)))
 		   cffi-defcstruct))
 	    (:define-slot-base-pointer-type
 	     (push (list (car slot)
-			 `(:pointer ,(emit-cffi-type-specfier (list (caddr slot)))))
+			 `(:pointer ,(emit-cffi-type-specfier (caddr slot))))
 		   cffi-defcstruct)))))
       (let ((result (cons (reverse cffi-defcstruct)
 			  slot-accessors)))
@@ -258,8 +395,6 @@
 	   (list (generate-accessor-defun name type)))))
       ;; ((tk::xt-class :no-defuns :no-constructor) :struct
       ;;  (tk::superclass :long) (tk::name * :char)
-      ;;  (tk::get-values-hook tk::xt-proc)
-      ;;  (tk::accept-focus tk::xt-proc)
       ;;  (tk::version tk::xt-version-type)
       ;;  (tk::callback-private * :char))
       (:explicit-struct
@@ -270,9 +405,6 @@
       ;; ((x11:xfocuschangeevent :no-defuns)
       ;;  (type x11:int)
       ;;  (x11::serial x11:unsigned-long)
-      ;;  (x11::send-event x11:int)
-      ;;  (x11:display * x11:display)
-      ;;  (x11:window x11:window)
       ;;  (x11::mode x11:int)
       ;;  (x11::detail x11:int)))
       (:implied-structure
@@ -282,6 +414,47 @@
 	 (generate-cffi-defcstruct name slots))))))
 
 (defparameter *ffi-c-definitions* '())
+
+;; List of all structs implied and explicit
+(defparameter *structs*
+  '(x11::xextdata x11::xextcodes x11::_xextension x11::xgcvalues x11::_xgc
+		x11::visual x11::depth x11::screen x11::screenformat
+		x11::xsetwindowattributes x11::xwindowattributes x11::xhostaddress
+		x11::funcs x11::ximage x11::xwindowchanges x11::xcolor x11::xsegment
+		x11::xpoint x11::xrectangle x11::xarc x11::xkeyboardcontrol
+		x11::xkeyboardstate x11::xtimecoord x11::xmodifierkeymap x11::display
+		x11::xkeyevent x11::xbuttonevent x11::xmotionevent x11::xcrossingevent
+		x11::xfocuschangeevent x11::xkeymapevent x11::xexposeevent
+		x11::xgraphicsexposeevent x11::xnoexposeevent x11::xvisibilityevent
+		x11::xcreatewindowevent x11::xdestroywindowevent x11::xunmapevent
+		x11::xmapevent x11::xmaprequestevent x11::xreparentevent
+		x11::xconfigureevent x11::xgravityevent x11::xresizerequestevent
+		x11::xconfigurerequestevent x11::xcirculateevent
+		x11::xcirculaterequestevent x11::xpropertyevent x11::xselectionclearevent
+		x11::xselectionrequestevent x11::xselectionevent x11::xcolormapevent
+		x11::xclientmessageevent x11::xmappingevent x11::xerrorevent
+		x11::xanyevent x11::_xqevent x11::xcharstruct x11::xfontprop
+		x11::xfontstruct x11::xtextitem x11::xchar2b x11::xtextitem16 x11::xrmvalue
+		x11::xrmoptiondescrec x11::xwmhints x11::xsizehints x11::xcomposestatus
+		tk::xt-class tk::xt-resource tk::xt-offset-rec tk::xt-widget
+		tk::x-push-button-callback-struct tk::x-drawing-area-callback
+		tk::xt-arg tk::xt-widget-geometry tk::xm-text-block-rec
+		tk::xm-text-field-callback-struct
+		tk::xm-file-selection-box-callback-struct tk::xm-list-callback-struct
+		wnn::wnn-buf))
+
+(defun get-structs ()
+  (reduce (lambda (definitions definition)
+	    (let ((definition-type
+		   (get-ffi-type-def-category (cadr (assoc :body definition)))))
+	      (cond
+		((member definition-type '(:explicit-struct :implied-structure))
+		 (let* ((name (caadr (assoc :body definition)))
+			(name (if (consp name) (car name) name)))
+		   (pushnew name definitions)))
+		(t
+		 definitions))))
+	  *ffi-c-definitions* :initial-value '()))
 
 (defun print-ffi-definitions (&optional (type :unidentified))
   (reduce (lambda (definitions definition)
