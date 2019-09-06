@@ -1945,7 +1945,7 @@
 		  (tk::get-values dialog :dir-spec :directory)))
 	  (tk::destroy-widget dialog))))))
 
-(ff::defun-foreign-callable file-search-proc-callback ((widget :foreign-address)
+(ff-wrapper::defun-foreign-callable file-search-proc-callback ((widget :foreign-address)
 						       (cb :foreign-address))
   (setq widget (xt::find-object-from-address widget))
   (file-search-proc-callback-1
@@ -1976,7 +1976,7 @@
                       :file-list-item-count (length new)
                       :list-updated t))))
 
-(defvar *file-search-proc-callback-address* (ff:register-foreign-callable 'file-search-proc-callback))
+(defvar *file-search-proc-callback-address* (ff-wrapper:register-foreign-callable 'file-search-proc-callback))
 
 (defun make-file-search-proc-function (dialog file-search-proc)
   (push (cons :file-search-proc file-search-proc)
@@ -2360,7 +2360,7 @@
 (defun reinitialize-silica-callbacks ()
   (xm-silica::setup-mda)
   (setq xm-silica::*file-search-proc-callback-address*
-    (ff:register-foreign-callable
+    (ff-wrapper:register-foreign-callable
      'xm-silica::file-search-proc-callback :reuse)))
 
 (in-package :tk-silica)

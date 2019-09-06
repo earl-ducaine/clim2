@@ -26,7 +26,7 @@
 (deftype unsigned-nat ()
   `(unsigned-byte #-64bit 32 #+64bit 64))
 
-(ff:def-foreign-type drawitemstruct
+(ff-wrapper:def-foreign-type drawitemstruct
     (:struct (ctltype    win:uint)
              (ctlid      win:uint)
              (itemid     win:uint)
@@ -37,7 +37,7 @@
              (rcitem     win:rect)
              (itemdata   (* :void))))
 
-(ff:def-foreign-type browseinfo
+(ff-wrapper:def-foreign-type browseinfo
     (:struct (hwndOwner win:hwnd)
 	     (pidlRoot win:lpcitemidlist)
 	     (pszDisplayName win:lpstr)
@@ -47,7 +47,7 @@
 	     (lparam win:lparam)
 	     (iImage :int)))
 
-(ff:def-foreign-type toolinfo
+(ff-wrapper:def-foreign-type toolinfo
     (:struct (cbsize win:uint)
 	     (uflags win:uint)
 	     (hwnd win:hwnd)
@@ -57,12 +57,12 @@
 	     (lpsztext win:lpstr)
 	     (lparam win:lparam)))
 
-(ff:def-foreign-call (SHBrowseForFolder "SHBrowseForFolder")
+(ff-wrapper:def-foreign-call (SHBrowseForFolder "SHBrowseForFolder")
     ((info (* browseinfo)))
   :returning win:pvoid  ; LPITEMIDLIST
   :release-heap :when-ok)
 
-(ff:def-foreign-call (FormatMessage "FormatMessageA")
+(ff-wrapper:def-foreign-call (FormatMessage "FormatMessageA")
     ((flags :int)
      (source (* :long))
      (messageid :int)
@@ -74,69 +74,69 @@
   :returning :int)
 
 ;; This should be equivalent to win:createpen but not cons.
-(ff:def-foreign-call (CreatePen "CreatePen")
+(ff-wrapper:def-foreign-call (CreatePen "CreatePen")
     ((flags :int) (source :int) (color :int))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
 ;; This should be equivalent to win:createrectrgn but not cons.
-(ff:def-foreign-call (CreateRectRgn "CreateRectRgn")
+(ff-wrapper:def-foreign-call (CreateRectRgn "CreateRectRgn")
     ((left :int) (top :int) (right :int) (bottom :int))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
 ;; This should be equivalent to win:getdc but not cons.
-(ff:def-foreign-call (GetDC "GetDC")
+(ff-wrapper:def-foreign-call (GetDC "GetDC")
     ((window win:hwnd))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning win:hdc)
 
 ;; This should be equivalent to win:getdc but not cons.
-(ff:def-foreign-call (ReleaseDC "ReleaseDC")
+(ff-wrapper:def-foreign-call (ReleaseDC "ReleaseDC")
     ((window win:hwnd) (dc win:hdc))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
-(ff:def-foreign-call (SetBkMode "SetBkMode")
+(ff-wrapper:def-foreign-call (SetBkMode "SetBkMode")
     ((dc win:hdc) (mode :int))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
-(ff:def-foreign-call (SetBkColor "SetBkColor")
+(ff-wrapper:def-foreign-call (SetBkColor "SetBkColor")
     ((dc win:hdc) (color :int))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
-(ff:def-foreign-call (SetTextColor "SetTextColor")
+(ff-wrapper:def-foreign-call (SetTextColor "SetTextColor")
     ((dc win:hdc) (color :int))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
-(ff:def-foreign-call (SetROP2 "SetROP2")
+(ff-wrapper:def-foreign-call (SetROP2 "SetROP2")
     ((dc win:hdc) (rop2 :int))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning :int)
 
 ;; This should be equivalent to win:selectobject but not cons.
-(ff:def-foreign-call (SelectObject "SelectObject")
+(ff-wrapper:def-foreign-call (SelectObject "SelectObject")
     ((a win:hdc) (b win:hpen))
   :arg-checking #.cl-user::*ffi-arg-checking*
   :call-direct #.cl-user::*ffi-call-direct*
   :returning win:hpen)
 
-(ff:def-foreign-call (SetWindowsHookEx "SetWindowsHookExA")
+(ff-wrapper:def-foreign-call (SetWindowsHookEx "SetWindowsHookExA")
     ((a :int) (b win:hookproc) (c win:hinstance) (d win:dword))
   :returning win:pvoid)
 
-(ff:def-foreign-call (CallNextHookEx "CallNextHookExA")
+(ff-wrapper:def-foreign-call (CallNextHookEx "CallNextHookExA")
     ((a (* :nat))
      (b :int)
      (c win:wparam)
@@ -146,17 +146,17 @@
 ;;; These are used only in the CreateDIBitmap code
 ;;;
 
-(ff:def-foreign-call memcpy
+(ff-wrapper:def-foreign-call memcpy
     ((to (* :void)) (from (* :void)) (nbytes :int))
   ;; really returns (* :void) but can't hack that (why?)
   :returning :int)
 
-(ff:def-foreign-call (system-malloc "malloc")
+(ff-wrapper:def-foreign-call (system-malloc "malloc")
     ((bytes :int))
   ;; really (* :void)
   :returning win:pvoid)
 
-(ff:def-foreign-call (system-free "free")
+(ff-wrapper:def-foreign-call (system-free "free")
     ((address (* :void)))
   :returning :void)
 

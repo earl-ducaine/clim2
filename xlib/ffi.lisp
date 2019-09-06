@@ -57,7 +57,7 @@
 		     (name &key type) slot
 		   `(,name ,@(trans-slot-type type)))))
 	  (if (notany #'(lambda (s) (member :overlays (cdr s))) slots)
-	      `(ff::def-c-type (,name :no-defuns ,@options)
+	      `(ff-wrapper:def-c-type (,name :no-defuns ,@options)
 		 ,@(mapcar #'foo-slot slots))
 	    (destructuring-bind
 		((first-slot-name . first-options) . other-slots) slots
@@ -69,7 +69,7 @@
 				  (eq (getf (cdr slot) :overlays)
 				      first-slot-name))
 			      other-slots))
-		  `(ff::def-c-type (,name :no-defuns ,@options) :union
+		  `(ff-wrapper::def-c-type (,name :no-defuns ,@options) :union
 				   ,@(mapcar #'(lambda (slot)
 						 (setq slot (copy-list slot))
 						 (remf (cdr slot) :overlays)
@@ -77,7 +77,7 @@
 					     slots))
 		(error ":overlays used in a way we cannot handle")))))
        ,(when array-name
-	  `(ff::def-c-type (,array-name :no-defuns ,@options)
+	  `(ff-wrapper::def-c-type (,array-name :no-defuns ,@options)
 	     1 ,name)))))
 
 
@@ -99,16 +99,16 @@
 (defun trans-arg-type (type)
   (excl:if* (consp type)
      then (ecase (car type)
-	    (:pointer 'ff:foreign-address)
-	    (:array 'ff:foreign-address))
+	    (:pointer 'ff-wrapper:foreign-address)
+	    (:array 'ff-wrapper:foreign-address))
      else (case type
 	    (void (error "void not allowed here"))
 	    ((int unsigned-int :unsigned-32bit :signed-32bit) 'integer)
 	    ((fixnum-int fixnum-unsigned-int) 'fixnum)
-	    (fixnum-drawable 'ff:foreign-address)
+	    (fixnum-drawable 'ff-wrapper:foreign-address)
 	    (t
-	     (if (get type 'ff::cstruct)
-		 'ff:foreign-address
+	     (if (get type 'ff-wrapper::cstruct)
+		 'ff-wrapper:foreign-address
 	       't)))))
 
 #+(and (version>= 5 0) (not (version>= 6 1)))
@@ -123,7 +123,7 @@
 	    ((fixnum-int fixnum-unsigned-int) 'fixnum)
 	    (fixnum-drawable :foreign-address)
 	    (t
-	     (if (get type 'ff::cstruct)
+	     (if (get type 'ff-wrapper:cstruct)
 		 :foreign-address
 	       't)))))
 
@@ -149,7 +149,7 @@
 ;;      (eval-when (eval load compile)
 ;;        (export ',name))
 ;;      (eval-when (compile eval load)
-;;        ,(let ((c-name (ff:convert-foreign-name (second (assoc :name options))))
+;;        ,(let ((c-name (ff-wrapper:convert-foreign-name (second (assoc :name options))))
 ;; 	      (return-type (or (second (assoc :return-type options))
 ;; 			       'void)))
 
@@ -177,7 +177,7 @@
 		  ((fixnum-int fixnum-unsigned-int) '(:int fixnum))
 		  (fixnum-drawable '(:foreign-address))
 		  (t
-		   (if (get (cadr type) 'ff::cstruct)
+		   (if (get (cadr type) 'ff-wrapper:cstruct)
 		       '(:foreign-address)
 		     '(:lisp)))))))
 
@@ -205,7 +205,7 @@
        ,(let ((c-name (second (assoc :name options)))
 	      (return-type (or (second (assoc :return-type options))
 			       'void)))
-	  `(ff:def-foreign-call (,name ,c-name)
+	  `(ff-wrapper:def-foreign-call (,name ,c-name)
 	       ,(or (mapcar #'trans-arg-type args) '(:void))
 	     :returning ,(trans-return-type return-type)
 	     :call-direct t
@@ -224,7 +224,7 @@
 
 #-(version>= 6 1)
 (defun defforeign-functions-now ()
-  (ff:defforeign-list *defforeigned-functions*))
+  (ff-wrapper:defforeign-list *defforeigned-functions*))
 
 ;;; End of delay version
 
@@ -233,7 +233,8 @@
 
 (ff-wrapper:def-c-typedef :fixnum :int)
 (ff-wrapper:def-c-typedef :signed-32bit :int)
-(ff-wrapper:def-c-typedef :pointer * :char)
+;; Already defined in CFFI
+#-use-cffi (ff-wrapper:def-c-typedef :pointer * :char)
 (ff-wrapper:def-c-typedef :signed-8bit :char)
 
 ;; Create non-keyword versions.

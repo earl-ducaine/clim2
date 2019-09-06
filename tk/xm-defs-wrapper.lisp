@@ -5,17 +5,17 @@
 
 (in-package :tk)
 
-;; (ff:def-c-typedef alisp-xm-string :int)
-;; (ff:def-c-typedef alisp-xm-text-position :long)
+;; (ff-wrapper:def-c-typedef alisp-xm-string :int)
+;; (ff-wrapper:def-c-typedef alisp-xm-text-position :long)
 
-;; (ff:def-c-type (alisp-xm-text-block-rec :no-defuns) :struct
+;; (ff-wrapper:def-c-type (alisp-xm-text-block-rec :no-defuns) :struct
 ;;   (ptr * :char)
 ;;   (length :int)
 ;;   (format x11:atom))
 
-;; (ff:def-c-typedef alisp-xm-text-block * xm-text-block-rec)
+;; (ff-wrapper:def-c-typedef alisp-xm-text-block * xm-text-block-rec)
 
-;; (ff:def-c-atype (alisp-xm-text-field-callback-struct :no-defuns :no-constructor) :struct
+;; (ff-wrapper:def-c-atype (alisp-xm-text-field-callback-struct :no-defuns :no-constructor) :struct
 ;;   (reason :int)
 ;;   (event * x11:xevent)
 ;;   (doit boolean)

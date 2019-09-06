@@ -6,7 +6,7 @@
 
 (defvar *address->object-mapping* (make-hash-table :test 'equal))
 
-(defclass display (ff:foreign-pointer)
+(defclass display (ff-wrapper:foreign-pointer)
   ((context :initarg :context :reader display-context)
    (xid->object-mapping :initform (make-hash-table :test #'equal)
 			excl::fixed-index 0)))
@@ -26,19 +26,19 @@
 	(errorp
 	 (error "Cannot find object from handle: ~S" handle))))
 
-(defun register-address (object &optional (handle (ff:foreign-pointer-address object)))
+(defun register-address (object &optional (handle (ff-wrapper:foreign-pointer-address object)))
   (setf (gethash handle *address->object-mapping*) object)
   object)
 
-(defun unregister-address (object &optional (handle (ff:foreign-pointer-address object)))
+(defun unregister-address (object &optional (handle (ff-wrapper:foreign-pointer-address object)))
   (remhash handle *address->object-mapping*)
-  (setf (ff:foreign-pointer-address object) 0))
+  (setf (ff-wrapper:foreign-pointer-address object) 0))
 
-(defun register-xid (object display &optional (handle (ff:foreign-pointer-address object)))
+(defun register-xid (object display &optional (handle (ff-wrapper:foreign-pointer-address object)))
   (setf (gethash handle (display-xid->object-mapping display)) object)
   object)
 
-(defun unregister-xid (object display &optional (handle (ff:foreign-pointer-address object)))
+(defun unregister-xid (object display &optional (handle (ff-wrapper:foreign-pointer-address object)))
   (remhash handle (display-xid->object-mapping display))
   object)
 

@@ -233,10 +233,10 @@
    (msg :initform (ct:ccallocate win:msg)
 	:accessor msg)
    (arrow-cursor :initform
-		 (ff:allocate-fobject 'win:hcursor :foreign-static-gc nil)
+		 (ff-wrapper:allocate-fobject 'win:hcursor :foreign-static-gc nil)
 		 :accessor arrow-cursor)
    (application-icon :initform
-		     (ff:allocate-fobject 'win:hicon  :foreign-static-gc nil)
+		     (ff-wrapper:allocate-fobject 'win:hicon  :foreign-static-gc nil)
 		     :accessor application-icon)
    (current-window :initform nil
 		   :accessor current-window)
@@ -1163,7 +1163,7 @@ or (:style . (family face size))")
   "Use win:GetVersionEx to determine the operating system being used."
   (or *system-version*
       (setq *system-version*
-	(let ((v (ff:allocate-fobject 'win::osversioninfo)))
+	(let ((v (ff-wrapper:allocate-fobject 'win::osversioninfo)))
 	  (setf (ct:cref win::osversioninfo v dwOSVersionInfoSize)
 	    (ct:sizeof win::osversioninfo))
 	  (win::GetVersionEx v)

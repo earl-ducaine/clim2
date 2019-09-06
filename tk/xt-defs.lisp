@@ -22,15 +22,37 @@
 
 ;;; allocate-cstruct was adapted from ff-wrapper::make-cstruct.  We aren't
 ;;; using ff-wrapper::make-cstruct because it uses excl:aclmalloc.
+;; (defun allocate-cstruct (name &key
+;; 			      (number 1)
+;; 			      (initialize
+;; 			       (ff-wrapper::cstruct-property-initialize
+;; 				(ff-wrapper::cstruct-prop name)))
+;; 			      )
+;;   (declare (optimize (speed 3)))
+;;   (let* ((prop (ff-wrapper::cstruct-prop name))
+;; 	 (size (* number (ff-wrapper::cstruct-property-length prop))))
+;;     (when initialize
+;;       (setq initialize 0))
+;;     (allocate-memory size initialize)))
+
+;;; allocate-cstruct was adapted from ff-wrapper::make-cstruct.  We aren't
+;;; using ff-wrapper::make-cstruct because it uses excl:aclmalloc.
+
+#+use-cffi
+(defun allocate-cstruct (name &key
+			      (number 1)
+				initialize)
+  (declare (ignor (number initialize)))
+  (cffi:foreign-alloc name :count number))
+
+#-use-cffi
 (defun allocate-cstruct (name &key
 			      (number 1)
 			      (initialize
-			       (ff::cstruct-property-initialize
-				(ff::cstruct-prop name)))
-			      )
-  (declare (optimize (speed 3)))
-  (let* ((prop (ff::cstruct-prop name))
-	 (size (* number (ff::cstruct-property-length prop))))
+			       (ff-wrapper::cstruct-property-initialize
+				(ff-wrapper::cstruct-prop name))))
+  (let* ((prop (ff-wrapper::cstruct-prop name))
+	 (size (* number (ff-wrapper::cstruct-property-length prop))))
     (when initialize
       (setq initialize 0))
     (allocate-memory size initialize)))

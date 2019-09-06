@@ -77,19 +77,19 @@
   (declare (ignore wproc-address arg-struct))
 ;;;  (setf *clim-wproc-arg-struct* arg-struct)
   ;; [rfe4951]:
-  (ff:register-foreign-callable 'clim-wind-proc :reuse :return-value))
+  (ff-wrapper:register-foreign-callable 'clim-wind-proc :reuse :return-value))
 
 (defun init-tooltip-relay (wproc-address arg-struct)
   (declare (ignore wproc-address arg-struct))
 ;;;  (setf *tooltip-relay-struct* arg-struct)
   ;; [rfe4951]:
-  (ff:register-foreign-callable 'tooltip-relay :reuse :return-value))
+  (ff-wrapper:register-foreign-callable 'tooltip-relay :reuse :return-value))
 
 (defun init-clim-ctrl-proc (wproc-address arg-struct)
   (declare (ignore wproc-address arg-struct))
 ;;;  (setf *clim-ctrl-arg-struct* arg-struct)
   ;; [rfe4951]:
-  (ff:register-foreign-callable 'clim-ctrl-proc :reuse :return-value))
+  (ff-wrapper:register-foreign-callable 'clim-ctrl-proc :reuse :return-value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; callback for the windowproc for all CLIM windows.
@@ -99,8 +99,8 @@
     ;; SetCursor doesn't seem to be the right thing.
     ;; Each time the mouse moves, Windows sets the cursor back
     ;; to the default for the class and then sends a WM_SETCURSOR
-    ;; message where we get a chance to SetCursor again.  
-    (win:SetClassLong (sheet-mirror sheet) 
+    ;; message where we get a chance to SetCursor again.
+    (win:SetClassLong (sheet-mirror sheet)
 		      -12		; GCL_HCURSOR
 		      wincursor)
     (win:SetCursor wincursor)
@@ -146,7 +146,7 @@
 	(sheet (mirror->sheet *acl-port* window)))
     (declare (ignore keys))
     (setf (win-result *acl-port*)
-      (if (or (not sheet) 
+      (if (or (not sheet)
 	      (note-pointer-motion *acl-port* sheet mx my))
 	  (win:DefWindowProc window msg wparam lparam)
 	win:FALSE))))
@@ -157,10 +157,10 @@
   ;; when the cursor is not moving.  JPM 5/98.
   (let* ((hit-code (loword lparam)))
     (cond ((eql hit-code win:HTCLIENT)
-	   (setf (win-result *acl-port*) 
+	   (setf (win-result *acl-port*)
 	     (if (maybe-set-cursor (mirror->sheet *acl-port* window))
 		 win:TRUE win:FALSE)))
-	  (t 
+	  (t
 	   (setf (pointer-cursor (port-pointer *acl-port*)) :default)
 	   ;; If the hit-code is not HTCLIENT, then its not CLIM's problem.
 	   ;; If it is in the client area, then DefWindowProc is supposed
@@ -176,12 +176,12 @@
 (defun onpaint (window msg wparam lparam)
   (declare (ignore wparam msg lparam))
   (let ((sheet (mirror->sheet *acl-port* window)))
-    (let* ((udrect (ff:allocate-fobject 'win:rect :foreign-static-gc nil))
+    (let* ((udrect (ff-wrapper:allocate-fobject 'win:rect :foreign-static-gc nil))
 	   (berase 0)
 	   (update (win:GetUpdateRect window udrect berase))
 	   ;; +++rl added to validate everything because of multiple
 	   ;; (continuous) repaints with maximized window
-	   (vdrect (ff:allocate-fobject 'win:rect :foreign-static-gc nil)))
+	   (vdrect (ff-wrapper:allocate-fobject 'win:rect :foreign-static-gc nil)))
       ;; +++rl same as comment above
       (win:GetClientRect window vdrect)
       (if update
@@ -191,13 +191,13 @@
 		(ibot (ct:cref win:rect udrect bottom)))
 	    (win:ValidateRect window vdrect) ; needed?
 	    #+debug
-	    (format *trace-output* "~A ~A ~A ~A ~A~%" 
+	    (format *trace-output* "~A ~A ~A ~A ~A~%"
 		    ilef itop irig ibot sheet)
 	    (unless (or (= ilef irig) (= itop ibot)) ;does this happen alot?
 	      (when sheet
 		(handle-event
 		 sheet
-		 (allocate-event 
+		 (allocate-event
 		  'window-repaint-event
 		  :native-region (sheet-native-region sheet)
 		  :region (make-bounding-rectangle ilef itop irig ibot)
@@ -209,9 +209,9 @@
   (declare (ignore wparam msg window)
            (optimize (speed 3) (safety 0) (debug 0)))
   (macrolet ((lp-slot (name)
-               `(ff:fslot-value-typed 'drawitemstruct :c lparam ',name))
+               `(ff-wrapper:fslot-value-typed 'drawitemstruct :c lparam ',name))
              (lp-addr (name)
-               `(ff:fslot-address-typed 'drawitemstruct :c lparam ',name)))
+               `(ff-wrapper:fslot-address-typed 'drawitemstruct :c lparam ',name)))
    (let* ((hwnd (lp-slot hwnditem))
           (sheet (mirror->sheet *acl-port* hwnd)))
      (when sheet
@@ -234,7 +234,7 @@
            (let ((rect (ct:ccallocate win:rect)))
 	     (win:GetClientRect hwnd rect)
 	     (silica::draw-picture-button sheet 0 hdc rect)))
-	 
+
 	 (setf (win-result *acl-port*) (adjust-gadget-colors sheet hdc))))))
 
 ;; Process WM_COMMAND.
@@ -253,7 +253,7 @@
 	   (let* ((frame (pane-frame parent))
 		  (ID (loword wparam))
 		  (command (cdr (aref (menu-id->command-table port) ID))))
-	     
+
 	     ;;mm bug12977
 	     (handler-case
 		 ;; set the focus to make sure mswin-text-field instances get updated
@@ -264,7 +264,7 @@
 		   ;; must do the command right now to do commands in
 		   ;; the right order
 		   (execute-command-in-frame frame command))))
-	     
+
 	     (when command
 	       (with-slots (clim-internals::disabled-commands) frame
 		 (if (member (car command) clim-internals::disabled-commands)
@@ -290,7 +290,7 @@
 	   port lparam (sheet-mirror sheet))
 	(declare (ignore right bottom))
 	(queue-put event-queue
-		   (allocate-event 
+		   (allocate-event
 		    'silica::window-change-event
 		    :native-x (+ left 1)
 		    :native-y (+ top 1)
@@ -319,9 +319,9 @@
     (#.win:SC_MINIMIZE			; iconify
      (let* ((sheet (mirror->sheet *acl-port* window))
 	    (frame (when sheet (pane-frame sheet))))
-       (when frame 
+       (when frame
 	 (let ((framem (clim::frame-manager frame)))
-	   (note-frame-iconified framem frame)) 
+	   (note-frame-iconified framem frame))
 	 #+old (when frame (setf (frame-state frame) :shrunk))
 	 )))
     (#.win:SC_RESTORE			; deiconify
@@ -353,7 +353,7 @@
          (redraw 1))
     (declare (fixnum position))
     (assert bar)
-    ;; By convention, scroll bar values should always have a range of 
+    ;; By convention, scroll bar values should always have a range of
     ;; 0 to *win-scroll-grain*.
     (multiple-value-bind (action amount)
         (case scrollcode
@@ -412,7 +412,7 @@
   (when (gadgetp scroll-bar)
     (let* ((delta (funcall delta-function scroll-bar))
            (old-position (win:GetScrollPos hwnd win-code))
-           (tentative-new-position 
+           (tentative-new-position
             (+ old-position
               (* direction (silica::convert-scroll-bar-size-out scroll-bar delta))))
            (new-position (max 0 (min (win-scroll-grain *acl-port*) tentative-new-position)))
@@ -510,10 +510,10 @@
     (setf (modstate-numlock (modstate *acl-port*))
           (and (plusp numstate) (zerop (ash numstate -15))))
     (setf (modstate-shift (modstate *acl-port*))
-          (or (and (or (minusp shiftstate) 
+          (or (and (or (minusp shiftstate)
                        (not (zerop (ash shiftstate -15))))
                    (zerop capstate))
-              (and (not (or (minusp shiftstate) 
+              (and (not (or (minusp shiftstate)
                             (not (zerop (ash shiftstate -15)))))
                    (and (plusp capstate) (zerop (ash capstate -15)))))))
   (setf (port-modifier-state *acl-port*)
@@ -540,7 +540,7 @@
 	(progn
 	  (setq pass nil)
 	  (setf (win-result *acl-port*) (win:DefWindowProc window msg wparam lparam))
-	  ;;added this so that port modifier state is always updated, 
+	  ;;added this so that port modifier state is always updated,
 	  ;; even on passed characters. -- KR
 	  (setf (port-modifier-state *acl-port*)
 	    (modstate->modifier (modstate *acl-port*)))
@@ -571,7 +571,7 @@
 		  (command nil))
 	      (cond ((and (or (eql msg win:WM_KEYDOWN)
 			      (eql msg win:WM_SYSKEYDOWN)); Alt keyboard accelerator
-			  (setq command 
+			  (setq command
 			    (lookup-accelerator frame keysym modstate)))
 		     (execute-command-in-frame frame command))
 		    ((and (or (eql msg win:WM_KEYDOWN)
@@ -593,7 +593,7 @@
 				 :character char
 				 :modifier-state modstate
 				 :sheet sheet))
-		     ;;added this so that port modifier state is always 
+		     ;;added this so that port modifier state is always
 		     ;; updated, even on passed characters. -- KR
 		     (setf (port-modifier-state *acl-port*)
 		       (modstate->modifier (modstate *acl-port*)))
@@ -628,8 +628,8 @@
     (if gadget
 	(with-slots (event-queue) *acl-port*
 	  (queue-put event-queue
-		     (allocate-event 
-		      'silica::window-change-event 
+		     (allocate-event
+		      'silica::window-change-event
 		      :native-x 0
 		      :native-y 0
 		      :button +pointer-left-button+
@@ -689,7 +689,7 @@
 ;; Process WM_LBUTTONDBLCLK
 (defun onbuttondblclk (window msg wparam lparam)
   ;; A double click will actually generate four events:
-  ;; down, up, dblclk, up.  This function handles the 
+  ;; down, up, dblclk, up.  This function handles the
   ;; double click, the other three are handled by OnButtonDown.
   (win:SetFocus (win:GetActiveWindow))
   (let* ((pointer (port-pointer *acl-port*))
@@ -727,7 +727,7 @@
   ;; A window is being activated or deactivated.
   ;; This message is not sent when interacting with the
   ;; individual controls in an active window.
-  ;; If user is activating a window with a mouse click, 
+  ;; If user is activating a window with a mouse click,
   ;; OnMouseActivate is also called, and ACTIVE will be
   ;; 2 (WA_CLICKACTIVE).
   (let ((sheet (mirror->sheet *acl-port* window))
@@ -736,7 +736,7 @@
     (update-acl-port-modifier-state)
     (when (and sheet (not (= active WA_INACTIVE)))
       (setf (acl-port-mirror-with-focus *acl-port*) window))
-    (setf (win-result *acl-port*) (win:DefWindowProc window msg wparam lparam))))  
+    (setf (win-result *acl-port*) (win:DefWindowProc window msg wparam lparam))))
 
 ;; Process WM_KILLFOCUS
 (defun onkillfocus (window msg wparam lparam)
@@ -787,17 +787,17 @@
   (win-result *acl-port*))
 
 ;; Refer to the windows documentation on Tooltip controls.
-;; The message stream needs to be relayed to the tooltip 
+;; The message stream needs to be relayed to the tooltip
 ;; control for it to know when and where to display tool tips.
 ;; [rfe4951]:
-(ff:defun-foreign-callable tooltip-relay ((window win:hwnd)
+(ff-wrapper:defun-foreign-callable tooltip-relay ((window win:hwnd)
 					  (msg win:uint)
 					  (wparam win:wparam)
 					  (lparam win:lparam))
   (declare (:convention :stdcall) (:unwind 0)
 	   (optimize (safety 0) (speed 3)))
   (case msg
-    ((#.win:WM_MOUSEMOVE 
+    ((#.win:WM_MOUSEMOVE
       #.win:WM_LBUTTONDOWN
       #.win:WM_LBUTTONUP
       #.win:WM_RBUTTONDOWN
@@ -834,7 +834,7 @@
 ;; a 32-bit "LRESULT" value to the caller.  The nature of the
 ;; return value depends on the message.
 ;; [rfe4951]:
-(ff:defun-foreign-callable clim-wind-proc ((window win:hwnd)
+(ff-wrapper:defun-foreign-callable clim-wind-proc ((window win:hwnd)
 					   (msg win:uint)
 					   (wparam win:wparam)
 					   (lparam win:lparam))
@@ -848,7 +848,7 @@
     (mformat *windows-message-trace-output*
 	     "~A In clim-wind-proc msg=~a sheet=~s lparam=~a~%"
 	     *level*
-	     (msg-name msg) 
+	     (msg-name msg)
 	     window
 	     lparam)
     (when (> *level* 40)
@@ -889,7 +889,7 @@
       (#.win:EN_UPDATE
        (onupdatetext window msg wparam lparam))
       ;; character typed
-      ((#.win:WM_KEYDOWN 
+      ((#.win:WM_KEYDOWN
 	#.win:WM_SYSKEYDOWN
 	#.win:WM_KEYUP
 	#.win:WM_SYSKEYUP)
@@ -922,7 +922,7 @@
     (mformat *windows-message-trace-output*
 	     "~A Out clim-wind-proc msg=~a sheet=~s result=~s~%"
 	       *level*
-	       (msg-name msg) 
+	       (msg-name msg)
 	       window
 	       result)
     result))
@@ -930,11 +930,11 @@
 
 ;;; [bug13094]   Set this var to nil if this hack seems to be interfering
 ;;;   with normal dialog accelarator keystrokes.
-(defvar *ignore-getdlgcode-in-acl-text-editor-pane* t)   
+(defvar *ignore-getdlgcode-in-acl-text-editor-pane* t)
 
 ;;; [spr31884]
 (defun win-catch-command (body sheet)
-  ;;mm: spr27890 - we need to catch some commands triggered by 
+  ;;mm: spr27890 - we need to catch some commands triggered by
   ;;               Windows events
   ;;    AND prevent throw out of WindowProc
   (unwind-protect
@@ -960,7 +960,7 @@
 ;;; only the edit control).
 
 ;; [rfe4951]
-(ff:defun-foreign-callable clim-ctrl-proc ((window win:hwnd)
+(ff-wrapper:defun-foreign-callable clim-ctrl-proc ((window win:hwnd)
 					   (msg win:uint)
 					   (wparam win:wparam)
 					   (lparam win:lparam))
@@ -1007,10 +1007,10 @@
 	    (setf (modstate-numlock (ctlmodstate *acl-port*))
 	      (and (plusp numstate) (zerop (ash numstate -15))))
 	    (setf (modstate-shift (ctlmodstate *acl-port*))
-	      (or (and (or (minusp shiftstate) 
+	      (or (and (or (minusp shiftstate)
 			   (not (zerop (ash shiftstate -15))))
 		       (zerop capstate))
-		  (and (not (or (minusp shiftstate) 
+		  (and (not (or (minusp shiftstate)
 				(not (zerop (ash shiftstate -15)))))
 		       (and (plusp capstate) (zerop (ash capstate -15)))))))
 
@@ -1039,7 +1039,7 @@
 		      keysym char modstate)
        (if (and (silica::isa-textfield sheet)
                 ;;mm: spr27890 look at :newline or :tab ourselves
-                (case keysym 
+                (case keysym
                   (:newline (eql modstate 0))
                   (:tab (or (eql modstate 0) (modstate-shift (ctlmodstate
 							      *acl-port*))))))
@@ -1047,21 +1047,21 @@
        (if pass
            (progn
              (setq pass nil)
-             (setq 
-              ;;mm (win-result *acl-port*) 
+             (setq
+              ;;mm (win-result *acl-port*)
               result
                (win:CallWindowProc (std-ctrl-proc-address *acl-port*)
                                    window msg wparam lparam))
              (win-result *acl-port*))
          (let ((sheet (mirror->sheet *acl-port* window)))
            ;; We have decided to handle this character ourselves!
-           
-           ;;mm: spr27890 
+
+           ;;mm: spr27890
            (when (eql msg win:WM_KEYDOWN)
              (setf (slot-value sheet 'ignore-wm-char) t))
            (win-catch-command
             #'(lambda (sheet)
-                (handle-event 
+                (handle-event
                  sheet
                  (allocate-event
                   (cond ((or (eql msg win:WM_KEYDOWN)
@@ -1080,7 +1080,7 @@
 		  ;;(clear-winproc-result (win-result *acl-port*))
 		  (setq result 0)))))))
 
-       ;; 17-Mar-03  mm [bug13094]      
+       ;; 17-Mar-03  mm [bug13094]
        ((and *ignore-getdlgcode-in-acl-text-editor-pane*
 	     (eql msg win:WM_GETDLGCODE)
 	     (typep (mirror->sheet *acl-port* window)
@@ -1089,7 +1089,7 @@
 	;; it seems to be coming because of the IsDialogMessage call.
 	;; We return 0 to pervent special (dialog accelerator) handling
 	;; for any of the keys that should be translated to WM_CHAR messages.
-	(clear-winproc-result (win-result *acl-port*)) 
+	(clear-winproc-result (win-result *acl-port*))
 	(setf (win-result *acl-port*) 0)
 	(win-result *acl-port*))
 
@@ -1135,25 +1135,25 @@
   ;; create and return a region of memory of the
   ;; given length.
   (declare (ignore type))
-  (ff:allocate-fobject `(:array :unsigned-char ,length) :foreign-static-gc))
+  (ff-wrapper:allocate-fobject `(:array :unsigned-char ,length) :foreign-static-gc))
 
 (defun ensure-clim-initialized (*acl-port*)
   (unless (acl-clim-initialized-p *acl-port*)
     (initialize-cg)
-    (setf (clim-window-proc-address *acl-port*) 
+    (setf (clim-window-proc-address *acl-port*)
 	  (init-clim-win-proc (if (slot-boundp *acl-port*
 					       'clim-window-proc-address)
 				  (clim-window-proc-address *acl-port*)
 				  nil)
 			      (make-cstructure 0 16)))
-    (setf (clim-ctrl-proc-address *acl-port*) 
+    (setf (clim-ctrl-proc-address *acl-port*)
 	  (init-clim-ctrl-proc (if (slot-boundp *acl-port*
 						'clim-ctrl-proc-address)
 				   (clim-ctrl-proc-address *acl-port*)
 				   nil)
 			       (make-cstructure 0 16)))
     #+not-yet
-    (setf (tooltip-relay-address *acl-port*) 
+    (setf (tooltip-relay-address *acl-port*)
 	  (init-tooltip-relay
 	   (if (slot-boundp *acl-port*
 			    'tooltip-relay-address)
@@ -1168,48 +1168,48 @@
   (unless (wndclass-registered *acl-port*)
     (init-clim-win-proc (clim-window-proc-address *acl-port*)
 			(make-cstructure 0 16))
-    (let ((class (ff:allocate-fobject 'win:wndclassex 
+    (let ((class (ff-wrapper:allocate-fobject 'win:wndclassex
 				      :foreign-static-gc nil))
 	  (icon (win:LoadIcon 0 win:IDI_APPLICATION)) ; (get-clim-icon)
 	  (reg nil))
-      (setf (ff:fslot-value-typed 'win:wndclassex 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
 				  :foreign class :cbSize)
-	(ff:sizeof-fobject 'win:wndclassex))
-      (setf (ff:fslot-value-typed 'win:wndclassex 
+	(ff-wrapper:sizeof-fobject 'win:wndclassex))
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
 				  :foreign class :style)
 	(logior win:CS_DBLCLKS
 		win:CS_BYTEALIGNCLIENT
 		win:CS_BYTEALIGNWINDOW))
-      (setf (ff:fslot-value-typed 'win:wndclassex 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
 				  :foreign class :lpfnWndProc)
 	    (clim-window-proc-address *acl-port*))
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :cbClsExtra) 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :cbClsExtra)
 	0)
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :cbWndExtra) 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :cbWndExtra)
 	0)
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :hInstance) 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :hInstance)
 	(hinst *acl-port*))
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :hIcon) 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :hIcon)
 	icon)
-      (setf (ff:fslot-value-typed 'win:wndclassex 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
 				  :foreign class :hCursor)
 	hcursor)
-      (setf (ff:fslot-value-typed 'win:wndclassex 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
 				  :foreign class :hbrBackground)
 	(1+ win:COLOR_BTNFACE))
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :lpszMenuName) 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :lpszMenuName)
 	0)
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :lpszClassName) 
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :lpszClassName)
 	(string-to-foreign (acl-clim::clim-class *acl-port*)))
-	  
-      (setf (ff:fslot-value-typed 'win:wndclassex 
-				  :foreign class :hIconSm) 
+
+      (setf (ff-wrapper:fslot-value-typed 'win:wndclassex
+				  :foreign class :hIconSm)
 	icon)
       (setq reg (win:RegisterClassEx class))
       (when (zerop reg)
@@ -1217,7 +1217,7 @@
       (setf (wndclass-registered *acl-port*) t)
       (when (tooltip-relay-address *acl-port*)
 	(setf (next-windows-hook *acl-port*)
-	  (SetWindowsHookEx win:WH_GETMESSAGE 
+	  (SetWindowsHookEx win:WH_GETMESSAGE
 			    (tooltip-relay-address *acl-port*)
 			    0 0))
 	(when (zerop (next-windows-hook *acl-port*))
@@ -1230,11 +1230,11 @@
 ;;;(      lpctstr lpctstr dword int int int int hwnd hmenu handle lpstr) hwnd 351 %oscall)
 
 (defun create-overlapped-window (parent pretty scroll
-				 left top width height menubar 
+				 left top width height menubar
 				 &optional modal)
   ;; Most frames come in here.
-  (let ((winstyle 
-	 (logior 
+  (let ((winstyle
+	 (logior
 	  win:WS_CLIPSIBLINGS
 	  win:WS_CAPTION
 	  win:WS_SYSMENU
@@ -1277,7 +1277,7 @@
 		     )))
 	  (t
 	   (setq winstyle
-	     (logior winstyle 
+	     (logior winstyle
 		     win:WS_THICKFRAME
 		     win:WS_MINIMIZEBOX
 		     win:WS_MAXIMIZEBOX))))
@@ -1292,13 +1292,13 @@
 			      (or parent 0)
 			      menu
 			      (hinst *acl-port*)
-			      (win-x *acl-port*) )))) 
+			      (win-x *acl-port*) ))))
     (when (zerop window)
       (or (check-last-error "CreateWindowEx")
 	  (error "CreateWindowEx: unknown error")))
     window))
 
-(defun create-pop-up-window (parent pretty scroll left top width height 
+(defun create-pop-up-window (parent pretty scroll left top width height
 			     ovl &optional modal)
   (declare (ignore modal))
   ;; MENU-FRAME comes in here.
@@ -1354,7 +1354,7 @@
 			 (if scroll win:WS_EX_CLIENTEDGE 0)
 			 ))
 	;; You can ask for a menu bar on a child window,
-	;; but Windows will not give you one.  
+	;; but Windows will not give you one.
 	(menu 0)
         (win-name (acl-clim::win-name *acl-port*))
 	(window nil))
@@ -1390,8 +1390,8 @@
 		    (zerop (loword (wres *acl-port*))))))
     t))
 
-;; This is the prototypical way to get and process 
-;; a windows message from the windows message queue. 
+;; This is the prototypical way to get and process
+;; a windows message from the windows message queue.
 ;; Note that TAB will not select the next control in
 ;; a group of controls if we never call IsDialogMessage.
 #+ignore
@@ -1401,11 +1401,11 @@
   (loop
     (let ((gotmessage
 	   (if nonblocking
-	       (win:PeekMessage (msg *acl-port*) 0 0 0 win:PM_REMOVE) 
+	       (win:PeekMessage (msg *acl-port*) 0 0 0 win:PM_REMOVE)
 	     (win:GetMessage (msg *acl-port*) 0 0 0))))
       (cond ((not gotmessage) (return t))
 	    ((and hwnd (win:IsDialogMessage hwnd (msg *acl-port*))))
-	    (t 
+	    (t
 	     (win:TranslateMessage (msg *acl-port*))
 	     (win:DispatchMessage (msg *acl-port*))))
       (when nonblocking (return t))
@@ -1425,7 +1425,7 @@
 
   ;; copied from process-pending-messages
 
-  (ff:with-stack-fobject
+  (ff-wrapper:with-stack-fobject
    (lmsg 'win:msg)
    (prog1
        (loop
@@ -1488,7 +1488,7 @@
 ;;; defined in the file aclpc/acl-class.lisp.
 ;;; This is here mainly to be called by (destroy-port :after) on acl-port.
 (defun reset-aclpc-clim (&key (destroy-frames t) (destroy-port t))
-  
+
   (when (and destroy-frames acl-clim::*acl-port*)
     (clim:map-over-frames #'(lambda (x) (clim:destroy-frame x))))
   (when (and destroy-port acl-clim::*acl-port*)
@@ -1499,12 +1499,12 @@
 	*maybe-format* nil
 	*level* 0
 	*windows-message-trace-output* excl:*initial-terminal-io*)
-  
+
 ;;;  (setq *hwnd* 0)
 ;;;  (setq *clim-wproc-arg-struct* nil)
 ;;;  (setq *clim-ctrl-arg-struct* nil)
 ;;;  (setq *tooltip-relay-struct* nil)
-  
+
   )
 
 (push #'reset-aclpc-clim excl::*restart-actions*)

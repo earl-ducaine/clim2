@@ -5,8 +5,8 @@
 (in-package :tk)
 
 (defun get-foreign-variable-value (x)
-  (let ((ep #-dlfcn (ff:get-extern-data-address x)
-	    #+dlfcn (ff:get-entry-point
+  (let ((ep #-dlfcn (ff-wrapper:get-extern-data-address x)
+	    #+dlfcn (ff-wrapper:get-entry-point
 		     x
 		     #-(version>= 5 0) :note-shared-library-references
 		     #-(version>= 5 0) nil)))
@@ -199,7 +199,7 @@
 
 (defun define-toolkit-classes (&rest classes)
   (make-classes
-   (mapcar #-rs6000 #'ff:convert-foreign-name
+   (mapcar #-rs6000 #'ff-wrapper:convert-foreign-name
 	   #+rs6000 #'identity
 	   (remove-duplicates
 	    (apply #'append classes)
@@ -316,11 +316,11 @@
       new)))
 
 
-(ff:defun-foreign-callable toolkit-error-handler ((message :foreign-address))
+(ff-wrapper:defun-foreign-callable toolkit-error-handler ((message :foreign-address))
   (let ((*error-output* excl:*initial-terminal-io*))
     (error "Xt: ~a" (excl:native-to-string message))))
 
-(ff:defun-foreign-callable toolkit-warning-handler ((message :foreign-address))
+(ff-wrapper:defun-foreign-callable toolkit-warning-handler ((message :foreign-address))
   (let ((*error-output* excl:*initial-terminal-io*))
     (warn "Xt: ~a" (excl:native-to-string message))))
 
@@ -346,7 +346,7 @@
     (excl::map-over-subclasses
      #'(lambda (class)
 	 (let* ((old-addr (and (typep class 'xt-class)
-			       (ff::foreign-pointer-address class)))
+			       (ff-wrapper::foreign-pointer-address class)))
 		(entry-point (and (typep class 'xt-class)
 				  (slot-boundp class 'entry-point)
 				  (slot-value class 'entry-point)))
@@ -354,7 +354,7 @@
 			       (get-foreign-variable-value entry-point))))
 	   (when entry-point
 	       (unless (equal old-addr new-addr)
-		 (setf (ff::foreign-pointer-address class) new-addr))
+		 (setf (ff-wrapper::foreign-pointer-address class) new-addr))
 	       (register-address class ))))
      root)))
 
@@ -366,7 +366,7 @@
     (excl::map-over-subclasses
      #'(lambda (class)
 	 (let* ((old-addr (and (typep class 'xt-class)
-			       (ff::foreign-pointer-address class)))
+			       (ff-wrapper::foreign-pointer-address class)))
 		(entry-point (and (typep class 'xt-class)
 				  (slot-boundp class 'entry-point)
 				  (slot-value class 'entry-point)))
@@ -374,6 +374,6 @@
 			       (get-foreign-variable-value entry-point))))
 	   (when entry-point
 	       (unless (equal old-addr new-addr)
-		 (setf (ff::foreign-pointer-address class) new-addr))
+		 (setf (ff-wrapper::foreign-pointer-address class) new-addr))
 	       (register-address class ))))
      root)))

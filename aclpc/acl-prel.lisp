@@ -19,11 +19,11 @@
 ;;; Open a combo box control.
 
 (defun combobox-scroll-bars (items)
-  ;; If there are many items, you won't be able 
+  ;; If there are many items, you won't be able
   ;; to see them without a scroll bar.
   (if (> (length items) 30) :vertical nil))
 
-(defun hcombo-open (parent id left top width height 
+(defun hcombo-open (parent id left top width height
 		    &key (items nil)
 			 (value nil)
 			 (name-key #'identity)
@@ -33,15 +33,15 @@
   (let* ((hwnd
 	  (excl:with-native-string (x "COMBOBOX")
 	    (excl:with-native-string (label label)
-	      (win:CreateWindowEx 
+	      (win:CreateWindowEx
 	       0			; extended-style
 	       x			; classname
 	       label			; windowname
 	       (logior
-		(if (member scroll-mode '(:vertical :both t :dynamic)) 
+		(if (member scroll-mode '(:vertical :both t :dynamic))
 		    win:WS_VSCROLL
 		  0)
-		(if (member scroll-mode '(:horizontal :both t :dynamic)) 
+		(if (member scroll-mode '(:horizontal :both t :dynamic))
 		    win:WS_HSCROLL
 		  0)
 		win:WS_CHILD
@@ -55,7 +55,7 @@
 	(cerror "proceed" "failed")
       ;; else succeed if we can init the DC
       (progn
-	(win:SetWindowPos hwnd 0 
+	(win:SetWindowPos hwnd 0
 			  left top width height
 			  0
 			  ;;#.(logior win:SWP_NOACTIVATE win:SWP_NOZORDER)
@@ -75,7 +75,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; open a list control
 
-(defun hlist-open (parent id left top width height 
+(defun hlist-open (parent id left top width height
 		   &key (mode :exclusive)
 			(scroll-mode nil)
 			(items nil)
@@ -105,7 +105,7 @@
 	   (if (member scroll-mode '(:horizontal :vertical :both t))
 	       LBS_DISABLENOSCROLL
 	     0)
-	   win:WS_CLIPCHILDREN 
+	   win:WS_CLIPCHILDREN
 	   win:WS_CLIPSIBLINGS))
 	 (exstyle win:WS_EX_CLIENTEDGE)
 	 (hwnd
@@ -125,7 +125,7 @@
 	(cerror "proceed" "failed")
       ;; else succeed if we can init the DC
       (progn
-	(win:SetWindowPos hwnd 0 
+	(win:SetWindowPos hwnd 0
 			  left top width height
 			  #.(logior win:SWP_NOACTIVATE win:SWP_NOZORDER))
 	(let* ((index -1)
@@ -146,17 +146,17 @@
 		 ;; combining them with an ash? (cim 9/20/96)
 		 hwnd win:LB_SELITEMRANGE
 		 (if (member (funcall value-key item)
-			     value :test test) 
+			     value :test test)
 		     1
-		   0) 
+		   0)
 		 (+ i (ash i 16)))
 		(incf i)))
 	  (let ((i (position value items
 			     :key value-key :test test)))
-	    (when i 
-	      (win:SendMessage 
+	    (when i
+	      (win:SendMessage
 	       hwnd win:LB_SETCURSEL i 0)
-	      (win:SendMessage 
+	      (win:SendMessage
 	       hwnd win:LB_SETTOPINDEX i 0))))
 	;; we put in the 20% hack because
 	;; compute-set-gadget-dimensions in acl-widg is
@@ -172,17 +172,17 @@
   (let* ((hwnd
 	  (excl:with-native-string (classname "SCROLLBAR")
 	    (excl:with-native-string (windowname "")
-	      (win:CreateWindowEx 
+	      (win:CreateWindowEx
 	       0			; style
 	       classname		; classname
 	       windowname		; windowname
-	       (logior (if (eql orientation :horizontal) 
+	       (logior (if (eql orientation :horizontal)
 			   win::SBS_HORZ win::SBS_VERT)
 		       win::WS_CHILD
                        ;; Removed the WS_BORDER flag.
                        ;; It's non-standard and, what's worse, it resulted
                        ;; in some garbage pixels (alemmens, 2005-01-19)
-		       win::WS_CLIPCHILDREN 
+		       win::WS_CLIPCHILDREN
 		       win::WS_CLIPSIBLINGS
                        ) ; style
 	       0 0 0 0			; x, y, width, height
@@ -194,7 +194,7 @@
 	;; failed
 	(cerror "proceed" "failed")
       ;; else succeed if we can init the position
-      (win::SetWindowPos hwnd 0 
+      (win::SetWindowPos hwnd 0
 			 left top width height
 			 #.(logior win:SWP_NOACTIVATE win:SWP_NOZORDER)))
     hwnd))
@@ -210,7 +210,7 @@
           (setf (aref nstr i) (aref label i))))
     nstr))
 
-(defun hbutton-open (parent id left top width height 
+(defun hbutton-open (parent id left top width height
 		     &key (buttonstyle win:BS_AUTORADIOBUTTON)
 		          (value nil)
 			  (nobutton nil)
@@ -221,7 +221,7 @@
   (let ((style (logior buttonstyle
 		       win:WS_TABSTOP
 		       win:WS_CHILD
-		       win:WS_CLIPCHILDREN 
+		       win:WS_CLIPCHILDREN
 		       win:WS_CLIPSIBLINGS)))
     (when (eq button-label-justify :left)
       ;; bug12221/SPR24998 -pnc
@@ -230,7 +230,7 @@
       (setq style (logior style
 			  win:BS_LEFTTEXT  ; Put the text on the left
 			  #x0200           ; BS_RIGHT: Right-justify the text in the label
-			  )))			  
+			  )))
     (let* ((nlabel (cleanup-button-label label))
 	   (hwnd
 	    (excl:with-native-string (classname "BUTTON")
@@ -258,7 +258,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Open an edit control
 
-(defun hedit-open (parent id left top width height 
+(defun hedit-open (parent id left top width height
 		   &key (editstyle 0)
 		        (value nil)
 			(label "")
@@ -267,7 +267,7 @@
   (let ((hwnd
          (excl:with-native-string (classname "EDIT")
            (excl:with-native-string (windowname label)
-             (win:CreateWindowEx 
+             (win:CreateWindowEx
               win:WS_EX_CLIENTEDGE
               classname                 ; classname
               windowname		; windowname
@@ -281,8 +281,8 @@
                       (if (member scroll-mode '(:vertical :both t :dynamic))
                           win:WS_VSCROLL
                           0)
-					   
-                      win:WS_CLIPCHILDREN 
+
+                      win:WS_CLIPCHILDREN
                       win:WS_CLIPSIBLINGS) ; style
               0 0 0 0
               parent
@@ -305,7 +305,7 @@
            (win:SetWindowLong hwnd
                               win:GWL_WNDPROC
                               (clim-ctrl-proc-address *acl-port*))
-           (win:SetWindowPos hwnd 0 
+           (win:SetWindowPos hwnd 0
                              left top width height
                              #.(logior win:SWP_NOACTIVATE win:SWP_NOZORDER))
            hwnd))))
@@ -347,7 +347,7 @@
 	       (setq rgb (medium-background medium))))
 	(multiple-value-bind (red green blue) (color-rgb rgb)
 	  (ct:cset windows:bitmapinfo bmi
-		   (windows::bmiColors (fixnum i) windows::rgbReserved) 
+		   (windows::bmiColors (fixnum i) windows::rgbReserved)
 		   0)
 	  (ct:cset windows:bitmapinfo bmi
 		   (windows::bmiColors (fixnum i) windows::rgbRed)
@@ -372,10 +372,10 @@
   (let ((texture-handle
 	 (win:CreateDIBitmap
 	  device-context
-	  bitmapinfo 
+	  bitmapinfo
 	  win:CBM_INIT			; initialize bitmap bits
 	  pixel-map
-	  bitmapinfo 
+	  bitmapinfo
 	  win:DIB_RGB_COLORS)))
     (when (zerop texture-handle)
       ;; This code comes from Ken Cheetham's mail attached to
@@ -396,10 +396,10 @@
 	  (setq texture-handle
 	    (win:CreateDIBitmap
 	     device-context
-	     bitmapinfo 
+	     bitmapinfo
 	     win:CBM_INIT		; initialize bitmap bits
 	     buffer-address
-	     bitmapinfo 
+	     bitmapinfo
 	     win:DIB_RGB_COLORS)))))
     (when (zerop texture-handle)
       (check-last-error "CreateDIBitmap"))
@@ -408,12 +408,12 @@
 ;;; about box support
 
 (defun pop-up-about-climap-dialog (frame &rest ignoreargs)
-  (clim:notify-user frame 
+  (clim:notify-user frame
 		    (format nil "~%~A~%~%Version: ~A~%~%"
 			    (clim-internals::frame-pretty-name frame)
 			    (lisp-implementation-version))
 		    :exit-boxes '((:exit "OK"))
-		    :title (format nil "About ~A" 
+		    :title (format nil "About ~A"
 				   (clim-internals::frame-pretty-name frame))))
 
 (defun errno-to-text (errno)
@@ -427,10 +427,10 @@
 	 ;; a handle to the relevant module, we could specify that
 	 ;; to FormatMessage in order to search a module's message table.
 	 (chars (FormatMessage flags
-			       0 errno 0 
+			       0 errno 0
 			       pointer 0 0)))
     (values (if (plusp chars)
-		(nsubstitute #\space #\return 
+		(nsubstitute #\space #\return
 			     (excl:native-to-string (aref pointer 0)))
 	      "unidentified system error")
 	    chars)))
@@ -440,7 +440,7 @@
   ;; impossible to ensure correct operation of CLIM
   ;; without paying attention to the errors that come
   ;; back from the system calls.  Sometimes, however,
-  ;; it is more appropriate to warn about the problem 
+  ;; it is more appropriate to warn about the problem
   ;; than to signal an error.
   (let* ((code (win:GetLastError)))
     (cond ((zerop code) nil)
@@ -466,7 +466,7 @@
   ;; Can't open clipboard if somebody else has it open.
   (if (win:OpenClipboard 0)
       (unwind-protect
-	  (let* ((string 
+	  (let* ((string
 		   (let ((*print-readably* t))
 		     (funcall printer object)))
 		 (cstring nil)
@@ -478,12 +478,12 @@
 	    (setq cstring (string-to-foreign string mem))
 	    (win:GlobalUnlock hmem)
 	    ;; After calling SetClipboardData, the
-	    ;; clipboard owns hMem.  It must not be 
+	    ;; clipboard owns hMem.  It must not be
 	    ;; modified or freed.
 	    (or (win:EmptyClipboard)
 		(check-last-error "EmptyClipboard"))
 	    (win:SetClipboardData format hmem)
-	    (ff:free-fobject-c cstring)
+	    (ff-wrapper:free-fobject-c cstring)
 	    t)
 	(win:CloseClipboard))
     (check-last-error "OpenClipboard")))
@@ -508,4 +508,3 @@
 		   (values (funcall parser string) string))))
 	(win:CloseClipboard))
     (check-last-error "OpenClipboard")))
-

@@ -29,9 +29,9 @@
   ;; In another engraft-medium method, the medium background/foreground
   ;; is initialized from the pane background/foreground.
   (with-slots (background-dc-image foreground-dc-image) medium
-    (let ((bink 
+    (let ((bink
 	   (dc-image-for-ink medium (medium-background medium)))
-	  (fink 
+	  (fink
 	   (dc-image-for-ink medium (medium-foreground medium))))
       (setf background-dc-image bink)
       (setf foreground-dc-image fink))))
@@ -95,17 +95,17 @@
 		winrgn
 		(valid nil))
 	   (unless (eq region +nowhere+)
-	     (multiple-value-setq (cleft ctop cright cbottom) 
+	     (multiple-value-setq (cleft ctop cright cbottom)
 	       (bounding-rectangle* region))
 	     (setf valid t)
-	     (unless (or (eq medium-region +everywhere+) 
+	     (unless (or (eq medium-region +everywhere+)
 			 (eq medium-region +nowhere+))
-	       (with-bounding-rectangle* (mleft mtop mright mbottom) 
+	       (with-bounding-rectangle* (mleft mtop mright mbottom)
 		   medium-region
 		 (multiple-value-setq (valid cleft ctop cright cbottom)
 		   (multiple-value-call #'ltrb-overlaps-ltrb-p
 		     cleft ctop cright cbottom
-		     (transform-rectangle* 
+		     (transform-rectangle*
 		      (sheet-device-transformation sheet)
 		      mleft mtop mright mbottom))))))
 	   (when valid
@@ -122,7 +122,7 @@
      (when ,var
        (unwind-protect
 	   (progn
-	     ,@body) 
+	     ,@body)
 	 (when (valid-handle ..winrgn..)
 	   (or (win:DeleteObject ..winrgn..)
 	       (error "with-selected-acl-dc: DeleteObject")))))))
@@ -131,8 +131,8 @@
   `(let ((,image-var nil)
 	 (..generated-bitmap.. nil)
 	 (..generated-mask-bitmap.. nil))
-     (unwind-protect 
-	 (progn 
+     (unwind-protect
+	 (progn
 	   (multiple-value-setq (,image-var ..generated-bitmap.. ..generated-mask-bitmap..)
 	     (dc-image-for-ink ,medium ,ink))
 	   ,@body)
@@ -183,7 +183,7 @@
 	     (declare (short-float v))
 	     (cond ((= x 0.0) 0)
 		   ((= x 1.0) #xff)
-		   (t 
+		   (t
 		    (setq v (the short-float (* x v)))
 		    (values (the fixnum (round v))))))))
     (multiple-value-bind (red green blue)
@@ -219,7 +219,7 @@
 		  (brush (win:CreateSolidBrush color)))
 	      (make-dc-image :solid-1-pen pen
 			     :brush brush
-			     :text-color color 
+			     :text-color color
 			     :background-color nil
 			     :rop2 win:R2_COPYPEN
 			     )))))))
@@ -252,7 +252,7 @@
 
 (defconstant bmdim 32)
 (defvar *bitmap-array* nil)		; probably not needed
-(defvar *the-dc* nil)			; new just for now, later 
+(defvar *the-dc* nil)			; new just for now, later
 					; rationalize passing dc
 
 (defun get-bitmapinfo (medium dc-image pixel-map colors)
@@ -291,7 +291,7 @@
 	   (bitmap (unless (zerop dc)
 		     (get-texture dc into bitmapinfo))))
       (when bitmap
-	;; To Do: replace BITMAP with INTO and just use 
+	;; To Do: replace BITMAP with INTO and just use
 	;; device-independent bitmap operations.
 	(setf (dc-image-bitmap dc-image) bitmap
 	      created-bitmap bitmap)
@@ -332,7 +332,7 @@
 	 (copy-arr-mask (make-pixel-map width height (expt 2 bits-per-pixel)))
 	 (transindex 0)
 	 (maincolor color1)
-	 (mainink ink1) 
+	 (mainink ink1)
 	 (created-bitmap nil)
 	 (created-mask-bitmap nil)
 	 )
@@ -350,37 +350,37 @@
 	       (setf (aref copy-arr-mask i j) 1)))
 	))
     (setf *bitmap-array* copy-arr)
-    (let* ((bitmapinfo (get-bitmapinfo medium dc-image copy-arr 
-				       (make-array 2 :initial-contents 
-						   (list clim:+white+ 
+    (let* ((bitmapinfo (get-bitmapinfo medium dc-image copy-arr
+				       (make-array 2 :initial-contents
+						   (list clim:+white+
 							 mainink))
 				       ))
 	   (dc (GetDC 0))
 	   (bitmap (get-texture dc copy-arr bitmapinfo)))
-      ;; To Do: replace BITMAP with COPY-ARR and just use 
+      ;; To Do: replace BITMAP with COPY-ARR and just use
       ;; device-independent bitmap operations.
       (when bitmap
 	(setf (dc-image-bitmap dc-image) bitmap
 	      created-bitmap bitmap)
-	(setf (dc-image-background-color dc-image) 
+	(setf (dc-image-background-color dc-image)
 	  (color->wincolor clim:+white+ medium))
 	(setf (dc-image-text-color dc-image) maincolor)
-	(let* ((bitmapinfo-mask 
+	(let* ((bitmapinfo-mask
 		(get-bitmapinfo medium dc-image-mask copy-arr-mask
-				(make-array 2 :initial-contents 
-					    (list clim:+black+ 
+				(make-array 2 :initial-contents
+					    (list clim:+black+
 						  mainink))
 				))
 	       (dc-mask dc)
-	       (bitmap-mask (get-texture dc-mask copy-arr-mask 
+	       (bitmap-mask (get-texture dc-mask copy-arr-mask
 					 bitmapinfo-mask)))
-	  ;; To Do: replace BITMAP with COPY-ARR and just use 
+	  ;; To Do: replace BITMAP with COPY-ARR and just use
 	  ;; device-independent bitmap operations.
 	  (setf (dc-image-bitmap dc-image-mask) bitmap-mask)
 
 	  (setf created-mask-bitmap bitmap-mask)
 
-	  (setf (dc-image-background-color dc-image-mask) 
+	  (setf (dc-image-background-color dc-image-mask)
 	    (color->wincolor clim:+black+ medium))
 	  (setf (dc-image-text-color dc-image-mask) maincolor)
 	  ;; I guess we don't want to release the device context
@@ -416,7 +416,7 @@
 
 (defun pattern-to-hatchbrush (pattern)
   (multiple-value-bind (array designs) (decode-pattern pattern)
-    (let* ((tcolor (position-if 
+    (let* ((tcolor (position-if
 		    #'(lambda (ink) (not (transparent-ink-p ink)))
 		    designs))
 	   (style nil))
@@ -427,7 +427,7 @@
 	      (a12 (= (aref array 0 1) tcolor))
 	      (a21 (= (aref array 1 0) tcolor))
 	      (a22 (= (aref array 1 1) tcolor)))
-	  (setq style 
+	  (setq style
 	    (cond ((and a12 a21 a22) win:HS_CROSS)
 		  ((and a12 a21) win:HS_FDIAGONAL)
 		  ((and a11 a22) win:HS_BDIAGONAL)
@@ -447,7 +447,7 @@
 	(multiple-value-bind (array designs) (decode-pattern ink)
 	  (cond ((find-if #'transparent-ink-p designs)
 		 ;; This returns two images, which
-		 ;; are used as masks to support how 
+		 ;; are used as masks to support how
 		 ;; windows draws patterns containing
 		 ;; transparent inks.
 		 ;;
@@ -459,7 +459,7 @@
 		   (multiple-value-setq (dc-image created-bitmap created-mask-bitmap)
 		     (dc-image-for-transparent-pattern medium ink array designs))
 		   (loop for dci in dc-image
-		       do (setf (dc-image-brush dci) 
+		       do (setf (dc-image-brush dci)
 			    (win:CreatePatternBrush (dc-image-bitmap dci))))
 		   (values dc-image
 			   created-bitmap
@@ -482,7 +482,7 @@ whats under it will show, but need code in vb3!!! thanks
 
 Joe,
 
-You can do this by creating two pictures, 
+You can do this by creating two pictures,
 one with white in the transparent area (The Picture)
 and the other with black in the transparent area. (The Mask)
 
@@ -502,7 +502,7 @@ XORs the values in the XOR mask to the destination DC, filling in the
 hole left by the AND mask and setting all the 0 pixels to the image
 colors. This is standard stuff described in any entry-level graphics
 programming course. It's also the technique that Windows uses to
-draw icons and mouse cursors on the screen. 
+draw icons and mouse cursors on the screen.
 |#
 
 (defmethod dc-image-for-ink ((medium acl-medium) (ink rectangular-tile))
@@ -530,7 +530,7 @@ draw icons and mouse cursors on the screen.
 		     (let ((old (dc-image-brush dci)))
 		       (when (valid-handle old) (win:DeleteObject old)))
 		     (setf (dc-image-background-color dci) -1) ; transparent
-		     (setf (dc-image-brush dci) 
+		     (setf (dc-image-brush dci)
 		       (pattern-to-hatchbrush pattern)))
 		   (setf (gethash ink cache) image)
 		   (setq created-bitmap nil)
@@ -561,7 +561,7 @@ draw icons and mouse cursors on the screen.
 		(make-dc-image :solid-1-pen pen
 			       :brush brush
 			       :rop2 win:R2_XORPEN
-			       :text-color color 
+			       :text-color color
 			       :background-color nil))))))))
 
 (defmethod dc-image-for-ink ((medium acl-medium) (ink contrasting-ink))
@@ -578,7 +578,7 @@ draw icons and mouse cursors on the screen.
   (without-scheduling
     (let ((window (medium-drawable medium)))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -599,7 +599,7 @@ draw icons and mouse cursors on the screen.
   (without-scheduling
     (let ((window (medium-drawable medium)))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -623,7 +623,7 @@ draw icons and mouse cursors on the screen.
   (without-scheduling
     (let ((window (medium-drawable medium)))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -649,7 +649,7 @@ draw icons and mouse cursors on the screen.
   (without-scheduling
     (let ((window (medium-drawable medium)))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -685,8 +685,8 @@ draw icons and mouse cursors on the screen.
 	   (optimize (speed 3) (safety 0)))
   (without-scheduling
     (let ((window (medium-drawable medium)))
-      (with-medium-dc (medium dc) 
-	(with-selected-acl-dc (old) 
+      (with-medium-dc (medium dc)
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -704,20 +704,20 @@ draw icons and mouse cursors on the screen.
 		     ;; this case is needed to correctly render patterns
 		     ;; larger than 8x8, due to limitations of CreatePatternBrush.
 		     (let ((cdc nil))
-		       (with-dc-image-for-ink (dc-image) 
+		       (with-dc-image-for-ink (dc-image)
 			 (medium ink)
-			
+
 			 ;; Create compatable memory dc
 			 (setq cdc (win:CreateCompatibleDC dc))
-			 (assert (valid-handle cdc))	
+			 (assert (valid-handle cdc))
 			 (cond ((listp dc-image)
 				;; This is the case of a pattern that contains transparent ink.
 				;; Windows does not support transparent ink directly.
-				;; You can do this by creating two pictures, 
+				;; You can do this by creating two pictures,
 				;; one with white in the transparent area (The Picture)
 				;; and the other with black in the transparent area. (The Mask)
 				;; Then use the bitblt API to blit the picture with
-				;; the SRCAND (&h8800c6) flag.  Then blit the mask in the 
+				;; the SRCAND (&h8800c6) flag.  Then blit the mask in the
 				;; same location with the SRCOR (&hee0086) flag.
 				(let* ((dci-pict (first dc-image))
 				       (dci-mask (second dc-image))
@@ -727,14 +727,14 @@ draw icons and mouse cursors on the screen.
 				  (when (valid-handle pictbm) (SelectObject cdc pictbm))
 				  ;; Copy bitmap from memory dc to screen dc
 				  (win:BitBlt dc left top (- right left) (- bottom top)
-					      cdc 0 0 
+					      cdc 0 0
 					      win:SRCAND)
-			 
+
 				  (when (valid-handle maskbm) (SelectObject cdc maskbm))
 				  (win:BitBlt dc left top (- right left) (- bottom top)
-					      cdc 0 0 
+					      cdc 0 0
 					      acl-clim::SRCOR)
-				  
+
 				  (destroy-dc-image dci-pict :destroy-bitmap nil)
 				  (destroy-dc-image dci-mask :destroy-bitmap nil)
 				  ))
@@ -767,7 +767,7 @@ draw icons and mouse cursors on the screen.
   (without-scheduling
     (let ((window (medium-drawable medium)))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -791,16 +791,16 @@ draw icons and mouse cursors on the screen.
 		      (win:Rectangle dc left top right bottom))))
 		(when (valid-handle old) (SelectObject dc old))))))))))
 
-(defparameter *point-vector* 
-    (ff:allocate-fobject `(:array :long 100) :foreign-static-gc))
+(defparameter *point-vector*
+    (ff-wrapper:allocate-fobject `(:array :long 100) :foreign-static-gc))
 
-(defparameter *point-vector-type* 
-    (ff:compile-foreign-type `(:array :long 100)))
+(defparameter *point-vector-type*
+    (ff-wrapper:compile-foreign-type `(:array :long 100)))
 
 (defun set-point (vector i x)
   (declare (optimize (speed 3) (safety 0))
 	   (fixnum i))
-  (setf (ff:fslot-value-typed *point-vector-type* :foreign
+  (setf (ff-wrapper:fslot-value-typed *point-vector-type* :foreign
 			      vector i)
     x)
   nil)
@@ -826,12 +826,12 @@ draw icons and mouse cursors on the screen.
 	(silica:map-position-sequence #'visit2 position-seq))
       (when closed
 	;; Make the first point be the last.
-	(set-point vector i 
-		   (ff:fslot-value-typed *point-vector-type* :foreign
+	(set-point vector i
+		   (ff-wrapper:fslot-value-typed *point-vector-type* :foreign
 					 vector 0))
 	(incf i)
-	(set-point vector i 
-		   (ff:fslot-value-typed *point-vector-type* :foreign
+	(set-point vector i
+		   (ff-wrapper:fslot-value-typed *point-vector-type* :foreign
 					 vector 1))
 	(incf i))
       i)))
@@ -849,7 +849,7 @@ draw icons and mouse cursors on the screen.
       (incf numpoints))
     (setq point-vector *point-vector*)
     (when (< (length point-vector) length)
-      (setq point-vector (ff:allocate-fobject `(:array :long ,length)))
+      (setq point-vector (ff-wrapper:allocate-fobject `(:array :long ,length)))
       (setq *point-vector* point-vector))
     (fill-point-vector point-vector transform position-seq
 			       (and closed (not filled)))
@@ -866,7 +866,7 @@ draw icons and mouse cursors on the screen.
 	  (length (length position-seq)))
       (assert (evenp length))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (draw-polygon-1 medium position-seq dc filled closed old)))))))
@@ -881,7 +881,7 @@ draw icons and mouse cursors on the screen.
   (without-scheduling
     (let ((window (medium-drawable medium)))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (let* ((sheet (medium-sheet medium))
@@ -907,7 +907,7 @@ draw icons and mouse cursors on the screen.
 				 (let ((r (truncate (sqrt s-1))))
 				   (values r r))
 			       ;; Degrade to drawing a rectilinear ellipse
-			       (values (truncate (sqrt s-1)) 
+			       (values (truncate (sqrt s-1))
 				       (truncate (sqrt s-2)))))))
 		  (let (left top right bottom)
 		    (setq left (- center-x x-radius)
@@ -961,26 +961,26 @@ draw icons and mouse cursors on the screen.
 	   (window (medium-drawable medium))
 	   (ink (medium-ink medium))
 	   (font-angle (pos-to-font-angle x y towards-x towards-y))
-	   (x-adjust 
-	    (compute-text-x-adjustment align-x medium 
+	   (x-adjust
+	    (compute-text-x-adjustment align-x medium
 				       string text-style start end))
 	   (y-adjust
-	    (compute-text-y-adjustment align-y (acl-font-descent font) 
+	    (compute-text-y-adjustment align-y (acl-font-descent font)
 				       (acl-font-ascent font) (acl-font-height font))))
       (incf x x-adjust)
       (incf y y-adjust)
       (when towards-x
 	(incf towards-x x-adjust)
 	(incf towards-y y-adjust))
-      (cond ((zerop font-angle) 
-	     (decf y (acl-font-ascent font))) ;text is positioned by its top left 
+      (cond ((zerop font-angle)
+	     (decf y (acl-font-ascent font))) ;text is positioned by its top left
 	    (t
 	     (setq font
 	       (port-find-rotated-font port font font-angle))))
       (if (flipping-ink-p ink)
 	  (medium-draw-inverted-string* medium string x y start end font text-style)
 	(with-medium-dc (medium dc)
-	  (with-selected-acl-dc (old) 
+	  (with-selected-acl-dc (old)
 	    (medium window dc)
 	    (when old
 	      (with-temporary-substring (substring string start end)
@@ -1002,11 +1002,11 @@ draw icons and mouse cursors on the screen.
     (let ((window (medium-drawable medium))
 	  (width 100)
 	  (height 100))
-      (multiple-value-setq (width height) 
+      (multiple-value-setq (width height)
 	(text-size medium string :text-style text-style
 		   :start start :end end))
       (with-medium-dc (medium dc)
-	(with-selected-acl-dc (old) 
+	(with-selected-acl-dc (old)
 	  (medium window dc)
 	  (when old
 	    (with-temporary-substring (substring string start end)
@@ -1046,12 +1046,12 @@ draw icons and mouse cursors on the screen.
   (let ((font-angle nil))
     (cond ((and (or towards-x towards-y)
 		(not (= (setq font-angle
-			  (pos-to-font-angle x y 
+			  (pos-to-font-angle x y
 					     (or towards-x x)
 					     (or towards-y y)))
 			0)))
 	   ;;; This is sort of expecnsive, but it
-	   ;;; should only happen when the text is 
+	   ;;; should only happen when the text is
 	   ;;; drawn the first time.
 	   (setq towards-x (or towards-x x))
 	   (setq towards-y (or towards-y y))
@@ -1066,9 +1066,9 @@ draw icons and mouse cursors on the screen.
 		  (transf (make-rotation-transformation* font-angle-rad x y)))
 	     (multiple-value-bind (xtr ytr)	;;; top-right corner
 		 (transform-position transf (+ x width) y)
-	       (multiple-value-bind (xbr ybr) ;;; bottom-right corner	     
+	       (multiple-value-bind (xbr ybr) ;;; bottom-right corner
 		   (transform-position transf (+ x width) (+ y height))
-		 (multiple-value-bind (xbl ybl)	;;; bottom-left corner	     
+		 (multiple-value-bind (xbl ybl)	;;; bottom-left corner
 		     (transform-position transf x (+ y height))
 		   (values (coordinate (min x xtr xbr xbl))
 			   (coordinate (min y ytr ybr ybl))
@@ -1078,7 +1078,7 @@ draw icons and mouse cursors on the screen.
 			   ;;; used, but...
 			   (coordinate x) (coordinate y)
 			   towards-x towards-y))))))
-	  (t 
+	  (t
 	   (call-next-method)))))
 
 (defmethod medium-draw-character* ((medium acl-medium)
@@ -1166,11 +1166,11 @@ draw icons and mouse cursors on the screen.
   (assert (member format '(:ico :bmp :cur))); give caller reasonable error msg
   (load-pixmap-1 path 0))
 
-(defun load-pixmap-1 (filename index) 
+(defun load-pixmap-1 (filename index)
   (format *trace-output* "~&Loading pixmap from file ~a ..." filename)
-  (multiple-value-prog1 
+  (multiple-value-prog1
       (with-open-file (s filename :element-type '(unsigned-byte 8))
-	(read-pixmap s index)) 
+	(read-pixmap s index))
     (format *trace-output* "LOADED pixmap~%")))
 
 (defstruct (texture-info (:constructor make-texture-info))
@@ -1196,7 +1196,7 @@ draw icons and mouse cursors on the screen.
 		((< 0 palette-size 3) (truncate (* x y) 8))
 		((< 2 palette-size 257) (* x y))
 		((< 256 palette-size #x10001) (* x y 2))
-		(t (* x y 4))) 
+		(t (* x y 4)))
 	   #x10000)
     (error "pixel-map bigger than 64k."))
   (make-array (list y x)
@@ -1278,7 +1278,7 @@ device-independent bitmap, an icon, nor a cursor."))
        (dotimes (j (- image-offset bytes-into-file))
 	 (read-byte stream))
        ))
-      
+
     ;; end of file-header; start of bitmap-info-header
     (setq info-header-size (bm-read-long stream))
     (setq width (bm-read-long stream)
@@ -1319,10 +1319,10 @@ device-independent bitmap, an icon, nor a cursor."))
 	       (24 0) ;; each pixel value is a direct rgb
 	       (t (error "~a is not a valid bits-per-pixel"
 			 bits-per-pixel))))))
-    
+
     (when (plusp number-of-colors-in-file)
       (setq palette-array (make-array number-of-colors-in-file))
-         
+
       (dotimes (j number-of-colors-in-file)
 	(if (setq rgb (aref palette-array j))
 	    (setf (rgb-blue rgb) (read-byte stream)
@@ -1343,7 +1343,7 @@ device-independent bitmap, an icon, nor a cursor."))
 			 :invert-p nil)) ;; <18>
     (setq pixmap (make-pixel-map
 		  height
-		  width	
+		  width
 		  (expt 2 bits-per-pixel))) ;; "palette size"
     (dotimes (y height)
       #-runtime-system
@@ -1355,7 +1355,7 @@ device-independent bitmap, an icon, nor a cursor."))
 	(format *trace-output* "Reading pixmap row ~a of ~a"
 		(1+ y) height))
       (setq real-y (- (1- height) y))
-      (case bits-per-pixel 
+      (case bits-per-pixel
 	(1				; monochrome
 	 (dotimes (x (* 4 (ceiling width 32)))
 	   (setq pixel-byte (read-byte stream))
@@ -1520,7 +1520,7 @@ device-independent bitmap, an icon, nor a cursor."))
 	      line))))
 
 (defun read-x11-bitmap-file (fstream)
-  (multiple-value-bind (width height depth left-pad format 
+  (multiple-value-bind (width height depth left-pad format
 			chars-per-pixel line)
       (get-bitmap-file-properties fstream)
     (declare (ignore format  chars-per-pixel line left-pad))
@@ -1554,7 +1554,7 @@ device-independent bitmap, an icon, nor a cursor."))
 		      (let ((zz (+ pixel-offset bit)))
 			(when (< zz width)
 			  (setf (aref data i zz)
-			    (ldb (byte bits-per-pixel (* bits-per-pixel bit)) 
+			    (ldb (byte bits-per-pixel (* bits-per-pixel bit))
 				 byte)))))
 		  (progn
 		    (assert (zerop (mod bits-per-pixel 8)))

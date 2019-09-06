@@ -23,7 +23,7 @@
 				      'make type 'array)))
 	(setq forms
 	  `(,@forms
-	    (ff:def-c-type ,type-array 1 ,type)
+	    (ff-wrapper:def-c-type ,type-array 1 ,type)
 	    (def-foreign-array-resource
 		,type-array ,make-type-array)))))
     `(progn ,@forms)))

@@ -13,7 +13,7 @@
       `(progn
 	 (eval-when (eval compile)
 	   (defforeign ',c-function-name
-	       :entry-point (ff:convert-foreign-name ,entry-point)
+	       :entry-point (ff-wrapper:convert-foreign-name ,entry-point)
 	       :call-direct t
 	       :arguments '(foreign-address foreign-address foreign-address fixnum)
 	       :arg-checking nil
@@ -46,7 +46,7 @@
 			       (lispify-tk-name entry-point :package nil)))))
       `(progn
 	 (eval-when (eval compile)
-	   (ff:def-foreign-call (,c-function-name ,entry-point)
+	   (ff-wrapper:def-foreign-call (,c-function-name ,entry-point)
 	       ((w :foreign-address) (x :foreign-address) (y :foreign-address) (z :int fixnum))
 	     :returning :foreign-address
 	     :call-direct t

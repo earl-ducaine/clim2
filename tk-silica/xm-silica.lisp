@@ -71,7 +71,7 @@
   (popup (widget-parent mirror)))
 
 
-;; (ff:defun-foreign-callable my-drawing-area-query-geometry-stub
+;; (ff-wrapper:defun-foreign-callable my-drawing-area-query-geometry-stub
 ;;     ((widget :foreign-address)
 ;;      (intended :foreign-address)
 ;;      (desired :foreign-address))
@@ -80,7 +80,7 @@
 ;; (defun setup-mda ()
 ;;   (break)
 ;;   (tk::initializemydrawingareaquerygeometry
-;;    (ff:register-foreign-callable 'my-drawing-area-query-geometry-stub)))
+;;    (ff-wrapper:register-foreign-callable 'my-drawing-area-query-geometry-stub)))
 
 ;; (setup-mda)
 
@@ -157,7 +157,7 @@
 	       ;; JPM 7/98: Don't destroy something already destroyed.
 	       ;; spr17831 and spr17939.  Apparently the motif-top-level-sheet
 	       ;; may have already destroyed it.
-	       (tk::find-object-from-address (ff:foreign-pointer-address input-widget) nil))
+	       (tk::find-object-from-address (ff-wrapper:foreign-pointer-address input-widget) nil))
       (tk::destroy-widget input-widget))))
 
 (defmethod port-note-cursor-change :after

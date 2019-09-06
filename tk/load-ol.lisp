@@ -8,7 +8,7 @@
 (progn
   (defvar sys::*toolkit-shared* nil)
 
-  (unless (ff:get-entry-point (ff:convert-foreign-name "ol_appl_add_item")
+  (unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "ol_appl_add_item")
 			      #-(version>= 5 0) :note-shared-library-references
 			      #-(version>= 5 0) nil)
     (load "clim2:;climol.so")
@@ -19,7 +19,7 @@
   (defvar sys::*libtk-pathname* "Ol")
   (defvar sys::*libxt-pathname* "Xt")
 
-  (unless (ff:get-entry-point (ff:convert-foreign-name "XtToolkitInitialize"))
+  (unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "XtToolkitInitialize"))
     (load "stub-olit.o"
 	  :system-libraries (list sys::*libtk-pathname*
 				  sys::*libxt-pathname*
@@ -30,14 +30,14 @@
 				  sys::*libx11-pathname*)
 	  :print t))
 
-  (unless (ff:get-entry-point (ff:convert-foreign-name "ol_appl_add_item"))
+  (unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "ol_appl_add_item"))
     (load "olsupport.o"
 	  :system-libraries (list sys::*libtk-pathname*
 				  sys::*libxt-pathname*
 				  sys::*libx11-pathname*)
 	  :print t))
 
-  (unless (ff:get-entry-point (ff:convert-foreign-name "XtAppIntervalNextTimer"))
+  (unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "XtAppIntervalNextTimer"))
     (load "xtsupport.o"
 	  :system-libraries (list sys::*libxt-pathname*
 				  sys::*libx11-pathname*)

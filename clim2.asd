@@ -8,6 +8,7 @@
     :serial t
     :components
     (
+     (:file "tk/ff-wrapper-for-ff")
      (:file "cat")
      (:file "utils/excl-verification")
      (:file "utils/packages")
@@ -17,7 +18,6 @@
      (:file "load-clim")
      (:file "tk-silica/pkg")
      (:file "xlib/pkg")
-     (:file "tk/ff-wrapper-for-ff")
 
      (:file "utils/defun-utilities")
      (:file "utils/reader")

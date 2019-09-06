@@ -5,7 +5,7 @@
 (in-package :tk)
 
 
-(defclass xt-class (ff:foreign-pointer standard-class)
+(defclass xt-class (ff-wrapper:foreign-pointer standard-class)
   ((entry-point :initarg :entry-point
 		:initform nil
 		:reader class-entry-point)
@@ -29,7 +29,7 @@
   (with-slots (entry-point) class
     (format stream "The entry point is ~A,~X~%"
 	    (and (slot-boundp class 'entry-point) entry-point)
-	    (ff:foreign-pointer-address class))))
+	    (ff-wrapper:foreign-pointer-address class))))
 
 (defmethod class-handle ((class xt-class))
   (unless (clos:class-finalized-p class)
@@ -37,6 +37,5 @@
   (dolist (c (clos:class-precedence-list class)
 	    (error "Cannot get handle for class" class))
     (when (and (typep c 'xt-class)
-	       (not (zerop (ff:foreign-pointer-address c))))
+	       (not (zerop (ff-wrapper:foreign-pointer-address c))))
       (return c))))
-

@@ -90,7 +90,7 @@
 (defun modstateeql (a b) (eql a b))
 
 (defun lookup-accelerator (frame keysym modstate)
-  (when clim-internals::*input-buffer-empty* 
+  (when clim-internals::*input-buffer-empty*
     ;; Ensure that command-accelerators are only enabled
     ;; when we are not in the middle of an input-editor context.
     ;; spr18494
@@ -105,7 +105,7 @@
 		    (modstateeql modstate gmodstate))
 	  return (cdr gesture-and-command)))))
 
-(defmethod update-frame-settings ((framem acl-frame-manager) 
+(defmethod update-frame-settings ((framem acl-frame-manager)
 				  (frame t))
   (let* ((sheet (frame-top-level-sheet frame)))
     (when sheet
@@ -115,7 +115,7 @@
 	(clim-internals::limit-size-to-graft width height (graft framem))
 	(multiple-value-bind (dl dt dw dh) (get-nonclient-deltas sheet)
 	  (declare (ignore dl dt))
-	  (setf (acl-top-min-width sheet) 
+	  (setf (acl-top-min-width sheet)
 	    (fix-coordinate (+ width dw)))
 	  (setf (acl-top-min-height sheet)
 	    (fix-coordinate (+ height dh))))
@@ -135,7 +135,7 @@
 ;; Note: items appear never to be removed from menu-id->command-table
 ;; so this will grow indefinitely (cim 9/9/96). There really should be
 ;; a global id counter and the association list should be kept on a
-;; per application-frame basis. 
+;; per application-frame basis.
 
 (defun assign-command-menu-item-id (command frame)
   ;; We should probably allow COMMAND to be NIL.
@@ -170,7 +170,7 @@
 ;;;  1] Remember the previously disabled-commands;
 ;;;  2] Disable all the defined commands;
 ;;;  3] Return the list of the previously disabled-commands.
-;;; 
+;;;
 ;;; In RE-ENABLE-MENU-ITEMS:
 ;;;  1] Record the currently disabled-commands;
 ;;;  2] re-Disable all the commands that were previously
@@ -183,14 +183,14 @@
 (defun clim-internals::disable-all-menu-items (frame)
   ;;; Called before a command is executed.
   ;;;
-  ;;; Push all the commands on top of the 
+  ;;; Push all the commands on top of the
   ;;; previously-disabled commands.
   ;;;
   ;;; In particular note that any previously-disabled
   ;;; command will appear in the list of disabled-commands
   ;;; two (or possibly more) times.
   ;;;
-  ;;; See the subequent clean-up below in 
+  ;;; See the subequent clean-up below in
   ;;; clim-internals::re-enable-menu-items.
   (map-command-menu-ids
    frame
@@ -205,21 +205,21 @@
 (defun clim-internals::re-enable-menu-items (frame)
   (let ((new-disabled-commands nil))
     (with-slots (clim-internals::disabled-commands) frame
-      
+
       ;;; Called after a command has finished executing.
       ;;; (See set-up above in clim-internals::disable-all-menu-items.)
       ;;;
       ;;; Re-Disable a command if and only if it appears
       ;;; in the list of disabled-commands twice.
-      ;;; 
+      ;;;
       ;;; 1] If a command has been actively enabled during
-      ;;;    the execution of the present-command, all 
+      ;;;    the execution of the present-command, all
       ;;;    appearances in the list of disabled-commands
       ;;;    will have been removed.
       ;;; 2] If a command has been actively disabled during
       ;;;    the execution of the present-command, it
       ;;;    will appear in the list two (or more) times.
-      ;;; 3] If a command was disabled before the 
+      ;;; 3] If a command was disabled before the
       ;;;    presently-exectuted command began, it should
       ;;;    appear in the list two (or more) time.
       ;;;
@@ -236,9 +236,9 @@
       (loop for (com . rest) on clim-internals::disabled-commands
 	  do (when (member com rest)
 	       (pushnew com new-disabled-commands)))
-      
+
       (setq clim-internals::disabled-commands
-	new-disabled-commands))))      
+	new-disabled-commands))))
 
 ;;; Either of these would be nicer, but redisplay of the menu bar causes them to not
 ;;; always get repainted in their ungrayed state at the end.  pr Aug97
@@ -269,7 +269,7 @@
 					    (keysym->char keypress)
 					  (char-downcase (keysym->char keypress))))
 			keypress)))
-	 
+
 	 )
     (dolist (shift alist)
       (when (member (first shift) (rest gesture-spec))
@@ -290,8 +290,8 @@
 
 (eval-when (compile load eval)
   (defconstant *nstringify-buffer-default-size* 2048)
-  (defvar nstringify-buffer 
-      (make-array *nstringify-buffer-default-size* :fill-pointer t 
+  (defvar nstringify-buffer
+      (make-array *nstringify-buffer-default-size* :fill-pointer t
 		  :element-type 'character))
   (defvar control-text-buffer
       (make-array 2048 :fill-pointer t :element-type 'character)))
@@ -332,9 +332,9 @@
 (defun make-control-text (x)
   (let ((string (nstringify-for-control x)))
     ;;mm: This is not MP-safe ???
-    ;;mm: allow access to the whole buffer 
+    ;;mm: allow access to the whole buffer
     #+aclmerge (setf (fill-pointer control-text-buffer) 2047)
-    (set-strlen 
+    (set-strlen
      control-text-buffer
      ;; copy characters across and return final length
      (block nil				; macroexpanded the FOR loop to get
@@ -343,8 +343,8 @@
 	 (declare (fixnum to-index) (fixnum from-index))
 	 (tagbody
 	  for-loop
-	   (when (or (>= from-index #.(length nstringify-buffer)) 
-		     (>= to-index #.(length control-text-buffer))) 
+	   (when (or (>= from-index #.(length nstringify-buffer))
+		     (>= to-index #.(length control-text-buffer)))
 	     (go for-exit))
 	   (setq last-char-byte char-byte)
 	   (setq char-byte (schar-byte string from-index))
@@ -353,16 +353,16 @@
 	     (0 (go for-exit))
 	     (#.(char-int #\&)
 		(when (< from-index #.(1- (length nstringify-buffer)))
-		  (set-schar-byte control-text-buffer 
-				  (incf to-index) 
+		  (set-schar-byte control-text-buffer
+				  (incf to-index)
 				  #.(char-int #\&))))
 	     (#.(char-int #\~)
 		(if (eql last-char-byte #.(char-int #\~))
 		    (progn (set-schar-byte control-text-buffer
-					   (decf to-index) 
+					   (decf to-index)
 					   #.(char-int #\~))
 			   (setf char-byte 0))
-		  (set-schar-byte control-text-buffer to-index 
+		  (set-schar-byte control-text-buffer to-index
 				  #.(char-int #\&)))))
 	   (incf to-index 1)
 	   (incf from-index 1)
@@ -397,16 +397,16 @@
 	(win:DrawMenuBar (sheet-mirror (frame-top-level-sheet frame)))
 	))))
 
-(defun make-menu-for-command-table (command-table menuhand frame 
+(defun make-menu-for-command-table (command-table menuhand frame
 				    &optional top-level-sheet top-level-p)
   (assert (valid-handle menuhand))
   (unless top-level-sheet
     (setq top-level-sheet (frame-top-level-sheet frame)))
   ;; First, delete any pre-existing menu items.
   (delete-menu-bar frame menuhand t)
-  (setf (gethash menuhand (popup-menu->menu-item-ids *acl-port*)) nil) 
-  (setf (gethash menuhand *popup-menu->command-table*) 
-    (list command-table 
+  (setf (gethash menuhand (popup-menu->menu-item-ids *acl-port*)) nil)
+  (setf (gethash menuhand *popup-menu->command-table*)
+    (list command-table
 	  (slot-value (find-command-table command-table)
 		      'clim-internals::menu-tick)))
   ;; Make the menu
@@ -414,7 +414,7 @@
    #'(lambda (menu keystroke item)
        (let* ((type (command-menu-item-type item))
 	      (value (command-menu-item-value item))
-	      (menu-item-available-p 
+	      (menu-item-available-p
 	       (or (not (eq type :command))
 		   (command-enabled (car value) frame)))
 	      (menu-item-selected-p nil)
@@ -432,7 +432,7 @@
 	      (record-accelerator frame acckey value top-level-sheet))
 	    (let ((menu-item-id (assign-command-menu-item-id value frame)))
 	      (excl:with-native-string (m (make-menu-text
-					   menu 
+					   menu
 					   ;; Don't display the accelerator key if
 					   ;; the command is going to land on the
 					   ;; menu bar itself,
@@ -470,7 +470,7 @@
 
 (defun compute-msmenu-bar-pane (frame top command-table)
   (let* ((mirror (sheet-mirror top))
-	 (menu-handle (win:GetMenu mirror)) 
+	 (menu-handle (win:GetMenu mirror))
 	 (command-table
 	  (if (listp command-table) (car command-table) command-table)))
     (when (silica::default-command-table-p command-table)
@@ -492,7 +492,7 @@
 	 (ticknow (when tickthen (slot-value (find-command-table command-table)
 					     'clim-internals::menu-tick))))
     (when (and tickthen ticknow (not (= tickthen ticknow)))
-      (make-menu-for-command-table command-table menuhand frame 
+      (make-menu-for-command-table command-table menuhand frame
 				   (frame-top-level-sheet frame) t)
       t)))
 
@@ -559,7 +559,7 @@
 			    0
 			    TTS_ALWAYSTIP
 			    win:CW_USEDEFAULT win:CW_USEDEFAULT
-			    win:CW_USEDEFAULT win:CW_USEDEFAULT 
+			    win:CW_USEDEFAULT win:CW_USEDEFAULT
 			    0 0
 			    (hinst *acl-port*) 0)))
       (setf (tooltip-control sheet) tooltip-control)
@@ -572,7 +572,7 @@
       (flet ((tip (s)
 	       ;; I never got tool tips to work, so I didn't
 	       ;; really finish this part.  JPM 8/98.
-	       (ct:csets 
+	       (ct:csets
 		toolinfo toolinfo
 		cbsize (ct:sizeof toolinfo)
 		uflags TTF_IDISHWND
@@ -580,9 +580,9 @@
 		uid (sheet-mirror s)
 		;;rect 0
 		hinst (hinst *acl-port*)
-		lpsztext -1 
+		lpsztext -1
 		#+ign
-		(lisp-string-to-scratch-c-string 
+		(lisp-string-to-scratch-c-string
 		 (princ-to-string label)))
 	       (setq status
 		 (frame-send-message frame
@@ -612,10 +612,10 @@
 	 (thread (when sheet (clim-internals::sheet-thread sheet))))
     (unless (eq thread (current-process))
       ;; Lisp may hang badly if you proceed.
-      (cerror "I don't care if the application crashes or hangs" 
+      (cerror "I don't care if the application crashes or hangs"
               "An attempt was made to display a window in thread ~S,
 which is not the thread in which the window was created.
-Windows does not allow a window created in one thread 
+Windows does not allow a window created in one thread
 to be run from another."
 	     thread))))
 
@@ -653,12 +653,12 @@ to be run from another."
       ;; bug12221/spr24998
       ;; If this is a button, make sure the "ungray"
       ;; is immediately seen.
-      
+
 ;;; Note from docs for Windows function DrawMenuBar.
 ;;; The DrawMenuBar function redraws the menu bar of the specified
 ;;; window. If the menu bar changes after Windows has created the
 ;;; window, this function must be called to draw the changed menu bar.
-      
+
       ;; (Unfortunately, there doesn't seem to be any
       ;; simpler way than refreshing the entire menubar.)
       (when (not +batch-menubar-refresh+)
@@ -676,7 +676,7 @@ to be run from another."
          (flag win:MF_GRAYED))
     (when menu-handle
       (win:EnableMenuItem menu-handle command-id flag)
-      
+
       ;; bug12221/spr24998
       ;; If this is a button, make sure the "ungray"
       ;; is immediately seen.
@@ -684,7 +684,7 @@ to be run from another."
       ;; simpler way than refreshing the entire menubar.)
       (when (not +batch-menubar-refresh+)
 	(win:DrawMenuBar mirror))
-      
+
       )))
 
 (defmethod note-frame-enabled ((framem acl-frame-manager) frame)
@@ -722,7 +722,7 @@ to be run from another."
   (update-frame-settings framem frame)
   ;;--- Perhaps we want to resize the top level sheet if there is one
   (let ((avp nil)
-        (*in-layout-frame* *in-layout-frame*))    
+        (*in-layout-frame* *in-layout-frame*))
     (when (frame-top-level-sheet frame)
       (map-over-sheets #'(lambda (sheet)
                            (when (accept-values-pane-p sheet)
@@ -734,7 +734,7 @@ to be run from another."
 (defmethod note-frame-layout-changed :after ((framem acl-frame-manager) frame)
   ;; added this to workaround some bugs with new layouts not being
   ;; correctly redisplayed - in particular problems with label-panes
-  ;; - this should be viewed as a temporary fix (cim 10/14/96) 
+  ;; - this should be viewed as a temporary fix (cim 10/14/96)
   (repaint-sheet (frame-top-level-sheet frame) +everywhere+)
   ;; spr16580.
   ;; Added this next one to fix problem with distribute-event
@@ -756,7 +756,7 @@ to be run from another."
 	  (check-last-error "SetWindowText" :action :warn)))))
 
 (defun select-messagebox-icon (style)
-  ;; Decides which Windows icon matches this (standardized) style. 
+  ;; Decides which Windows icon matches this (standardized) style.
   (if (member style '#.`(,win:MB_ICONINFORMATION
 			 ,win:MB_ICONQUESTION
 			 ,win:MB_ICONEXCLAMATION
@@ -827,7 +827,7 @@ to be run from another."
 
 (defun select-messagebox-result (code button-style exit-boxes)
   ;; Most ports assume the notify-user exit boxes are limited
-  ;; to :exit and :abort. This function tries to imagine which 
+  ;; to :exit and :abort. This function tries to imagine which
   ;; one the user picked.
   (when (zerop code)
     (error "Not enough memory for MessageBox operation."))
@@ -862,10 +862,10 @@ to be run from another."
   (excl:with-native-string (m message-string)
     (excl:with-native-string (n name)
       (win:MessageBox hwnd m n
-		      (or icon 
-			  (logior win:MB_ICONSTOP 
+		      (or icon
+			  (logior win:MB_ICONSTOP
 				  win:MB_TASKMODAL))))))
- 
+
 (defmethod frame-manager-notify-user
     ((framem acl-frame-manager) message-string
      &key (style :inform)
@@ -874,7 +874,7 @@ to be run from another."
 	   (if frame-p
 	       (frame-top-level-sheet frame)
 	     (graft framem)))
-	  (title "Notification") 
+	  (title "Notification")
 	  documentation
 	  (exit-boxes '(:exit :abort))
 	  (name title)
@@ -890,7 +890,7 @@ to be run from another."
 	(let* ((hwnd (sheet-mirror associated-window))
 	       (code (message-box
 		      hwnd
-		      (coerce message-string 'simple-string) 
+		      (coerce message-string 'simple-string)
 		      (coerce name 'simple-string)
 		      (logior win:MB_SYSTEMMODAL icon buttons)))
 	       (symbol (select-messagebox-result code buttons exit-boxes)))
@@ -910,7 +910,7 @@ to be run from another."
 (defun do-one-menu-item (popmenu item printer tick alist submenus)
   (let ((*print-circle* nil))
     (flet ((print-item (item)
-	     (silica::xlat-newline-return 
+	     (silica::xlat-newline-return
 	      (with-output-to-string (stream)
 		;; The click-right menu uses PRESENT at this point to
 		;; get the menu text, using the stream-default-view, which needs to be
@@ -924,7 +924,7 @@ to be run from another."
 	 (win:AppendMenu popmenu win:MF_SEPARATOR tick 0))
 	(:label
 	 (excl:with-native-string (p-i (print-item item))
-	   (win:AppendMenu popmenu win:MF_DISABLED tick 
+	   (win:AppendMenu popmenu win:MF_DISABLED tick
 			   p-i)))
 	(:item
 	 (if (clim-internals::menu-item-items item)
@@ -941,18 +941,18 @@ to be run from another."
 					 tick alist submenus)))
 		 (clim-internals::menu-item-items item)))
 	   (progn
-	     (push (list tick (menu-item-value item) 
+	     (push (list tick (menu-item-value item)
 			 item) ;; spr25894 -- Third item is the menu-item itself
 		   alist)
-	     
+
 	     (excl:with-native-string (p-i (print-item item))
 	       (if (clim-internals::menu-item-active item)
-		   (win:AppendMenu popmenu win:MF_ENABLED tick 
+		   (win:AppendMenu popmenu win:MF_ENABLED tick
 				   p-i)
 		;;; Use win:MF_GRAYED rather than win:MF_DISABLED.
 		;;; The latter will also disable the command, but
-		;;; doesn't seem to affect the appearance.	       
-		 (win:AppendMenu popmenu win:MF_GRAYED tick 
+		;;; doesn't seem to affect the appearance.
+		 (win:AppendMenu popmenu win:MF_GRAYED tick
 				 p-i)))))))
       (values tick alist submenus))))
 
@@ -978,7 +978,7 @@ to be run from another."
 	  x-position
 	  y-position
 	  scroll-bars
-	  
+
 	  default-item ;; bug12221/spr25238
 	  )
   ;; The basic theory of ignoring is that we ignore arguments
@@ -988,7 +988,7 @@ to be run from another."
 		   cache-test cache-value
 		   id-test unique-id
 		   foreground background))
-  (if (or presentation-type ;; foreground background  
+  (if (or presentation-type ;; foreground background
 	  row-wise n-columns n-rows scroll-bars label)
       (call-next-method)
     #+simple-but-sure
@@ -997,7 +997,7 @@ to be run from another."
 	  (submenus nil)
 	  (flags (logior win:TPM_RETURNCMD ; return the selection
 			 win:TPM_NONOTIFY ; don't notify clim
-			 (if (eq gesture :menu) 
+			 (if (eq gesture :menu)
 			     win:TPM_RIGHTBUTTON
 			   win:TPM_LEFTBUTTON)))
 	  (rect 0)
@@ -1026,15 +1026,15 @@ to be run from another."
       (setq y-position (truncate y-position))
       (map nil #'(lambda (item)
 		   (multiple-value-setq (tick alist submenus)
-		     (do-one-menu-item popmenu item printer 
+		     (do-one-menu-item popmenu item printer
 				       tick alist submenus)))
 	   items)
       ;; Bug here, exhibited by CAD Demo Create, that menu
-      ;; is sometimes never exposed.  TrackPopupMenu returns 0.  
+      ;; is sometimes never exposed.  TrackPopupMenu returns 0.
       ;; But most of the time this seems to work... 5/98 JPM.
       (setq code
 	(win:TrackPopupMenu
-	 popmenu flags x-position y-position 
+	 popmenu flags x-position y-position
 	 0				; reserved, must be zero
 	 (sheet-mirror associated-window) rect))
       (win:DestroyMenu popmenu)
@@ -1048,8 +1048,8 @@ to be run from another."
 
 ;;; bug12221/spr25238
 ;;; New method:  Make native menus appear with pointer on :default-item.
-(defun calculate-mswin-menu-pos (framem 
-				 init-cursor-x init-cursor-y			   
+(defun calculate-mswin-menu-pos (framem
+				 init-cursor-x init-cursor-y
 				 items
 				 default-item)
   (let ((menu-left init-cursor-x)
@@ -1071,7 +1071,7 @@ to be run from another."
 	      (cond ((< (- graft-height bottom-buffer)
 			menu-hei)
 		     ;; The menu is taller than the screen
-		     ;; First, shift the offset, because of the 
+		     ;; First, shift the offset, because of the
 		     ;; scroll-gadget at the top of the menu.
 		     (setq item-offset-y (+ item-offset-y line-hei))
 		     ;; Now, place the menu against the top of the screen...
@@ -1081,7 +1081,7 @@ to be run from another."
 		     (setq cursor-x (+ init-cursor-x item-offset-x)
 			   cursor-y (min (+ menu-top item-offset-y)
 					 (- graft-height bottom-buffer))))
-		    ((< (- graft-height bottom-buffer) 
+		    ((< (- graft-height bottom-buffer)
 			(+ (- init-cursor-y item-offset-y) menu-hei))
 		     ;; We are bumping against the bottom.
 		     ;; So place the menu at the bottom of the screen...
@@ -1098,21 +1098,21 @@ to be run from another."
 			   menu-top 0)
 		     ;; ... and place the pointer on the default-item.
 		     (setq cursor-x (+ init-cursor-x item-offset-x)
-			   cursor-y (+ menu-top item-offset-y))) 
+			   cursor-y (+ menu-top item-offset-y)))
 		    (t
 		     ;; The normal case-- everything fits on the screen
 		     ;; So position the menu so the the default item
 		     ;; comes up under the pointer.
 		     (setq menu-left (- init-cursor-x item-offset-x)
 			   menu-top  (- init-cursor-y item-offset-y))
-		     ;; Warp the pointer slightly, 
-		     ;; so that the item highlights properly 
+		     ;; Warp the pointer slightly,
+		     ;; so that the item highlights properly
 		     (setq cursor-x (+ init-cursor-x 1)
 			   cursor-y (+ init-cursor-y 1))))
 
 	      ;; Finally, warp the pointer
-	      (when (and cursor-x cursor-y) 
-		(win:SetCursorPos cursor-x 
+	      (when (and cursor-x cursor-y)
+		(win:SetCursorPos cursor-x
 				  (max 0
 				       (min cursor-y
 					    (- graft-height bottom-buffer))))))))))
@@ -1127,7 +1127,7 @@ to be run from another."
 	    (car dotted-pair) (cdr dotted-pair) (code-char 0)
 	    (cdr dotted-pair) (code-char 0))))
 
-(eval-when (compile load eval) 
+(eval-when (compile load eval)
   ;; All pathnames returned by SELECT-FILE must fit in the scratch string,
   ;; so make it pretty big.
   (defconstant *scratch-string-length* 2048)
@@ -1137,24 +1137,24 @@ to be run from another."
     (make-string *scratch-string-length*))
 
 (defparameter *scratch-c-string*
-  (ff:allocate-fobject-c `(:array :char ,*scratch-string-length*)))
+  (ff-wrapper:allocate-fobject-c `(:array :char ,*scratch-string-length*)))
 
 (eval-when (compile eval load)
   ;; this type useful since we don't open code anonymous types well yet:
-  (ff:def-foreign-type foreign-string (:array :char 1))
+  (ff-wrapper:def-foreign-type foreign-string (:array :char 1))
   )
 
 (defun lisp-string-to-scratch-c-string (lisp-string)
   (let ((length (min (length lisp-string)
 		     (1- *scratch-string-length*))))
-    (dotimes (i length 
+    (dotimes (i length
 	       ;; null term
-	       (setf (ff:fslot-value-typed 'acl-clim::foreign-string
+	       (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string
 					   :c
 					   *scratch-c-string*
 					   length)
 		 0))
-      (setf (ff:fslot-value-typed 'acl-clim::foreign-string
+      (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string
 				  :c
 				  *scratch-c-string*
 				  i)
@@ -1275,24 +1275,24 @@ to be run from another."
 				    0)
 		      hInstance 0	; no custom dialog
 		      lpstrFilter file-filter-string
-		      lpstrCustomFilter 0 
+		      lpstrCustomFilter 0
 		      nMaxCustFilter 0 ;; length of custom filter string
 		      nFilterIndex 0	; zero means use custom-filter if supplied
 					; otherwise the first filter in the list
 		      lpstrFile s1
 		      nMaxFile *scratch-string-length*
-		      lpstrFileTitle 0 
+		      lpstrFileTitle 0
 		      nMaxFileTitle 0
 		      lpstrInitialDir initial-dir-string
 		      lpstrTitle prompt-string
 		      Flags (get-pathname-flags save-p multiple-p warn-if-exists-p)
 		      nFileOffset 0
-		      nFileExtension 0 
+		      nFileExtension 0
 		      lpstrDefExt 0
 		      lCustData 0
 		      lpfnHook 0
 		      lpTemplateName 0)))))
-    (let* ((result 
+    (let* ((result
 	    (if save-p
 		(win:GetSaveFileName open-file-struct)
 	      (win:GetOpenFileName open-file-struct))))
@@ -1305,7 +1305,7 @@ to be run from another."
 	     (scratch-c-string-to-lisp-string)))
 	(let ((error-code (win:CommDlgExtendedError)))
 	  (and (plusp error-code) ;; zero means cancelled, so return NIL
-	       (error (format nil 
+	       (error (format nil
 			      "Common dialog error ~a."
 			      (or (cdr (assoc error-code
 					      common-dialog-errors))
@@ -1332,7 +1332,7 @@ to be run from another."
     (let ((result (SHBrowseForFolder info)))
       (when (plusp result)
 	;; To do: parse the result.
-	result))))  
+	result))))
 
 (defmethod frame-manager-select-file
     ((framem acl-frame-manager)
@@ -1359,7 +1359,7 @@ to be run from another."
      &allow-other-keys)
   (declare (ignore name exit-boxes file-list-label directory-list-label
 		   file-search-proc documentation))
-  (unless pattern 
+  (unless pattern
     (setq pattern ""))
   (when (pathnamep default)
     (let ((name (pathname-name default))
@@ -1373,12 +1373,12 @@ to be run from another."
 	    (type
 	     (setq pattern (format nil "*.~A" type))))
       (when (or directory device)
-	(setq directory 
+	(setq directory
 	  (namestring (make-pathname :name nil
 				     :directory dir
 				     :device device))))))
   ;; Massage the directory to make sure, in particular,
-  ;; that it has a device.  Expensive, but worth it to 
+  ;; that it has a device.  Expensive, but worth it to
   ;; avoid a segmentation violation.  JPM.
   (if directory
       (setq directory
@@ -1388,14 +1388,14 @@ to be run from another."
   (let* ((stream associated-window)
 	 (save-p nil)
 	 (directory-p nil))
-    (ecase dialog-type 
+    (ecase dialog-type
       (:open (setq save-p nil))
       (:save (setq save-p t))
       (:directory (setq directory-p t)))
     (if directory-p
 	(get-directory stream title)
-      (get-pathname title 
-		    directory 
+      (get-pathname title
+		    directory
 		    stream
 		    file-types
 		    pattern
@@ -1419,7 +1419,7 @@ to be run from another."
    (notepane :initform nil :accessor notepane)
    (process :accessor work-process))
   (:panes
-   (display 
+   (display
     (setf (notepane *application-frame*)
       (make-pane 'application-pane
 		 :text-style '(:sans-serif :roman :small)
@@ -1449,13 +1449,13 @@ to be run from another."
 			   (process nil))
 		       (when (and frame (cancellable frame))
 			 (setq process (work-process frame))
-			 (if process 
+			 (if process
 			     (mp:process-interrupt process 'abort)
 			   (beep)))))))))
   (:menu-bar nil)
-  (:layouts (main 
+  (:layouts (main
 	     (spacing (:thickness 10)
-	       (vertically () 
+	       (vertically ()
 		 display
 		 (25 (horizontally ()
 		       (vertically ()
@@ -1479,7 +1479,7 @@ to be run from another."
 (defmethod display-thermometer ((frame nt-working-dialog) stream)
   (let ((fraction (fraction frame)))
     (with-bounding-rectangle* (left top right bottom) (sheet-region stream)
-      (medium-draw-rectangle* stream left top 
+      (medium-draw-rectangle* stream left top
 			      (+ left (* (- right left) fraction)) bottom
 			      t))))
 
@@ -1526,8 +1526,8 @@ to be run from another."
 		     (run-frame-top-level frame)))))
 	    (process-wait
 	     "Synchronize In"
-	     #'(lambda () 
-		 (and frame 
+	     #'(lambda ()
+		 (and frame
 		      (eq (frame-state frame) :enabled))))
 	    (setq *working-dialog* frame)
 	    (clim-internals::frame-manager-invoke-with-noting-progress
@@ -1536,13 +1536,13 @@ to be run from another."
 	  (mp:process-interrupt waiter #'frame-exit frame)
 	  ;; It is possible to hang all of Lisp if you don't
 	  ;; slow down here.  Don't ask me why.  Perhaps
-	  ;; it also helps if FRAME is not modal-frame-p. 
+	  ;; it also helps if FRAME is not modal-frame-p.
 	  ;; JPM 10/98.
 	  (mp:process-allow-schedule waiter)
 	  (process-wait
 	   "Synchronize Out"
-	   #'(lambda () 
-	       (and frame 
+	   #'(lambda ()
+	       (and frame
 		    (not (eq (frame-state frame) :enabled)))))
 	  (setq *working-dialog* nil))))))
 
@@ -1562,7 +1562,7 @@ to be run from another."
 	(display-note *working-dialog* (notepane *working-dialog*))))))
 
 (defun wait-demo (&key (time 10.0) (N 100))
-  (let ((*application-frame* (car (frame-manager-frames 
+  (let ((*application-frame* (car (frame-manager-frames
 				   (find-frame-manager))))
 	(note (format nil "Men at work. ~%Please wait."))
 	(wtime (/ time N)))
@@ -1653,7 +1653,7 @@ to be run from another."
 Windows has destroyed it automatically as a
 result of the exit of the thread that created it:
 ~S
-This typically happens when you attempt to reuse a disabled CLIM frame 
+This typically happens when you attempt to reuse a disabled CLIM frame
 in a second Lisp process.  This frame cannot be reused."
 		 mirror frame (when sheet (clim-internals::sheet-thread sheet))))
       )))
@@ -1698,7 +1698,7 @@ in a second Lisp process.  This frame cannot be reused."
 	;;; The code below makes sure that the frame grows or shrinks
 	;;; when the user resizes the frame window.
 	;; ----
-	;; Actually, the code below repaints the entire frame. 
+	;; Actually, the code below repaints the entire frame.
 	;; Shouldn't we free wrect? JPM.
 	(or (win:GetClientRect handle wrect)
 	    (acl-clim::check-last-error "GetClientRect"))
@@ -1716,13 +1716,13 @@ in a second Lisp process.  This frame cannot be reused."
 
 ;; Obsolete I think.
 (defun frame-find-position (frame)
-  (when frame 
+  (when frame
     (let* ((wrect (ct:ccallocate win:rect))
 	   (sheet (frame-top-level-sheet frame))
 	   (handle (when sheet (sheet-mirror sheet))))
       (when handle
 	(win:GetWindowRect handle wrect)
-	(values (ct:cref win:rect wrect left) 
+	(values (ct:cref win:rect wrect left)
 		(ct:cref win:rect wrect top))))))
 
 ;; Obsolete I think.
@@ -1741,17 +1741,17 @@ in a second Lisp process.  This frame cannot be reused."
   (let ((length (length string)))
     (assert (< length 1024))
     ;; The header is the size of a "word"
-    (setf (ff:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 0) 
+    (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 0)
       (ldb (byte 8 0) code))
-    (setf (ff:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 1) 
+    (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 1)
       (ldb (byte 8 8) code))
-    (setf (ff:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 2) 
+    (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 2)
       (ldb (byte 8 16) code))
-    (setf (ff:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 3) 
+    (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string :foreign buffer 3)
       (ldb (byte 8 24) code))
     ;; The rest is the actual string.
     (dotimes (i length)
-      (setf (ff:fslot-value-typed 'acl-clim::foreign-string :foreign
+      (setf (ff-wrapper:fslot-value-typed 'acl-clim::foreign-string :foreign
 				  buffer (+ i 4))
 	(char-code (char string i))))
     buffer))
@@ -1762,31 +1762,31 @@ in a second Lisp process.  This frame cannot be reused."
   (assert (stringp filename))
   (assert (acl-clim::valid-handle printer))
   (let ((code 1)
-	(buffer (ff:allocate-fobject-c '(:array :char 1024)))
+	(buffer (ff-wrapper:allocate-fobject-c '(:array :char 1024)))
 	(prcode 4115 #+ig win:POSTSCRIPT_PASSTHROUGH)
 	(isa-psprinter t)
-	(docinfo (ff:allocate-fobject 'win:docinfo :foreign-static-gc)))
+	(docinfo (ff-wrapper:allocate-fobject 'win:docinfo :foreign-static-gc)))
 
     (setf (ct:cref win:docinfo docinfo cbSize) (ct:sizeof win:docinfo))
     #+ignore
     (excl:with-native-string (cstr filename)
       (setf (ct:cref win:docinfo docinfo lpszDocName) cstr))
-    (setf (ct:cref win:docinfo docinfo lpszDocName) 
+    (setf (ct:cref win:docinfo docinfo lpszDocName)
       (excl:string-to-native filename))
     (setf (ct:cref win:docinfo docinfo lpszOutput) 0)
     (setf (ct:cref win:docinfo docinfo lpszDatatype) 0)
     (setf (ct:cref win:docinfo docinfo fwType) 0)
-    
+
     (setup-escape-buffer buffer prcode "")
     (setq isa-psprinter
-      (plusp (win:Escape printer win:QUERYESCSUPPORT 
+      (plusp (win:Escape printer win:QUERYESCSUPPORT
 			 4 buffer 0)))
     (unless isa-psprinter
       (return-from print-postscript :error-postscript-not-supported))
     (or (plusp (win:StartDoc printer docinfo))
 	(acl-clim::check-last-error "StartDoc"))
     (with-open-file (stream filename :direction :input)
-      (loop 
+      (loop
 	(let ((line (read-line stream nil nil nil)))
 	  (unless line (return))
 	  (setup-escape-buffer buffer (length line) line)
@@ -1810,10 +1810,10 @@ in a second Lisp process.  This frame cannot be reused."
 	(line-height 12)
 	(char-width 12)
 	(textmetric (ct:ccallocate win:textmetric))
-	(docinfo (ff:allocate-fobject 'win:docinfo :foreign-static-gc)))
+	(docinfo (ff-wrapper:allocate-fobject 'win:docinfo :foreign-static-gc)))
     (or (win:GetTextMetrics printer textmetric)
 	(acl-clim::check-last-error "GetTextMetrics"))
-    (setq line-height 
+    (setq line-height
       (+ (ct:cref win:textmetric textmetric tmHeight)
 	 (ct:cref win:textmetric textmetric tmExternalLeading)))
     (setq char-width (ct:cref win:textmetric textmetric tmMaxCharWidth))
@@ -1825,21 +1825,21 @@ in a second Lisp process.  This frame cannot be reused."
     #+ignore
     (excl:with-native-string (cstr filename)
       (setf (ct:cref win:docinfo docinfo lpszDocName) cstr))
-    (setf (ct:cref win:docinfo docinfo lpszDocName) 
+    (setf (ct:cref win:docinfo docinfo lpszDocName)
       (excl:string-to-native filename))
     (setf (ct:cref win:docinfo docinfo lpszOutput) 0)
     (setf (ct:cref win:docinfo docinfo lpszDatatype) 0)
     (setf (ct:cref win:docinfo docinfo fwType) 0)
-    
-    (decf pagesize (+ ymargin ymargin))    
+
+    (decf pagesize (+ ymargin ymargin))
     (setq lines-per-page (1- (truncate pagesize line-height)))
-    
+
     (or (plusp (win:StartDoc printer docinfo))
 	(acl-clim::check-last-error "StartDoc"))
     (progn
       (win:StartPage printer)
       (with-open-file (stream filename :direction :input)
-	(loop 
+	(loop
 	  (let ((line (read-line stream nil nil nil)))
 	    (unless line (return))
 	    (multiple-value-bind (string i)
@@ -1874,14 +1874,14 @@ in a second Lisp process.  This frame cannot be reused."
 
 (defmethod frame-manager-print-file
     ((framem acl-clim::acl-frame-manager) filename
-     &key 	  
+     &key
      (frame nil frame-p)
      (associated-window
       (if frame-p
 	  (frame-top-level-sheet frame)
 	(graft framem)))
      from-page to-page min-page max-page
-     ncopies collate-p 
+     ncopies collate-p
      print-to-file-p disable-print-to-file (hide-print-to-file t)
      nopagenums noselection selection
      nowarning nodialog)
@@ -1891,9 +1891,9 @@ in a second Lisp process.  This frame cannot be reused."
 	      lStructSize (ct:sizeof win:printdlg)
 	      hwndOwner hwnd
 	      hDevMode 0
-	      hDevNames 0        
+	      hDevNames 0
 	      hDC 0
-	      Flags (logior 
+	      Flags (logior
 		     ;; check the collate box
 		     (if collate-p win:PD_COLLATE 0)
 		     ;; disable the printtofile check box
@@ -1925,15 +1925,15 @@ in a second Lisp process.  This frame cannot be reused."
     (cond ((not (win:PrintDlg printdlg))
 	   ;; User cancelled, or there was an error.
 	   (let ((code (win:CommDlgExtendedError)))
-	     (if (zerop code) 
-		 nil			
+	     (if (zerop code)
+		 nil
 	       ;; Code will be among CDERR_* or PDERR_* families
 	       (error "PrintDlg failed with error code ~A" code))))
 	  (t
 	   (let ((hdc (ct:cref win:printdlg printdlg hDC)))
 	     (unwind-protect
 		 (ecase (determine-print-file-type filename)
-		   (:postscript 
+		   (:postscript
 		    (case (print-postscript filename hdc)
 		      (:error-postscript-not-supported
 		       (frame-manager-notify-user
@@ -1946,20 +1946,20 @@ in a second Lisp process.  This frame cannot be reused."
 			"Printing Error: Cannot print file"
 			:style :error)
 		       )))
-		   (:ascii 
+		   (:ascii
 		    (case (print-ascii filename hdc)
 		      (:error
-		       (frame-manager-notify-user 
+		       (frame-manager-notify-user
 			framem
 			"Printing Error: Cannot print file"
 			:style :error))))
 		   (:none
-		    (frame-manager-notify-user 
+		    (frame-manager-notify-user
 		     framem
 		     "Printing Error: File does not exist"
 		     :style :error))
 		   (:empty
-		    (frame-manager-notify-user 
+		    (frame-manager-notify-user
 		     framem
 		     "Printing Error: File is empty"
 		     :style :error)))
@@ -1987,14 +1987,14 @@ in a second Lisp process.  This frame cannot be reused."
 ;;; Motif seems to do this automatically.  Windows does
 ;;; it relative to the main-screen.  So, here we just
 ;;; do it all by hand.
-(defmethod clim-internals::frame-manager-position-dialog 
+(defmethod clim-internals::frame-manager-position-dialog
   ((framem acl-clim::acl-frame-manager)
    frame
    own-window-x-position
    own-window-y-position)
   ;; This definition overrides the more general method in clim/accept-values.lisp
   (let ((calling-frame nil) calling-frame-top-level-sheet frame-top-level-sheet)
-    (multiple-value-bind (x y) 
+    (multiple-value-bind (x y)
 	(cond ((and own-window-x-position own-window-y-position)
 	       ;; If value is specified, use that.
 	       (values own-window-x-position own-window-y-position))
@@ -2005,18 +2005,18 @@ in a second Lisp process.  This frame cannot be reused."
 			  (frame-top-level-sheet calling-frame))
                     (setq frame-top-level-sheet (frame-top-level-sheet frame))
 		    )
-	       ;; If frame is a designated pop-up, 
+	       ;; If frame is a designated pop-up,
 	       ;; try to center over the calling frame.
 	       (let ()
 		 (multiple-value-bind (calling-frame-left calling-frame-top
 							  calling-frame-width)
 		     (bounding-rectangle* calling-frame-top-level-sheet)
 		   (let ((frame-width (bounding-rectangle-size frame-top-level-sheet)))
-		     (let ((offset (/ (- calling-frame-width frame-width) 2))) 
-		       (multiple-value-bind (new-x new-y) 
+		     (let ((offset (/ (- calling-frame-width frame-width) 2)))
+		       (multiple-value-bind (new-x new-y)
 			   (transform-position (sheet-delta-transformation
-                                                calling-frame-top-level-sheet nil) 
-					       calling-frame-left calling-frame-top) 
+                                                calling-frame-top-level-sheet nil)
+					       calling-frame-left calling-frame-top)
 			 (values (+ new-x offset)
 				 (+ new-y 10))))))))
 	      (t
@@ -2045,7 +2045,7 @@ in a second Lisp process.  This frame cannot be reused."
 
 (defparameter *max-file-selection-buffer-size* (* 16 *max-path*))
 
-(ff:def-foreign-call IMallocFree
+(ff-wrapper:def-foreign-call IMallocFree
     ((this :nat)
      (pv win:pvoid))
   :returning :void
@@ -2055,7 +2055,7 @@ in a second Lisp process.  This frame cannot be reused."
   :arg-checking nil
   :strings-convert nil)
 
-(ff:def-foreign-call IMallocRelease ()
+(ff-wrapper:def-foreign-call IMallocRelease ()
   :method-index 2
   :convention :stdcall
   :release-heap :when-ok
@@ -2063,7 +2063,7 @@ in a second Lisp process.  This frame cannot be reused."
   :returning :unsigned-long
   :strings-convert nil)
 
-(ff:def-foreign-call IShellFolderParseDisplayName
+(ff-wrapper:def-foreign-call IShellFolderParseDisplayName
     ((this :nat)
      (hwnd win:hwnd)
      (pbc win:lpstr)
@@ -2078,7 +2078,7 @@ in a second Lisp process.  This frame cannot be reused."
   :returning win:hresult
   :strings-convert nil)
 
-(ff:def-foreign-call (MultiByteToWideChar "MultiByteToWideChar")
+(ff-wrapper:def-foreign-call (MultiByteToWideChar "MultiByteToWideChar")
     ((code-page :unsigned-int)
      (flags win:dword)      ; character-type options
      (string win:lpcstr)    ; address of string to map
@@ -2096,7 +2096,7 @@ in a second Lisp process.  This frame cannot be reused."
 
 
 ;; WINSHELLAPI HRESULT WINAPI SHGetDesktopFolder(LPSHELLFOLDER *ppshf)
-(ff:def-foreign-call (SHGetDesktopFolder "SHGetDesktopFolder")
+(ff-wrapper:def-foreign-call (SHGetDesktopFolder "SHGetDesktopFolder")
     ((folder (* :nat)))
   :returning win:hresult
   :release-heap :when-ok)
@@ -2106,7 +2106,7 @@ in a second Lisp process.  This frame cannot be reused."
 ;; SHBrowseForFolder moved to winwidgh.lisp
 
 ;; HRESULT SHGetMalloc(LPMALLOC *ppMalloc);
-(ff:def-foreign-call (SHGetMalloc "SHGetMalloc")
+(ff-wrapper:def-foreign-call (SHGetMalloc "SHGetMalloc")
     ((pointer (* :nat)))
   :returning win:hresult
   :release-heap :when-ok)
@@ -2115,7 +2115,7 @@ in a second Lisp process.  This frame cannot be reused."
 ;; WINSHELLAPI BOOL WINAPI SHGetPathFromIDList(
 ;;    LPCITEMIDLIST pidl,
 ;;    LPSTR pszPath)
-(ff:def-foreign-call (SHGetPathFromIDList "SHGetPathFromIDList")
+(ff-wrapper:def-foreign-call (SHGetPathFromIDList "SHGetPathFromIDList")
     ((pidl win:lpcitemidlist)
      (path win:lpstr))
   :returning win:bool
@@ -2130,19 +2130,19 @@ in a second Lisp process.  This frame cannot be reused."
 ;;;
 
 (defun allocate-pointer (type &optional (size 1))
-  (ff:allocate-fobject `(:array ,type ,size)))
+  (ff-wrapper:allocate-fobject `(:array ,type ,size)))
 
 (defun pointer-value (type object)
-  (ff:fslot-value-typed `(:array ,type 1) nil object 0))
+  (ff-wrapper:fslot-value-typed `(:array ,type 1) nil object 0))
 
 (defmacro fill-fslots (type object &rest slots)
   (declare (ignore type))
   (let ((object-var (gensym "OBJECT")))
     `(let ((,object-var ,object))
       ,@(loop for (slot-name slot-value) on slots by #'cddr
-              collect `(setf (ff:fslot-value ,object-var ',slot-name)
+              collect `(setf (ff-wrapper:fslot-value ,object-var ',slot-name)
                              ,slot-value)))))
-        
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; spr17917b
@@ -2154,7 +2154,7 @@ in a second Lisp process.  This frame cannot be reused."
 
 (defun make-directory-selection-buffer ()
   (setq *directory-selection-buffer*
-        (ff:allocate-fobject `(:array char ,*max-file-selection-buffer-size*)
+        (ff-wrapper:allocate-fobject `(:array char ,*max-file-selection-buffer-size*)
                              :c)))
 
 (defun lisp-string-to-directory-selection-buffer (lisp-string)
@@ -2182,7 +2182,7 @@ in a second Lisp process.  This frame cannot be reused."
 (defconstant BFFM_SETSELECTION       BFFM_SETSELECTIONW)
 
 ;; The the docs for the `BrowseCallbackProc' function.
-(ff:defun-foreign-callable browse-callback-proc
+(ff-wrapper:defun-foreign-callable browse-callback-proc
     ((hwnd        win:hwnd)
      (message     win:uint)
      (lparam      win:lparam)
@@ -2195,7 +2195,7 @@ in a second Lisp process.  This frame cannot be reused."
     ;; specified initial-directory (0 if no initial-directory was
     ;; specified).
     ;; This is executed when the browse dialog box has finished
-    ;; initializing. 
+    ;; initializing.
     (win:SendMessage hwnd BFFM_SETSELECTION win:FALSE lparam-data))
   0)
 
@@ -2219,8 +2219,8 @@ in a second Lisp process.  This frame cannot be reused."
     ;; string'.  (IShellFolder::ParseDisplayName requires the file
     ;; name to be in Unicode.)
     (MultiByteToWideChar win:CP_ACP
-                         win:MB_PRECOMPOSED 
-                         (lisp-string-to-directory-selection-buffer 
+                         win:MB_PRECOMPOSED
+                         (lisp-string-to-directory-selection-buffer
                           (namestring pathname))
                          -1 ole-path *max-path*)
     ;; Let IShellFolder::ParseDisplayName turn the directory
@@ -2261,7 +2261,7 @@ in a second Lisp process.  This frame cannot be reused."
   (unless (and (clim-initialized-p *acl-port*)
 	       *clim-browse-callback-proc-address*)
     (setf *clim-browse-callback-proc-address*
-          (ff:register-foreign-callable 'browse-callback-proc
+          (ff-wrapper:register-foreign-callable 'browse-callback-proc
                                         :reuse :return-value)))
   ;;
   (let* ((malloc (allocate-pointer :nat))
@@ -2277,7 +2277,7 @@ in a second Lisp process.  This frame cannot be reused."
             (pathname-to-item-id-list initial-directory)))
     ;;
     (unwind-protect
-         (ff:with-stack-fobject (browse-info 'browseinfo)
+         (ff-wrapper:with-stack-fobject (browse-info 'browseinfo)
            ;; The real work: callSHBrowseForFolder.
            (excl:with-native-string (win-prompt prompt)
              (fill-fslots browseinfo browse-info
@@ -2349,7 +2349,7 @@ in a second Lisp process.  This frame cannot be reused."
      &allow-other-keys)
   (declare (ignore name exit-boxes file-list-label directory-list-label
 		   file-search-proc documentation))
-  (unless pattern 
+  (unless pattern
     (setq pattern ""))
   (when (pathnamep default)
     (let ((name (pathname-name default))
@@ -2363,22 +2363,22 @@ in a second Lisp process.  This frame cannot be reused."
 	    (type
 	     (setq pattern (format nil "*.~A" type))))
       (when (or directory device)
-	(setq directory 
+	(setq directory
 	  (namestring (make-pathname :name nil
 				     :directory dir
 				     :device device))))))
   ;; Massage the directory to make sure, in particular,
-  ;; that it has a device.  Expensive, but worth it to 
+  ;; that it has a device.  Expensive, but worth it to
   ;; avoid a segmentation violation.  JPM.
   (setq directory
         (namestring
          (if directory
              (merge-pathnames (pathname directory) (excl:current-directory))
              (excl:current-directory))))
-  (ecase dialog-type 
+  (ecase dialog-type
     ((:open :save)
-     (get-pathname title 
-                   directory 
+     (get-pathname title
+                   directory
                    associated-window
                    file-types
                    pattern
@@ -2389,4 +2389,3 @@ in a second Lisp process.  This frame cannot be reused."
      (ask-user-for-directory :associated-window associated-window
                              :prompt title
                              :initial-directory directory))))
-

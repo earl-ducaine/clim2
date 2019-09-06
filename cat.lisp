@@ -49,5 +49,5 @@
 
 (cl:in-package #:user)
 
-(unless (ff:get-entry-point (ff:convert-foreign-name "XmCreateMyDrawingArea"))
+(unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "XmCreateMyDrawingArea"))
   (load "./liblib_motif_wrapper.so"))
