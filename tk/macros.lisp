@@ -18,6 +18,7 @@
 (defmacro define-ref-par-types (&rest types)
   (let ((forms nil))
     (dolist (type types)
+      (format t "define-ref-par-types: ~A-~A-~A~%" 'make type 'array)
       (let ((type-array (fintern "~A-~A" type 'array))
 	    (make-type-array (fintern "~A-~A-~A"
 				      'make type 'array)))
@@ -52,6 +53,30 @@
 
 ;;        (ff-wrapper:def-c-type *-array 1 *)
 ;;        (def-foreign-array-resource *-array make-*-array))
+
+;; (macroexpand '(def-foreign-array-resource *-array make-*-array))
+;;
+;; (clim-sys:defresource *-array (n) :constructor
+;;                              (cons n (make-*-array :number n)) :matcher
+;;                              (not (< (car *-array) n)))
+
+
+;; make-\*-ARRAY
+
+;; (PROGN (EXCL:RECORD-SOURCE-FILE '*-ARRAY :TYPE 'CLIM-SYS:DEFRESOURCE)
+;;        (DEFUN #:*-ARRAY-CONSTRUCTOR (#:RD N)
+;;          #:RD
+;;          N
+;;          (CONS N (MAKE-*-ARRAY :NUMBER N)))
+;;        (DEFUN #:*-ARRAY-MATCHER (*-ARRAY #:OBJECT-STORAGE N)
+;;          *-ARRAY
+;;          #:OBJECT-STORAGE
+;;          N
+;;          (NOT (< (CAR *-ARRAY) N)))
+;;        (CLIM-INTERNALS::DEFRESOURCE-LOAD-TIME '*-ARRAY
+;;          #'#:*-ARRAY-CONSTRUCTOR NIL NIL #'#:*-ARRAY-MATCHER 'NIL))
+
+
 
 (defmacro with-ref-par (bindings &body body)
   (if (null bindings)

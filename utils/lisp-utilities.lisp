@@ -433,9 +433,11 @@
 		(let ((*package* pkg))
 		  (apply #'lisp:format () format-string
 			 (mapcar #'(lambda (x)
-				     (excl::if* (symbolp x)
-					then (symbol-name x)
-					else x))
+				     (cond
+				       ((symbolp x)
+					(symbol-name x))
+				       (t
+					 x)))
 				 format-args)))))
 	  package))
 

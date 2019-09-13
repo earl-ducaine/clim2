@@ -1,107 +1,21 @@
 
 
 (eval-when (eval load compile)
-  (push :use-cffi *features*)
+  ;; (push :use-cffi *features*)
+  )
+
+#+allegro
+(eval-when (eval load compile)
   (ff:def-c-typedef :anint :int)
   (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff)))
-
-;; (defpackage :wnn
-;;   (:export wnn-buf))
-
-;; (defpackage :tk
-;;   (:export
-;;    x-drawing-area-callback
-;;    x-push-button-callback-struct
-;;    xm-file-selection-box-callback-struct
-;;    xm-list-callback-struct
-;;    xm-text-block-rec
-;;    xm-text-field-callback-struct
-;;    xt-arg
-;;    xt-class
-;;    xt-offset-rec
-;;    xt-resource
-;;    xt-widget
-;;    xt-widget-geometry))
-
-;; (defpackage :x11
-;;   (:export
-;;    _xextension
-;;    _xgc
-;;    _xqevent
-;;    depth
-;;    display
-;;    funcs
-;;    screen
-;;    screenformat
-;;    visual
-;;    xanyevent
-;;    xarc
-;;    xbuttonevent
-;;    xchar2b
-;;    xcharstruct
-;;    xcirculateevent
-;;    xcirculaterequestevent
-;;    xclientmessageevent
-;;    xcolor
-;;    xcolormapevent
-;;    xcomposestatus
-;;    xconfigureevent
-;;    xconfigurerequestevent
-;;    xcreatewindowevent
-;;    xcrossingevent
-;;    xdestroywindowevent
-;;    xerrorevent
-;;    xexposeevent
-;;    xextcodes
-;;    xextdata
-;;    xfocuschangeevent
-;;    xfontprop
-;;    xfontstruct
-;;    xgcvalues
-;;    xgraphicsexposeevent
-;;    xgravityevent
-;;    xhostaddress
-;;    ximage
-;;    xkeyboardcontrol
-;;    xkeyboardstate
-;;    xkeyevent
-;;    xkeymapevent
-;;    xmapevent
-;;    xmappingevent
-;;    xmaprequestevent
-;;    xmodifierkeymap
-;;    xmotionevent
-;;    xnoexposeevent
-;;    xpoint
-;;    xpropertyevent
-;;    xrectangle
-;;    xreparentevent
-;;    xresizerequestevent
-;;    xrmoptiondescrec
-;;    xrmvalue
-;;    xsegment
-;;    xselectionclearevent
-;;    xselectionevent
-;;    xselectionrequestevent
-;;    xsetwindowattributes
-;;    xsizehints
-;;    xtextitem
-;;    xtextitem16
-;;    xtimecoord
-;;    xunmapevent
-;;    xvisibilityevent
-;;    xwindowattributes
-;;    xwindowchanges
-;;    xwmhints
-;;    ))
 
 
 (defpackage :ff-wrapper
   (:use cl)
   (:import-from :ff
-		foreign-address
-		allocate-fobject
-		convert-foreign-name
+		;; foreign-address
+		;; allocate-fobject
+		;; convert-foreign-name
 		cstruct
 		;; cstruct-prop
 		;; cstruct-property-length
@@ -150,16 +64,6 @@
 
   (defun c-struct-p (type)
     (member type *structs*))
-
-  (defun nest-pointers-add-structs (type)
-    (cond
-      ((and (> (length type) 1)
-	    (eq (car type) :pointer))
-       (list :pointer (nest-pointers-add-structs (cdr type))))
-      ((c-struct-p (car type))
-       (list :struct  (car type)))
-      (t
-       (car type))))
 
   (defparameter *ff-base-type* '(:signed-int :short :unsigned-int
 				 :void :unsigned-long :int :cardinal
@@ -303,8 +207,22 @@
 	result)))
 
   (defun generate-accessor-defun (name type)
-    `(defun ,name (entry-point index)
-       (cffi:mem-aref entry-point ,type index)))
+    (let ((make-defun-name
+	   (intern (format nil "~a-~a" 'make name) (symbol-package name))))
+      (format
+       t
+       "generate-accessor-defun -- name: ~a type: ~a make-defun-name: ~a~%"
+       name type make-defun-name)
+      `(progn
+	 (defun ,make-defun-name
+	     (&key number in-foreign-space initialize)
+	   (declare (ignore in-foreign-space initialize))
+	   (cffi:foreign-alloc ,(emit-cffi-type-specfier type) :count number))
+	 (defun ,name (entry-point index)
+	   (cffi:mem-aref entry-point ,(emit-cffi-type-specfier type) index))
+	 (defun (setf ,name) (entry-point index value)
+	   (setf (cffi:mem-aref entry-point ,(emit-cffi-type-specfier type) index)
+		 value)))))
 
   (defun get-ffi-slot-def-category (slot)
     (cond
@@ -512,4 +430,120 @@
 
 #-use-cffi
 (defmacro cstruct-property-length (&body body)
-  `(ff::cstruct-prop ,@body))
+  `(ff::cstruct-property-length ,@body))
+
+
+;; (defparameter *foreign-names* '())
+
+
+
+;; (do-list (name ff-wrapper::*foreign-names*)
+;;   (when (not (string= (getf name :to-name)
+;; 		      (getf name :from-name)))
+;;     (format t "convert-foreign-name did work on: ~s~%"
+;; 	    (getf name :from-name))))
+
+;; Should never need to convert for CFFI supported platforms or allegro on
+;; linux.
+(defun convert-foreign-name (name &key (language :c))
+  name)
+
+
+
+;; (let ((to-name
+  ;; 	 (funcall #'ff:convert-foreign-name name :language language)))
+  ;;   (push (list :from-name name
+  ;; 		:to-name to-name
+  ;; 		:language language)
+  ;; 	  *foreign-names*)
+  ;;   to-name))
+;; ;; make-*-ARRAY
+;;
+;; (defpackage :wnn
+;;   (:export wnn-buf))
+;;
+;; (defpackage :tk
+;;   (:export
+;;    x-drawing-area-callback
+;;    x-push-button-callback-struct
+;;    xm-file-selection-box-callback-struct
+;;    xm-list-callback-struct
+;;    xm-text-block-rec
+;;    xm-text-field-callback-struct
+;;    xt-arg
+;;    xt-class
+;;    xt-offset-rec
+;;    xt-resource
+;;    xt-widget
+;;    xt-widget-geometry))
+;; (defpackage :x11
+;;   (:export
+;;    _xextension
+;;    _xgc
+;;    _xqevent
+;;    depth
+;;    display
+;;    funcs
+;;    screen
+;;    screenformat
+;;    visual
+;;    xanyevent
+;;    xarc
+;;    xbuttonevent
+;;    xchar2b
+;;    xcharstruct
+;;    xcirculateevent
+;;    xcirculaterequestevent
+;;    xclientmessageevent
+;;    xcolor
+;;    xcolormapevent
+;;    xcomposestatus
+;;    xconfigureevent
+;;    xconfigurerequestevent
+;;    xcreatewindowevent
+;;    xcrossingevent
+;;    xdestroywindowevent
+;;    xerrorevent
+;;    xexposeevent
+;;    xextcodes
+;;    xextdata
+;;    xfocuschangeevent
+;;    xfontprop
+;;    xfontstruct
+;;    xgcvalues
+;;    xgraphicsexposeevent
+;;    xgravityevent
+;;    xhostaddress
+;;    ximage
+;;    xkeyboardcontrol
+;;    xkeyboardstate
+;;    xkeyevent
+;;    xkeymapevent
+;;    xmapevent
+;;    xmappingevent
+;;    xmaprequestevent
+;;    xmodifierkeymap
+;;    xmotionevent
+;;    xnoexposeevent
+;;    xpoint
+;;    xpropertyevent
+;;    xrectangle
+;;    xreparentevent
+;;    xresizerequestevent
+;;    xrmoptiondescrec
+;;    xrmvalue
+;;    xsegment
+;;    xselectionclearevent
+;;    xselectionevent
+;;    xselectionrequestevent
+;;    xsetwindowattributes
+;;    xsizehints
+;;    xtextitem
+;;    xtextitem16
+;;    xtimecoord
+;;    xunmapevent
+;;    xvisibilityevent
+;;    xwindowattributes
+;;    xwindowchanges
+;;    xwmhints
+;;    ))

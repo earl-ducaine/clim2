@@ -2,6 +2,7 @@
 
 (pushnew :ansi-90 *features*)
 
+#+acl
 (setq comp:declared-fixnums-remain-fixnums-switch
       (named-function |(> speed 2)|
 		      (lambda (safety size speed debug compilation-speed)
@@ -19,7 +20,7 @@
 
 (in-package :cl-user)
 
-(eval-when (compile load eval)
+(eval-when (:execute :load-toplevel :compile-toplevel)
 
 ;;; Tell the world that we're here
 ;;;--- These need to be in the CLIM.fasl also.
@@ -38,6 +39,15 @@
 ;; (eval-when (compile load eval)
 ;;   (load "sys/sysdcl.lisp"))
 
+
+#-acl
+(eval-when (:execute :load-toplevel :compile-toplevel)
+  (defpackage :sys
+    (:use :cl))
+  (defpackage :user
+    (:use :cl)))
+
+#+acl
 (setf (sys:gsgc-switch :print) t)
 
 (defvar sys::*clim-library-search-path*

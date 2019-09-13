@@ -16,8 +16,9 @@
      (:file "test/test-pkg")
      (:file "load-clim")
      (:file "tk-silica/pkg")
-     (:file "xlib/pkg")
+     ;;(:file "xlib/pkg")
      (:file "wnn/pkg")
+
      (:file "tk/ff-wrapper-for-ff")
      (:file "cat-alt")
      (:file "utils/defun-utilities")

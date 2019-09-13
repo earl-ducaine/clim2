@@ -26,7 +26,6 @@
 	  (t (list type)))
       (list type))))
 
-
 (defmacro def-exported-foreign-synonym-type (new-name old-name)
   `(progn
      (eval-when (eval load compile)
@@ -44,6 +43,7 @@
 	    options (delete :array options)))
     `(progn
        ,(flet ((make-exports (name)
+		 (format t "def-exported-foreign-struct: ~A-~A%" 'make name)
 		 (list* name
 			(fintern "~A-~A" 'make name)
 			(mapcar #'(lambda (x)
@@ -80,8 +80,6 @@
 	  `(ff-wrapper::def-c-type (,array-name :no-defuns ,@options)
 	     1 ,name)))))
 
-
-
 (defun trans-slot-type (type)
   (if (atom type)
       (transmogrify-ff-type type)
@@ -93,77 +91,6 @@
 	(declare (ignore ignore))
 	`(,@indicies ,type))))))
 
-;;; Delay version
-
-#-(version>= 5 0)
-(defun trans-arg-type (type)
-  (excl:if* (consp type)
-     then (ecase (car type)
-	    (:pointer 'ff-wrapper:foreign-address)
-	    (:array 'ff-wrapper:foreign-address))
-     else (case type
-	    (void (error "void not allowed here"))
-	    ((int unsigned-int :unsigned-32bit :signed-32bit) 'integer)
-	    ((fixnum-int fixnum-unsigned-int) 'fixnum)
-	    (fixnum-drawable 'ff-wrapper:foreign-address)
-	    (t
-	     (if (get type 'ff-wrapper::cstruct)
-		 'ff-wrapper:foreign-address
-	       't)))))
-
-#+(and (version>= 5 0) (not (version>= 6 1)))
-(defun trans-arg-type (type)
-  (excl:if* (consp type)
-     then (ecase (car type)
-	    (:pointer :foreign-address)
-	    (:array :foreign-address))
-     else (case type
-	    (void (error "void not allowed here"))
-	    ((int unsigned-int :unsigned-32bit :signed-32bit) 'integer)
-	    ((fixnum-int fixnum-unsigned-int) 'fixnum)
-	    (fixnum-drawable :foreign-address)
-	    (t
-	     (if (get type 'ff-wrapper:cstruct)
-		 :foreign-address
-	       't)))))
-
-#-(version>= 6 1)
-(defun trans-return-type (type)
-  (excl:if* (consp type)
-     then (ecase (car type)
-	    (:pointer :unsigned-integer)
-	    (:array :unsigned-integer))
-     else (case type
-	    (void :void)
-	    ((integer int) :integer)
-	    ((fixnum-int :fixnum) :fixnum)
-	    (fixnum-int :fixnum)
-	    (:unsigned-32bit :integer)
-	    (:signed-32bit :integer)
-	    (t :unsigned-integer))))
-
-
-;; #-(version>= 6 1)
-;; (defmacro def-exported-foreign-function ((name &rest options) &rest args)
-;;   `(progn
-;;      (eval-when (eval load compile)
-;;        (export ',name))
-;;      (eval-when (compile eval load)
-;;        ,(let ((c-name (ff-wrapper:convert-foreign-name (second (assoc :name options))))
-;; 	      (return-type (or (second (assoc :return-type options))
-;; 			       'void)))
-
-;; 	  `(delayed-defforeign
-;; 	    ',name
-;; 	    :arguments ',(mapcar #'trans-arg-type (mapcar #'second args))
-;; 	    :call-direct t
-;; 	    :callback t
-;; 	    :arg-checking nil
-;; 	    :return-type ,(trans-return-type return-type)
-;; 	    :entry-point ,c-name)))))
-
-
-#+(version>= 6 1)
 (defun trans-arg-type (type)
   (cons (car type)
 	(excl:if* (consp (cadr type))
@@ -181,7 +108,6 @@
 		       '(:foreign-address)
 		     '(:lisp)))))))
 
-#+(version>= 6 1)
 (defun trans-return-type (type)
   (excl:if* (consp type)
      then (ecase (car type)
@@ -195,7 +121,6 @@
 	    (:signed-32bit :int)
 	    (t :unsigned-int))))
 
-#+(version>= 6 1)
 (defmacro def-exported-foreign-function ((name &rest options) &rest args)
   (format t "def-exported-foreign-function: ~s ~%" name)
   `(progn
@@ -210,23 +135,6 @@
 	     :returning ,(trans-return-type return-type)
 	     :call-direct t
 	     :arg-checking nil)))))
-
-
-#-(version>= 6 1)
-(defparameter *defforeigned-functions* nil
-  "A list of name and defforeign arguments")
-
-#-(version>= 6 1)
-(defun delayed-defforeign (name &rest arguments)
-  (setf *defforeigned-functions*
-    (delete name *defforeigned-functions* :key #'car))
-  (push (cons name arguments) *defforeigned-functions*))
-
-#-(version>= 6 1)
-(defun defforeign-functions-now ()
-  (ff-wrapper:defforeign-list *defforeigned-functions*))
-
-;;; End of delay version
 
 (defmacro def-exported-foreign-macro ((name &rest options) &rest args)
   `(def-exported-foreign-function (,name  ,@options) ,@args))

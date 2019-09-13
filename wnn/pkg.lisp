@@ -6,7 +6,6 @@
 
 (defpackage :wnn
   (:use :clim-lisp :clim-utils :clim :silica)
-  (:import-from :excl #:if*)
   (:export
    #:jserver
    #:jserver-login

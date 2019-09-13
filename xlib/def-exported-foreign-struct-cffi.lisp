@@ -171,23 +171,6 @@
        (export ',new-name))
      (cffi::defctype ,new-name ,(convert-builtin-ctypes-to-keyword old-name))))
 
-(defun trans-arg-type-cffi (type)
-  (cons (car type)
-	(if (consp (cadr type))
-	    (ecase (caadr type)
-	      (:pointer '(:pointer))
-	      (:array '(:pointer)))
-	    (case (cadr type)
-	      (void (error "void not allowed here"))
-	      ((int :signed-32bit) '(:int))
-	      ((unsigned-int :unsigned-32bit) '(:unsigned-int))
-	      ((fixnum-int fixnum-unsigned-int) '(:int fixnum))
-	      (fixnum-drawable '(:pointer))
-	      (t
-	       (if (get (cadr type) 'ff-wrapper::cstruct)
-		   '(:pointer)
-		   '(:lisp)))))))
-
 (defun trans-return-type-cffi (type)
   (if (consp type)
       (ecase (car type)
@@ -200,13 +183,3 @@
 	(:unsigned-32bit :unsigned-int)
 	(:signed-32bit :int)
 	(t :unsigned-int))))
-
-(defmacro def-exported-foreign-function-cffi ((name &rest options) &rest args)
-  (let ((c-name (second (assoc :name options)))
-	(return-type (or (second (assoc :return-type options))
-			 :void)))
-    `(progn
-       (cffi:defcfun (,name ,c-name)
-	   ,(trans-return-type-cffi return-type)
-	 ,@(mapcar #'trans-arg-type-cffi args))
-       (export ',name ':x11 ))))
