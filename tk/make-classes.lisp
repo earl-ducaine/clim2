@@ -53,18 +53,18 @@
   (declare (optimize (speed 3) (safety 0)))
   (with-slots (cached-resources specially-hacked-resources) class
     (multiple-value-bind
-	(value foundp)
+	  (value foundp)
 	(gethash resource-name cached-resources)
       (if foundp
 	  value				; Never had it, never will
-	(setf (gethash resource-name cached-resources)
-	  (if* (find resource-name specially-hacked-resources
-		     :key #'resource-name)
-	     thenret
-	     else (get-resource-internal class
-					 #'xt-get-resource-list
-					 'resource
-					 resource-name)))))))
+	  (setf (gethash resource-name cached-resources)
+		(cond ((find resource-name specially-hacked-resources
+			     :key #'resource-name))
+		       (t
+			(get-resource-internal class
+					       #'xt-get-resource-list
+					       'resource
+					       resource-name))))))))
 
 (defmethod find-class-constraint-resource ((class xt-class) resource-name)
   (declare (optimize (speed 3) (safety 0)))

@@ -5,14 +5,14 @@
 ;;
 
 (defun train-clim (&key (train-times 2)
-			(psview nil)
-			(frame-tests t)
-			(errorp t)
-			(hpglview nil)
-			(compile t)
-			(profilep t)
-			(benchmarkp t)
-			(report-file))
+		     (psview nil)
+		     (frame-tests t)
+		     (errorp t)
+		     (hpglview nil)
+		     (compile t)
+		     (profilep t)
+		     (benchmarkp t)
+		     (report-file))
 
   (load "test/test.lisp")
 
@@ -21,7 +21,7 @@
   (clim-test:with-test-reporting (:file (or report-file
 					    (if (excl::featurep :clim-motif)
 						"notes/test-suite-reportxm.lisp"
-					      "notes/test-suite-reportol.lisp")))
+						"notes/test-suite-reportol.lisp")))
     (when compile
       (compile-file-if-needed "test/test-suite" :print nil :verbose t))
     (load "test/test-suite.fasl")
@@ -75,8 +75,8 @@
   (when (fboundp 'generate-coverage-report)
     (with-open-file (*standard-output* (if (excl::featurep :clim-motif)
 					   "notes/coverage-reportxm.lisp"
-					 "notes/coverage-reportol.lisp")
-		     :if-exists :supersede :direction :output)
+					   "notes/coverage-reportol.lisp")
+				       :if-exists :supersede :direction :output)
       (generate-coverage-report :files (known-clim2-files))))
 
   ;; We have to do this here because profiling clears the call counts.
@@ -91,9 +91,11 @@
   ;; delete the preload fasls for the type of clim we are testing, so that
   ;; make-dist cat use the one we will make.
 
-  (let ((xx (if* (excl::featurep :clim-motif)
-	       then "xm"
-	       else "ol")))
+  (let ((xx (cond
+	      ((excl::featurep :clim-motif)
+	       "xm")
+	      (t
+	       "ol"))))
     (dolist (file-format '("clim~a-preload.fasl"
 			   "clim~a-preload.fasl.Z"
 			   "clim~a-preload.fasl.z"
@@ -105,10 +107,11 @@
   (let ((tpl::*zoom-print-circle* t)
 	(tpl::*zoom-print-length* 3)
 	(tpl::*zoom-print-level* 3))
-    (compile-file (if* (probe-file "../src/clos-preload.cl")
-		     thenret
-		     else "misc/clos-preload.cl")
+    (compile-file (cond ((probe-file "../src/clos-preload.cl")
+			 (return )
+			 (t
+			  "misc/clos-preload.cl")))
 		  :output-file
 		  (if (excl::featurep :clim-motif)
 		      "climxm-preload.fasl"
-		    "climol-preload.fasl"))))
+		      "climol-preload.fasl"))))

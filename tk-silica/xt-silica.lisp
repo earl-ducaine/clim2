@@ -1988,14 +1988,16 @@ the geometry of the children. Instead the parent has control. "))
 	  (unless (zerop
 		   (x11::xgetwmnormalhints display window size-hints &supplied))
 	    (let ((flags (x11::xsizehints-flags size-hints)))
-	      (if* (and uspp (not (eq uspp :unspecified)))
-		 then (setf flags (logior flags x11::uspositionhint))
-	       elseif (null uspp)
-		 then (setf flags (logandc2 flags x11::uspositionhint)))
-	      (if* (and ussp (not (eq ussp :unspecified)))
-		 then (setf flags (logior flags x11::ussizehint))
-	       elseif (null ussp)
-		 then (setf flags (logandc2 flags x11::ussizehint)))
+	      (cond
+		((and uspp (not (eq uspp :unspecified)))
+		 (setf flags (logior flags x11::uspositionhint)))
+		((null uspp)
+		 (setf flags (logandc2 flags x11::uspositionhint))))
+	      (cond
+		((and ussp (not (eq ussp :unspecified)))
+		 (setf flags (logior flags x11::ussizehint)))
+		((null ussp)
+		 (setf flags (logandc2 flags x11::ussizehint))))
 	      ;; always switch off program-specified position hint so
 	      ;; that OpenWindows cascading works
 	      (setf flags (logandc2 flags x11::ppositionhint))

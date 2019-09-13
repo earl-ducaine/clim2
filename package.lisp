@@ -15,8 +15,6 @@
 (defpackage :tk
   (:use :common-lisp)
   (:nicknames :xt)
-  #+allegro
-  (:import-from :excl #:if*)
   (:import-from :clim-utils #:fintern #:package-fintern)
   (:import-from :x11 def-c-type def-c-typedef)
   (:export

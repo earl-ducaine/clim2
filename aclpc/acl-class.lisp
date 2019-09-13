@@ -1417,8 +1417,6 @@
 ;; so it is only left here as a comment in case we figure out
 ;; when and how to call IsDialogMessage correctly.
 
-;;(defvar *pmif* nil)
-;;(defvar *last-pmif* 0)
 #+ignore
 (defun clim-message-interrupt-function (&aux hwnd done)
   (declare (optimize (speed 3) (safety 0)))

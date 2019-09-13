@@ -7,8 +7,6 @@
 (defpackage :tk-silica
   (:nicknames :xm-silica :xt-silica)
   (:use :clim-lisp :clim-utils :clim :silica :tk)
-  #+allegro
-  (:import-from :excl #:if*)
   (:export
    *xt-font-families*
    *xt-logical-size-alist*

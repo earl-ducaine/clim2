@@ -975,10 +975,12 @@
 	    ;; This means that both Ys or both Xs are out of the window
 	    ;; which means that there is nothing to draw
 	    (return-from clipper nil))
-	(if* (acceptp outcode1 outcode2)
-	   then (return)
-	   else ;; If P1 is inside window, exchange P1 and P2 to guarantee
-		;; that P1 is outside window.
+	 (cond
+	   ((acceptp outcode1 outcode2)
+	    (return))
+	   (t
+	    ;; If P1 is inside window, exchange P1 and P2 to guarantee
+	    ;; that P1 is outside window.
 		(if (zerop outcode1)
 		    (psetq x1 x2
 			   y1 y2
@@ -988,26 +990,27 @@
 			   outcode2 outcode1))
 		;; Now perform a subdivision; move P1 to the intersection point.
 		;; Use the formulas y=y1+slope*(x-x1), x=x1+(1/slope)*(y-y1).
-		(if* (logbitp 3 outcode1)
-		   then ;; Divide line at top of window.
-			(setq x1 (round (+ x1 (* (- x2 x1)
-						 (/ (- ymax y1) (- y2 y1))))))
-			(setq y1 ymax)
-		 elseif (logbitp 2 outcode1)
-		   then ;; Divide line at bottom of window.
-			(setq x1 (round (+ x1 (* (- x2 x1)
-						 (/ (- ymin y1) (- y2 y1))))))
-			(setq y1 ymin)
-		 elseif (logbitp 1 outcode1)
-		   then ;; Divide line at right of window.
-			(setq x1 xmax)
-			(setq y1 (round (+ y1 (* (- y2 y1)
-						 (/ (- xmax x1) (- x2 x1))))))
-		 elseif (logbitp 0 outcode1)
-		   then ;; Divide line at left of window.
-			(setq x1 xmin)
-			(setq y1 (round (+ y1 (* (- y2 y1)
-						 (/ (- xmin x1) (- x2 x1)))))))
+		(cond
+		  ((logbitp 3 outcode1)
+		   ;; Divide line at top of window.
+		   (setq x1 (round (+ x1 (* (- x2 x1)
+					    (/ (- ymax y1) (- y2 y1))))))
+		   (setq y1 ymax))
+		  ((logbitp 2 outcode1)
+		   ;; Divide line at bottom of window.
+		   (setq x1 (round (+ x1 (* (- x2 x1)
+					    (/ (- ymin y1) (- y2 y1))))))
+		   (setq y1 ymin))
+		  ((logbitp 1 outcode1)
+		   ;; Divide line at right of window.
+		   (setq x1 xmax)
+		   (setq y1 (round (+ y1 (* (- y2 y1)
+					    (/ (- xmax x1) (- x2 x1)))))))
+		  ((logbitp 0 outcode1)
+		   ;; Divide line at left of window.
+		   (setq x1 xmin)
+		   (setq y1 (round (+ y1 (* (- y2 y1)
+					    (/ (- xmin x1) (- x2 x1)))))))))
 		))))
   (values x1 y1 x2 y2))
 
@@ -1032,10 +1035,12 @@
 	     (y (pop positions)))
 	(push `(valid-point-p ,x ,y) forms)))
     `(unless (and ,@forms)
-       (if* *discard-illegal-graphics*
-	  then (return-from ,function-name)
-	  else (error "Coordinate(s) out of (signed-byte 16) range")))))
-
+       (cond
+	 (*discard-illegal-graphics*
+	  (return-from ,function-name))
+	 (t
+	  (error "Coordinate(s) out of (signed-byte 16) range"))))))
+
 (defmacro with-single-floats (variable-bindings &body body)
   (flet ((binding-var (x) (if (atom x) x (car x)))
 	 (binding-form (x) (if (atom x) x (second x))))
@@ -1514,7 +1519,7 @@
       ;; These two are used to correct the alignment after text has
       ;; been rotated:
       (multiple-value-bind (left up)
-          (compute-text-alignment-delta width height baseline align-x align-y) 
+          (compute-text-alignment-delta width height baseline align-x align-y)
         (let ((y-factor 0)
               (x-factor 1))
           (if (and towards-x towards-y)
@@ -1677,8 +1682,8 @@
             (tk::draw-multibyte-string pixmap font rotation-gc
                                        0 text-height
                                        string start end)
-            
-            
+
+
             ;; then, rotate that square:
             (rotate-pixmap pixmap rotation)
 
@@ -1687,7 +1692,7 @@
             #+debug
             (tk::draw-rectangle drawable gcontext
                                 0 0 square-size square-size t)
-            
+
             ;; then we copy the text rectangle from the rotated square
             ;; into the drawable:
             (multiple-value-bind (src-x src-y x-add y-add dst-x dst-y)
