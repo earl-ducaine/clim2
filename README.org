@@ -24,7 +24,7 @@
    Something like the following on APT based systems:
 
    1. sudo apt-get install libmotif-dev
-   2. sudo apt-get libxt-dev
+   2. sudo apt-get install libxt-dev
    3. sudo apt-get install build-essential
 
 ** Build motif wraper and copy library

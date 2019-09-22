@@ -431,7 +431,7 @@
   (intern (let ((pkg *package*))
 	    (with-standard-io-environment
 		(let ((*package* pkg))
-		  (apply #'lisp:format () format-string
+		  (apply #'cl:format () format-string
 			 (mapcar #'(lambda (x)
 				     (cond
 				       ((symbolp x)
@@ -452,7 +452,7 @@
 (defun gensymbol (&rest parts)
   (declare (dynamic-extent parts))
   (when (null parts) (setf parts '(gensymbol)))
-  (make-symbol (lisp:format nil "~{~A-~}~D" parts (incf *gensymbol*))))
+  (make-symbol (cl:format nil "~{~A-~}~D" parts (incf *gensymbol*))))
 )	;eval-when
 
 ;;; For macro writers; you can have your GENSYMBOLs start at 1.  Use
@@ -968,7 +968,7 @@
 #-Genera
 (defmacro defun-property ((symbol indicator) lambda-list &body body)
   (let ((function-name
-	  (make-symbol (lisp:format nil "~A-~A-~A" symbol indicator 'property))))
+	  (make-symbol (cl:format nil "~A-~A-~A" symbol indicator 'property))))
     `(progn (defun ,function-name ,lambda-list ,@body)
 	    (eval-when (load eval) (setf (get ',symbol ',indicator) #',function-name)))))
 
