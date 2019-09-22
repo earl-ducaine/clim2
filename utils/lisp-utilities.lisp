@@ -555,38 +555,37 @@
 		    ,@body)
 	   (when ,condition-value (setf ,@unwind-forms)))))))
 
-#-(and ansi-90 (not allegro) (not Symbolics))
 (eval-when (compile load eval)
   (proclaim '(declaration non-dynamic-extent)))
 
-#+aclpc
-(eval-when (compile load eval)
-  (proclaim '(declaration non-dynamic-extent ignorable)))
+;; #+aclpc
+;; (eval-when (compile load eval)
+;;   (proclaim '(declaration non-dynamic-extent ignorable)))
 
-#+(and ansi-90 (not allegro) (not aclpc) (not Symbolics))
-(define-declaration non-dynamic-extent (spec env)
-  (let ((vars (rest spec))
-        (result nil))
-    (dolist (v vars)
-      (block process-var
-        (multiple-value-bind (type local info)
-                             (variable-information v env)
-          (declare (ignore local))
-          (case type
-            (:lexical
-             (when (cdr (assoc 'dynamic-extent info))
-               (warn "The variable ~S has been declared ~S,~%it cannot be now declared ~S"
-                     v 'dynamic-extent 'non-dynamic-extent)
-               (return-from process-var))
-             (when (cdr (assoc 'ignore info))
-               (warn "The variable ~S has been declared ~S,~%it cannot be now declared ~S"
-                     v 'ignore 'non-dynamic-extent)
-               (return-from process-var))
-             (push `(,v dynamic-extent nil) result))
-            (otherwise
-             (warn "~S is not a lexical variable, it cannot be declared ~S."
-                   v 'non-dynamic-extent))))))
-    (values :variable (nreverse result))))
+;; #+(and ansi-90 (not allegro) (not aclpc) (not Symbolics))
+;; (define-declaration non-dynamic-extent (spec env)
+;;   (let ((vars (rest spec))
+;;         (result nil))
+;;     (dolist (v vars)
+;;       (block process-var
+;;         (multiple-value-bind (type local info)
+;;                              (variable-information v env)
+;;           (declare (ignore local))
+;;           (case type
+;;             (:lexical
+;;              (when (cdr (assoc 'dynamic-extent info))
+;;                (warn "The variable ~S has been declared ~S,~%it cannot be now declared ~S"
+;;                      v 'dynamic-extent 'non-dynamic-extent)
+;;                (return-from process-var))
+;;              (when (cdr (assoc 'ignore info))
+;;                (warn "The variable ~S has been declared ~S,~%it cannot be now declared ~S"
+;;                      v 'ignore 'non-dynamic-extent)
+;;                (return-from process-var))
+;;              (push `(,v dynamic-extent nil) result))
+;;             (otherwise
+;;              (warn "~S is not a lexical variable, it cannot be declared ~S."
+;;                    v 'non-dynamic-extent))))))
+;;     (values :variable (nreverse result))))
 
 
 (defun time-elapsed-p (delta-seconds start-time)
