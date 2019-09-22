@@ -613,30 +613,6 @@
                        (t nil))))
          ,@body))))
 
-
-;;; Bindings on the stack.  A work in progress.
-;;; Which Lisps support this?
-
-;; I suppose this could be done with IMPORT
-#+Genera
-(progn
-(defmacro with-stack-list ((var &rest elements) &body body)
-  `(scl:with-stack-list (,var ,@elements) ,@body))
-
-(defmacro with-stack-list* ((var &rest elements) &body body)
-  `(scl:with-stack-list* (,var ,@elements) ,@body))
-
-(defun-inline evacuate-list (list)
-  (if (and (sys:%pointerp list)
-	   (not (or (sys:%pointer-lessp list sys:%control-stack-low)
-		    (sys:%pointer-lessp (progn #+3600  sys:%control-stack-limit
-					       #+imach (sys:%read-internal-register
-							 sys:%register-control-stack-limit))
-					list))))
-      (copy-list list)
-      list))
-)	;#+Genera
-
 #+Cloe-Runtime
 (progn
 (defmacro with-stack-list ((var &rest elements) &body body)
