@@ -1,57 +1,5 @@
 
 
-(eval-when (eval load compile)
-  ;; (push :use-cffi *features*)
-  )
-
-#+allegro
-(eval-when (eval load compile)
-  (ff:def-c-typedef :anint :int)
-  (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff)))
-
-
-(defpackage :ff-wrapper
-  (:use cl)
-  (:import-from :ff
-		;; foreign-address
-		;; allocate-fobject
-		;; convert-foreign-name
-		cstruct
-		;; cstruct-prop
-		;; cstruct-property-length
-		;; def-c-type
-		;; def-c-typedef
-		defforeign-list
-		def-foreign-call
-		def-foreign-type
-		defun-foreign-callable
-		foreign-pointer
-		foreign-pointer-address
-		foreign-pointer-address
-		free-fobject
-		fslot-value-typed
-		get-entry-point
-		register-foreign-callable)
-  (:export
-   foreign-address
-   allocate-fobject
-   convert-foreign-name
-   cstruct
-   cstruct-prop
-   cstruct-property-length
-   def-c-type
-   def-c-typedef
-   defforeign-list
-   def-foreign-call
-   def-foreign-type
-   defun-foreign-callable
-   foreign-pointer
-   foreign-pointer-address
-   free-fobject
-   fslot-value-typed
-   get-entry-point
-   register-foreign-callable))
-
 (in-package :ff-wrapper)
 
 ;; (defparameter *structs* '())
@@ -106,23 +54,23 @@
        :unidentified)))
 
   (defun emit-cffi-type-specfier (type)
-    ;; (push types *ff-types*)
-    (format t "type (~s) category: ~s~%" type (get-type-category type))
     (cond
+      ((eq :foreign-address type)
+       :pointer)
       ((eq :double-float type)
        :double)
       ((eq :single-float type)
        :float)
-      ((eq 'char type)
+      ((string= "CHAR" (symbol-name type))
        :char)
-      ((eq '* type)
+      ((string= "*" (symbol-name type))
        :pointer)
       ((c-struct-p type)
        (unless (c-type-defined-p type :struct)
-	 ;; Define it as a pointer for now and hope that its
-	 ;; real definition appears later
+	 ;; Define it as a pointer for now and hope that its real
+	 ;; definition appears later
 	 (let ((def `(cffi:defcstruct ,type)))
-	   (format t "defining stub: ~s~%" def)
+	   (format t "defining struct stub: ~s~%" def)
 	   (eval def)))
        (list :struct type))
       (t
@@ -131,7 +79,7 @@
 		     (c-type-defined-p type :struct))
 	   ;; Define it as a pointer for now and hope that its
 	   ;; real definition appears later
-	   (format t "defining stub: ~s~%"
+	   (format t "defining base-type stub (shouldnr't get here): ~s~%"
 		   `(cffi:defctype ,type :pointer))
 	   (eval `(cffi:defctype ,type :pointer))))
        type)))
@@ -309,6 +257,7 @@
     (case (get-ffi-type-def-category body)
       (:define-base-type-array
        (destructuring-bind (name size type) body
+	 (declare (ignore size))
 	 (let ((name (if (consp name) (car name) name)))
 	   (list (generate-accessor-defun name type)))))
       ;; ((tk::xt-class :no-defuns :no-constructor) :struct
@@ -418,7 +367,7 @@
 
 #+use-cffi
 (defmacro cstruct-prop (&body body)
-  )
+  (declare (ignore body)))
 
 #-use-cffi
 (defmacro cstruct-prop (&body body)
@@ -426,11 +375,16 @@
 
 #+use-cffi
 (defmacro cstruct-property-length (&body body)
-  )
+  (declare (ignore body)))
 
 #-use-cffi
 (defmacro cstruct-property-length (&body body)
   `(ff::cstruct-property-length ,@body))
+
+
+
+
+
 
 
 ;; (defparameter *foreign-names* '())
@@ -446,9 +400,315 @@
 ;; Should never need to convert for CFFI supported platforms or allegro on
 ;; linux.
 (defun convert-foreign-name (name &key (language :c))
+  (declare (ignore language))
   name)
 
 
+(defparameter *exported-foreign-functions* '())
+(defparameter *exported-types* '())
+
+(defun cfun-lisp-name (cfun-definition)
+  (getf cfun-definition :name))
+
+(defun cfun-c-name (cfun-definition)
+  (cadr (assoc :name (getf cfun-definition :options))))
+
+(defun cfun-c-return-type (cfun-definition)
+  (or (cadr (assoc :return-type (getf cfun-definition :options)))
+      :void))
+
+(defun cfun-c-raw-args (cfun-definition)
+  (getf cfun-definition :args))
+
+(defun str (&rest rest)
+  (apply #'concatenate (cons 'string rest)))
+
+(defun print-types-used-alt ()
+  (let ((all-types
+	 (apply #'concatenate
+		(cons 'list
+		      (mapcar
+		       (lambda (cfun-def)
+			 (let* ((arg-types
+				 (mapcar #'cadr
+					 (getf cfun-def :args))))
+			   arg-types))
+		       *exported-foreign-functions*)))))
+    all-types))
+
+;; also converts simple type, i.e. (not (consp type))
+(defun convert-composite-ff-type-to-cffi-type (type)
+  ;; These are the only case we need to worry about as empiracally
+  ;; found in CLIM2 by brute force.
+  (cond
+    ((and (consp type)
+	  (eq (car type) :array))
+     (list :pointer (convert-composite-ff-type-to-cffi-type (cadr type))))
+    ((and (consp type)
+	  (or (eq (car type) :pointer)
+	      ;; avoid issues with which package symbol's in
+	      (string= (symbol-name (car type)) "*")))
+     (list :pointer (convert-composite-ff-type-to-cffi-type (cadr type))))
+    ((atom type)
+     (emit-cffi-type-specfier type))
+    (t
+     (error "unknown type, can't convert ~s" type))))
+
+(defun generate-cffi-arg-list (ff-arg-list)
+  (mapcar (lambda (arg)
+	    (list (car arg)
+		  (convert-composite-ff-type-to-cffi-type (cadr arg))))
+	  ff-arg-list))
+
+(defun generate-cffi-defcfun (ff-def)
+  (let* ((lisp-name (cfun-lisp-name ff-def))
+	 (c-name (cfun-c-name ff-def))
+	 (c-return (cfun-c-return-type ff-def))
+	 (c-args (cfun-c-raw-args ff-def)))
+    `(cffi:defcfun (,lisp-name ,c-name)
+	 ,(convert-composite-ff-type-to-cffi-type c-return)
+       ,@(generate-cffi-arg-list c-args))))
+
+#+use-cffi
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmacro def-exported-foreign-function ((name &rest options) &rest args)
+    (push (list :name name :options options :args args)
+	  *exported-foreign-functions*)
+    (format t "def-exported-foreign-function: ~s ~%" name)
+    `(progn
+       (eval-when (eval load compile)
+	 (export ',name))
+       (eval-when (compile eval load)
+	 ,(generate-cffi-defcfun (list :name name :options options :args args))))))
+
+;; total of 128
+(defparameter *foreign-call* '())
+
+
+;; (defun get-c-name-foreign-call (call-def)
+;;   (let ((call-def-name (car call-def)))
+;;   (cond
+;;     ((and (consp call-def-name)
+;; 	  (= (length call-def-name) 2))
+;;      (cadr call-def-name))
+;;     ((and (atom call-def-name)
+;; 	  (symbolp call-def-name))
+;;      (string-downcase (symbol-name call-def-name)))
+;;     (t
+;;      (error "Unable to parse foreign call ~s~%" call-def)))))
+
+(defun get-lisp-name-foreign-call (call-def)
+  (let ((call-def-name (car call-def)))
+    (cond
+      ((and (consp call-def-name)
+	    (= (length call-def-name) 2))
+       (car call-def-name))
+      ((and (atom call-def-name)
+	    (symbolp call-def-name))
+       call-def-name)
+      (t
+       (error "Unable to parse foreign call ~s~%" call-def)))))
+
+
+(defun get-c-name-foreign-call (call-def)
+  (cond
+    ((and (consp (car call-def))
+	  (= (length (car call-def)) 2))
+     (cadar call-def))
+    ((and (atom (car call-def))
+	  (symbolp (car call-def)))
+     (string-downcase (symbol-name (car call-def))))
+    (t
+     (error "Unable to parse c-name of foreign call ~s~%" call-def))))
+
+(defun get-raw-args-foreign-call (call-def)
+  (let ((call-def-name (cadr call-def)))
+    call-def-name))
+
+(defun get-converted-arg-foreign-call (raw-arg)
+  (cond
+    ((atom raw-arg)
+     (list raw-arg :int))
+    ((and (consp raw-arg)
+	  (= (length raw-arg) 2))
+     (list (car raw-arg) (convert-composite-ff-type-to-cffi-type (cadr raw-arg))))
+    ((and (consp raw-arg)
+	  (= (length raw-arg) 3)
+	  (eq (cadr raw-arg) :int))
+     (list (car raw-arg) :int))
+    ((and (consp raw-arg)
+	  (= (length raw-arg) 3)
+	  (consp (cadr raw-arg))
+	  (string= (symbol-name (caadr raw-arg)) "*")
+	  (eq (cadr (cadr raw-arg)) :char))
+     (list (car raw-arg) '(:pointer :char)))
+    (t
+     (error "Unexpected argument type: ~s" raw-arg))))
+
+(defun get-converted-args-foreign-call (raw-args)
+    (cond
+      ((and (= (length raw-args) 1)
+	    (eq (car raw-args) :void))
+       nil)
+      (t
+       (mapcar (lambda (arg)
+		 (get-converted-arg-foreign-call arg))
+	       raw-args))))
+
+(defun get-converted-return-type-foreign-call (call-def)
+  (let ((raw-return-type (getf (cddr call-def) :returning)))
+    (cond
+      ((and (consp raw-return-type)
+	    (= (length raw-return-type) 2)
+	    (eq (car raw-return-type) :int))
+       :int)
+      ((atom raw-return-type)
+       (convert-composite-ff-type-to-cffi-type raw-return-type))
+      (t
+       (error "unidentified return type: ~s" raw-return-type)))))
+
+(defun generate-cffi-defcfun-from-ff-def-foreign-call (ff-def)
+  (let* ((lisp-name (get-lisp-name-foreign-call ff-def))
+	 (c-name (get-c-name-foreign-call ff-def))
+	 (c-return (get-converted-return-type-foreign-call ff-def))
+	 (c-args (get-converted-args-foreign-call
+		  (get-raw-args-foreign-call ff-def))))
+    `(cffi:defcfun (,lisp-name ,c-name)
+	 ,c-return
+       ,@c-args)))
+
+(defun print-types-used ()
+  (let ((all-types
+	 (apply #'concatenate
+		(cons 'list
+		      (mapcar
+		       (lambda (cfun-def)
+			 (let* ((arg-types
+				 (mapcar #'cadr
+					 (getf cfun-def :args))))
+			   arg-types))
+		       *exported-foreign-functions*)))))
+    all-types))
+
+
+(defvar *foreign-callables* '())
+
+#+use-cffi
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun get-entry-point (x)
+    (cffi:foreign-symbol-pointer x))
+
+  (defun free-fobject (pointer)
+    (cffi:foreign-free pointer))
+
+  (defclass foreign-pointer ()
+    ((foreign-address :accessor foreign-pointer-address :initarg :foreign-address)))
+
+  (defmacro defun-foreign-callable (name args &rest body)
+    `(cffi:defcallback ,name :void ,(get-converted-args-foreign-call args)
+       ,@body))
+
+  (defun register-foreign-callable (&rest callable)
+    ;; Ignore all other arguments
+    (let ((callable-name (car callable)))
+      (format t "callable-name: ~s~%" callable-name)
+      (cffi:get-callback callable-name)))
+
+  (defmacro def-foreign-type (&body body)
+    (declare (ignore body))
+    '(cffi:defcstruct event-match-info
+      (display (:pointer :void))
+      (seq-no :unsigned-long)
+      (n-types :int)
+      (event-types (:pointer :int))))
+
+  (defmacro def-foreign-call (&body body)
+    (generate-cffi-defcfun-from-ff-def-foreign-call body)))
+
+#-use-cffi
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; (defun free-fobject (pointer)
+  ;;   (ff:free-fobject pointer))
+
+  ;; (defclass foreign-pointer (ff:foreign-pointer)
+  ;;   ())
+
+  ;; (defmethod foreign-pointer-address ((foreign-pointer foreign-pointer))
+  ;;   (ff:foreign-pointer-address foreign-pointer))
+
+  ;; (defmethod (setf foreign-pointer-address) ((foreign-pointer foreign-pointer) value)
+  ;;   (setf (ff:foreign-pointer-address foreign-pointer) value))
+
+  ;; (defmethod (setf foreign-pointer-address) ((fixnum fixnum) value)
+  ;;   (setf (ff:foreign-pointer-address fixnum) value))
+
+  (defun get-entry-point (x)
+    (ff:get-entry-point x))
+
+  (defun register-foreign-callable (&rest rest)
+       (apply #'ff:register-foreign-callable rest))
+
+  (defmacro defun-foreign-callable (&body body)
+    (format t "~s~%" body)
+    (push  body *foreign-callables*)
+    `(ff::defun-foreign-callable ,@body))
+
+  (defmacro def-foreign-call (&body body)
+    (push  body *foreign-call*)
+    `(ff::def-foreign-call ,@body))
+
+  (defun trans-return-type (type)
+    (cond
+      ((consp type)
+       (ecase (car type)
+	 (:pointer :foreign-address)
+	 (:array :foreign-address)))
+      (t
+       (case type
+	 (void :void)
+	 ((integer int) :int)
+	 ((fixnum-int :fixnum) '(:int fixnum))
+	 (:unsigned-32bit :unsigned-int)
+	 (:signed-32bit :int)
+	 (t :unsigned-int)))))
+
+  (defun trans-arg-type (type)
+    (cons (car type)
+	  (cond ((consp (cadr type))
+		 (ecase (caadr type)
+		   (:pointer '(:foreign-address))
+		   (:array '(:foreign-address))))
+		(t
+		 (case (cadr type)
+		   (void (error "void not allowed here"))
+		   ((int :signed-32bit) '(:int))
+		   ((unsigned-int :unsigned-32bit) '(:unsigned-int))
+		   ((fixnum-int fixnum-unsigned-int) '(:int fixnum))
+		   (fixnum-drawable '(:foreign-address))
+		   (t
+		    (if (get (cadr type) 'ff::cstruct)
+			'(:foreign-address)
+			'(:lisp))))))))
+
+  (defmacro def-exported-foreign-function ((name &rest options) &rest args)
+    (push (list :name name :options options :args args)
+	  *exported-foreign-functions*)
+    (format t "def-exported-foreign-function: ~s ~%" name)
+    `(progn
+       (eval-when (eval load compile)
+	 (export ',name))
+       (eval-when (compile eval load)
+	 ,(let ((c-name (second (assoc :name options)))
+		(return-type (or (second (assoc :return-type options))
+				 'void)))
+	    `(ff:def-foreign-call (,name ,c-name)
+				  ,(or (mapcar #'trans-arg-type args) '(:void))
+				  :returning ,(trans-return-type return-type)
+				  :call-direct t
+				  :arg-checking nil)))))
+
+  (defmacro def-foreign-type (&body body)
+    `(ff:def-foreign-type ,@body)))
 
 ;; (let ((to-name
   ;; 	 (funcall #'ff:convert-foreign-name name :language language)))

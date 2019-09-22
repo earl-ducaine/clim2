@@ -4,12 +4,16 @@
 
 (in-package :tk)
 
+#+use-cffi
 (defun get-foreign-variable-value (x)
-  (let ((ep #-dlfcn (ff-wrapper:get-extern-data-address x)
-	    #+dlfcn (ff-wrapper:get-entry-point
-		     x
-		     #-(version>= 5 0) :note-shared-library-references
-		     #-(version>= 5 0) nil)))
+  (format t "get-foreign-variable-value: ~s~%" x)
+  (let ((ep (ff-wrapper:get-entry-point x)))
+    (unless ep (error "Entry point ~S not found" x))
+    (class-array ep 0)))
+
+#-use-cffi
+(defun get-foreign-variable-value (x)
+  (let ((ep (ff-wrapper:get-entry-point x)))
     (unless ep (error "Entry point ~S not found" x))
     (class-array ep 0)))
 
@@ -199,8 +203,7 @@
 
 (defun define-toolkit-classes (&rest classes)
   (make-classes
-   (mapcar #-rs6000 #'ff-wrapper:convert-foreign-name
-	   #+rs6000 #'identity
+   (mapcar #'ff-wrapper:convert-foreign-name
 	   (remove-duplicates
 	    (apply #'append classes)
 	    :test #'string=))))

@@ -18,19 +18,13 @@
 ;; finding this out. Experience would indicate that the default is
 ;; to always link in the shared libraries except on rs6k (cim 3/14/96)
 
+(defparameter *toolkit-static* nil)
 
-#+(version>= 5 0)
-(defparameter *toolkit-static*
-    #+rs6000 t
-    #-rs6000 nil)
+;; #+(and (not (version>= 5 0)) dlfcn)
+;; (defparameter *toolkit-static*
+;;     #+rs6000 t
+;;     #-rs6000 nil)
 
-
-#+(and (not (version>= 5 0)) dlfcn)
-(defparameter *toolkit-static*
-    #+rs6000 t
-    #-rs6000 nil)
-
-#+(version>= 5 0)
 (defun reinitialize-toolkit ()
   (unless *toolkit-static*
 
@@ -54,16 +48,15 @@
     (setup-error-handlers)
     (fixup-class-entry-points)))
 
-#+(and (not (version>= 5 0)) dlfcn)
-(defun reinitialize-toolkit ()
-  (unless *toolkit-static*
-    (xt_toolkit_initialize)
-    (setup-error-handlers)
-    (fixup-class-entry-points)))
+;; #+(and (not (version>= 5 0)) dlfcn)
+;; (defun reinitialize-toolkit ()
+;;   (unless *toolkit-static*
+;;     (xt_toolkit_initialize)
+;;     (setup-error-handlers)
+;;     (fixup-class-entry-points)))
 
-#+(version>= 5 0)
+
 (push 'reinitialize-toolkit excl::*restart-actions*)
 
-#+(and (not (version>= 5 0)) dlfcn)
-(push 'reinitialize-toolkit excl::*restart-actions*)
-
+;; #+(and (not (version>= 5 0)) dlfcn)
+;; (push 'reinitialize-toolkit excl::*restart-actions*)

@@ -4,10 +4,11 @@
 
 (in-package :xt)
 
-(ff-wrapper:def-foreign-type event-match-info (:struct (display (* :void))
-                                            (seq-no :unsigned-long)
-                                            (n-types :int)
-                                            (event-types (:array :int 16))))
+(ff-wrapper:def-foreign-type event-match-info
+    (:struct (display (* :void))
+	     (seq-no :unsigned-long)
+	     (n-types :int)
+	     (event-types (:array :int 16))))
 
 (ff-wrapper:def-foreign-call (alisp_xt_get_resource_list "XtGetResourceList")
     ((x :foreign-address) (y :foreign-address) (z :foreign-address))

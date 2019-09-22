@@ -45,20 +45,6 @@
   :call-direct t
   :arg-checking nil)
 
-;; (defmacro def-exported-foreign-function ((name &rest options) &rest args)
-;;   `(progn
-;;      (eval-when (eval load compile)
-;;        (export ',name))
-;;      (eval-when (compile eval load)
-;;        ,(let ((c-name (second (assoc :name options)))
-;; 	      (return-type (or (second (assoc :return-type options))
-;; 			       'void)))
-;; 	  `(ff-wrapper:def-foreign-call (,name ,c-name)
-;; 	       ,(or (mapcar #'trans-arg-type args) '(:void))
-;; 	     :returning ,(trans-return-type return-type)
-;; 	     :call-direct t
-;; 	     :arg-checking nil)))))
-
 (defun run-set-foreign-slot-value ()
   (set-foreign-slot-value size-hints 'xsizehints 'flags 1))
 

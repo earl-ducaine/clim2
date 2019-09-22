@@ -12,8 +12,9 @@
 ;;; Locks
 
 (eval-when (compile load eval)
-;;;  (require :mdproc)
-  (require :process))
+  ;; (require :mdproc)
+  ;; (require :process)
+  )
 
 (defvar *multiprocessing-p*
   #{

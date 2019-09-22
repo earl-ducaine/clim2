@@ -18,14 +18,14 @@
   (proclaim '(declaration arglist)))
 
 ;;; Moved here from DEFUN.  DEFUN now only contains the portable implementation
-;;; of the DYNAMIC-EXTENT declaration, and so is not loaded into Lisps which 
+;;; of the DYNAMIC-EXTENT declaration, and so is not loaded into Lisps which
 ;;; implement that declaration.
 
 ;;; This file has to be loaded BEFORE DEFUN.
 
 (defparameter *declarations-may-be-exposed-by-macro-expansion* nil)
 
-(lisp:defun extract-declarations (body &optional environment)
+(cl:defun extract-declarations (body &optional environment)
   (declare (values documentation declarations body))
   (let ((declarations nil)
 	(documentation nil))
@@ -60,17 +60,17 @@
 ;;; somehow.  In Genera, this causes the function-parents to be set
 ;;; correctly, for example, and also if you attempt to abort out of the
 ;;; middle you get told that something might be left inconsistent.
-#+Genera 
+#+Genera
 (defmacro define-group (name type &body body)
   `(sys:multiple-definition ,name ,type ,@body))
 
-#+(and allegro (not acl86win32) (version>= 4 1))
+#+(and allegro (not acl86win32))
 (defmacro define-group (name type &body body)
   `(progn
      (excl::record-source-file ',name :type ',type)
      ,@body))
 
-#-(or Genera (and (not acl86win32) (and allegro (version>= 4 1))))
+#-(or Genera (and (not acl86win32) (and allegro)))
 (defmacro define-group (name type &body body)
   (declare (ignore name type))
   `(progn ,@body))
@@ -96,33 +96,10 @@
   (setf (get 'defun-inline 'zwei:definition-function-spec-parser)
 	(zl:::scl:function (:property zl:::scl:defun zwei:definition-function-spec-parser)))
   (setf (get 'defun-inline 'zwei:definition-function-spec-type) 'zl:::scl:defun)
-  (setf (get 'defun-inline 'gprint::formatter) 
+  (setf (get 'defun-inline 'gprint::formatter)
 	(zl:::scl:function (:property zl:::scl:defun gprint::formatter)))
   (pushnew 'defun-inline zwei:*irrelevant-functions*)
   (pushnew 'defun-inline zwei:*irrelevant-defining-forms*))
 
-;;
+
 ;; Backwards compatibility for new ics functions during beta2 development
-;;
-#+allegro
-(in-package :excl)
-#+allegro
-(progn
-  #-(version>= 5 (0 1) :pre-beta2 7)
-  (defmacro with-native-string ((native-string-var string-exp)
-				&body body)
-    `(let ((,native-string-var ,string-exp))
-       ,@body))
-
-  #-(version>= 5 (0 1) :pre-beta2 7)
-  (eval-when (compile load eval) (export 'with-native-string))
-
-  #-(version>= 5 (0 1) :pre-beta2 7)
-  (defun mb-to-string (mb-vector)
-    (let* ((lgth (length mb-vector))
-	   (string (make-string lgth)))
-      (dotimes (i lgth string)
-	(setf (schar string i) (code-char (aref mb-vector i))))))
-
-  #-(version>= 5 (0 1) :pre-beta2 7)
-  (eval-when (compile load eval) (export 'mb-to-string)))

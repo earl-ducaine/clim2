@@ -8,9 +8,7 @@
 (progn
   (defvar sys::*toolkit-shared* nil)
 
-  (unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "ol_appl_add_item")
-			      #-(version>= 5 0) :note-shared-library-references
-			      #-(version>= 5 0) nil)
+  (unless (ff-wrapper:get-entry-point (ff-wrapper:convert-foreign-name "ol_appl_add_item"))
     (load "clim2:;climol.so")
     (setq sys::*toolkit-shared* t)))
 

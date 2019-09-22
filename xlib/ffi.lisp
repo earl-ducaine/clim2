@@ -91,54 +91,6 @@
 	(declare (ignore ignore))
 	`(,@indicies ,type))))))
 
-(defun trans-arg-type (type)
-  (cons (car type)
-	(cond ((consp (cadr type))
-	       (ecase (caadr type)
-		 (:pointer '(:foreign-address))
-		 (:array '(:foreign-address))))
-	      (t
-	       (case (cadr type)
-		 (void (error "void not allowed here"))
-		 ((int :signed-32bit) '(:int))
-		 ((unsigned-int :unsigned-32bit) '(:unsigned-int))
-		 ((fixnum-int fixnum-unsigned-int) '(:int fixnum))
-		 (fixnum-drawable '(:foreign-address))
-		 (t
-		  (if (get (cadr type) 'ff-wrapper:cstruct)
-		      '(:foreign-address)
-		      '(:lisp))))))))
-
-(defun trans-return-type (type)
-  (cond
-    ((consp type)
-     (ecase (car type)
-       (:pointer :foreign-address)
-       (:array :foreign-address)))
-    (t
-     (case type
-       (void :void)
-       ((integer int) :int)
-       ((fixnum-int :fixnum) '(:int fixnum))
-       (:unsigned-32bit :unsigned-int)
-       (:signed-32bit :int)
-       (t :unsigned-int)))))
-
-(defmacro def-exported-foreign-function ((name &rest options) &rest args)
-  (format t "def-exported-foreign-function: ~s ~%" name)
-  `(progn
-     (eval-when (eval load compile)
-       (export ',name))
-     (eval-when (compile eval load)
-       ,(let ((c-name (second (assoc :name options)))
-	      (return-type (or (second (assoc :return-type options))
-			       'void)))
-	  `(ff-wrapper:def-foreign-call (,name ,c-name)
-	       ,(or (mapcar #'trans-arg-type args) '(:void))
-	     :returning ,(trans-return-type return-type)
-	     :call-direct t
-	     :arg-checking nil)))))
-
 (defmacro def-exported-foreign-macro ((name &rest options) &rest args)
   `(def-exported-foreign-function (,name  ,@options) ,@args))
 
