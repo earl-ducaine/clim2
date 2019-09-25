@@ -195,7 +195,7 @@
 
 
 (defmacro fix-coordinate (coord)
-  `(the fixnum (if (excl:fixnump ,coord) ,coord (fixit ,coord))))
+  `(the fixnum (if (typep ,coord 'fixnum) ,coord (fixit ,coord))))
 
 (defun fixit (coord)
   (declare (optimize (speed 3) (safety 0)))
@@ -547,10 +547,11 @@
 
   (defun-inline evacuate-list (list)
     (if (and (consp list)
-	     (excl::stack-allocated-p list))
+	     #+sbcl (sb-ext:stack-allocated-p list)
+	     #+allegro (excl::stack-allocated-p list)
+	     #-(or allegro sbcl) t)
 	(copy-list list)
 	list)))
-
 
 (progn
   (defmacro with-stack-list ((var &rest elements) &body body)

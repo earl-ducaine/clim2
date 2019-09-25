@@ -26,7 +26,7 @@
 
 
 (defun-inline compile-file-environment-p (environment)
-  #+(version>= 7 0)
+  #+allegro
   (or (and sys::*compile-file-environment*
 	   (excl::compilation-environment-p environment)
 	   environment)
