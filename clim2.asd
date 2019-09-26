@@ -4,7 +4,7 @@
 ;;; MIT license.
 
 (asdf:defsystem :clim2
-  :depends-on (:cffi :alexandria ::bordeaux-threads)
+  :depends-on (:cffi :alexandria ::bordeaux-threads :closer-mop)
   :serial t
   :components
   (
@@ -25,6 +25,7 @@
    (:file "utils/reader")
    (:file "utils/processes")
    (:file "utils/lisp-utilities")
+
    (:file "utils/clos-patches")
    (:file "utils/clos")
    (:file "utils/utilities")

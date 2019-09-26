@@ -32,7 +32,8 @@
   (pushnew :clim-uses-lisp-stream-classes *features*)
   (pushnew :clim-uses-lisp-stream-functions *features*)
   (pushnew :clim-ansi-conditions *features*)
-  (pushnew :allegro-v4.0-constructors *features*))
+  ;; (pushnew :allegro-v4.0-constructors *features*)
+  )
 
 (declaim (declaration non-dynamic-extent))
 
