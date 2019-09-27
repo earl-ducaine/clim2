@@ -228,7 +228,7 @@
     (when writer
       (ignore-errors
 	(multiple-value-bind (vars vals store-vars store-form access-form)
-	    (lisp:get-setf-expansion `(,accessor-name foo))
+	    (cl:get-setf-expansion `(,accessor-name foo))
 	  (declare (ignore vars vals store-vars access-form))
 	  (when (or (equal (first store-form) writer)
 		    (and (eq (first store-form) 'funcall)
@@ -247,7 +247,7 @@
 
 (defun expand-defsetf-for-defmethod*
        (accessor-name accessor-arg real-arglist setf-function-name)
-  `(lisp:define-setf-expander
+  `(cl:define-setf-expander
      ,accessor-name (,accessor-arg)	;Only last one is real.
      (flet ((make-temp (name) (gensymbol name 'temp)))
        (let ((temps (list (make-temp ',accessor-arg)))
