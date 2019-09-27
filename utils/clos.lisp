@@ -10,8 +10,8 @@
 
 (in-package :clim-utils)
 
-(eval-when (compile eval load)
-  (require :constructor))
+;; (eval-when (compile eval load)
+;;   (require :constructor))
 
 ;;; ----------------
 ;;; Constructors
