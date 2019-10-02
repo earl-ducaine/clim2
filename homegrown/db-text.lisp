@@ -8,7 +8,7 @@
 (defun pop-up-text-editor (&key initial-contents prompt
 				(exit-gesture '(:end))
 				(width '(60 :character)) (height '(10 :line)))
-  (with-menu (stream)
+  (with-menu (stream nil)
     ;; First set up the pop-up window the way we want to see it
     (setf (cursor-visibility (stream-text-cursor stream)) :off)
     (when prompt

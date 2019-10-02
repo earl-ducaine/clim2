@@ -62,12 +62,14 @@
   nil)
 
 (defmethod map-over-polygon-coordinates (function (line standard-line))
+  (declare (dynamic-extent function))
   (with-slots (start-x start-y end-x end-y) line
     (funcall function start-x start-y)
     (funcall function end-x end-y)
     nil))
 
 (defmethod map-over-polygon-segments (function (line standard-line))
+  (declare (dynamic-extent function))
   (with-slots (start-x start-y end-x end-y) line
     (funcall function start-x start-y end-x end-y)
     nil))
@@ -212,6 +214,7 @@
     (setf (slot-value polygon 'coords) coords)))
 
 (defmethod map-over-polygon-coordinates (function (polygon polygon-mixin))
+  (declare (dynamic-extent function))
   (with-slots (coords points) polygon
     (if (slot-boundp polygon 'coords)
 	(let ((ncoords (1- (length coords)))
@@ -227,6 +230,7 @@
   nil)
 
 (defmethod map-over-polygon-segments (function (polygon polygon-mixin))
+  (declare (dynamic-extent function))
   (with-slots (coords points) polygon
     (if (slot-boundp polygon 'coords)
 	(let* ((ncoords (1- (length coords)))
@@ -857,6 +861,7 @@
 
 (defmethod ellipse-radii ((ellipse ellipse-mixin))
   (with-slots (radius-1-dx radius-1-dy radius-2-dx radius-2-dy) ellipse
+    (declare (values radius-1-dx radius-1-dy radius-2-dx radius-2-dy))
     (values radius-1-dx radius-1-dy radius-2-dx radius-2-dy)))
 
 

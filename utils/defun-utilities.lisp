@@ -8,9 +8,9 @@
 
 ;;; Useful proclamations, very early on
 
-#+(or CCL-2 allegro Minima)	;not part of ANSI CL, but they're nice to have around
+;; #+(or CCL-2 allegro Minima)	;not part of ANSI CL, but they're nice to have around
 (eval-when (compile load eval)
-  (proclaim '(declaration values))
+  ;; (proclaim '(declaration values))
   (proclaim '(declaration arglist)))
 
 #+aclpc

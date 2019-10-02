@@ -79,10 +79,10 @@
   (copy-list (queue-head queue)))
 
 (defgeneric map-over-queue (function queue)
-  (declare (dynamic-extent function)))
+  #+allegro (declare (dynamic-extent function)))
 
 (defmethod map-over-queue (function (queue queue))
-  (declare (dynamic-extent function))
+  #+allegro (declare (dynamic-extent function))
   (mapc function (queue-head queue)))
 
 (defmethod queue-next ((queue queue))
@@ -171,8 +171,6 @@
 (define-constructor make-locking-queue queue () )
 
 (defmacro with-queue-locked (queue &body body)
-  #+ccl (declare (ignore queue))
-  #+ccl `(progn ,@body)
   #-ccl
   `(with-slots (lock-place) ,queue
      (with-lock-held (lock-place "Queue lock") 

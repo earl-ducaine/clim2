@@ -221,8 +221,7 @@
 (defun make-setf-function-name (accessor-name)
   (values `(setf ,accessor-name) t))
 
-(defun make-setf*-function-name (accessor-name)
-  (declare (values setf-function-name defsetf-done-p))
+(defun make-setf*-function-name (accessor-name)  
   (let ((writer (get accessor-name 'setf-function-name))
 	(old-p nil))
     (when writer
@@ -274,7 +273,7 @@
 ;; For example, (DEFMETHOD* (SETF CURSOR-POSITION) (NX NY (CURSOR T)) ...)
 ;; Then (SETF (CURSOR-POSITION cursor) (VALUES nx ny))
 (defmacro defmethod* (name &body quals-lambda-list-and-body)
-  (declare (arglist name [qualifiers]* lambda-list &body body))
+  #+allegro (declare (arglist name [qualifiers]* lambda-list &body body))
   (assert (and (listp name) (eq (first name) 'setf) (null (cddr name))) ()
 	  "Syntax error in ~S: This only works on ~S methods" 'defmethod* 'setf)
   (let (qualifiers real-arglist body accessor-arg

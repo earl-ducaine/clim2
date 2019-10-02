@@ -146,7 +146,8 @@
 
 (defmethod map-over-region-set-regions
            (function (region standard-region-difference) &key normalize)
-  (declare (dynamic-extent function) (ignore normalize))
+  (declare (dynamic-extent function)
+	   (ignore normalize))
   (with-slots (region1 region2) region
     (funcall function region1)
     (funcall function region2))

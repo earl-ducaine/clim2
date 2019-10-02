@@ -92,7 +92,7 @@
 (defmacro without-scheduling (&body forms)
   "Evaluate the forms w/o letting any other process run."
   #+allegro `(excl:with-delayed-interrupts ,@forms)
-  #+sbcl  `(sbcl:without-scheduling ,@forms))
+  #+sbcl  `(sb-sys:without-interrupts ,@forms))
 
 ;; Atomically increments a fixnum value
 ;; #+Genera
@@ -181,8 +181,9 @@
 
 (defun process-wait (wait-reason predicate)
   "Cause the current process to go to sleep until the predicate returns TRUE."
+  #+sbcl (declare (ignore wait-reason))
   #+allegro (mp:process-wait wait-reason predicate)
-  #+sbcl (bt:condition-wait predicate wait-reason))
+  #+sbcl (sb-ext:wait-for predicate))
 
 (defun process-wait-with-timeout (wait-reason timeout predicate)
   "Cause the current process to go to sleep until the predicate returns TRUE or
@@ -191,9 +192,11 @@
     ;; ensure genera semantics, timeout = NIL means indefinite timeout
     (return-from process-wait-with-timeout
       (process-wait wait-reason predicate)))
-  #+sbcl (bt:condition-wait predicate wait-reason :timeout timeout)
+  #+sbcl (sb-ext:wait-for predicate :timeout timeout)
   #+allegro (mp:process-wait-with-timeout wait-reason timeout predicate))
 
+
+(defparameter *sbcl-interupter* nil)
 
 ;; dangerous
 (defun process-interrupt (process function)
@@ -201,15 +204,23 @@
 
 (defun restart-process (process)
   #+allegro (mp:process-reset process)
-  #+sbcl (sb-thread:process-reset process))
+  #+sbcl (progn
+	   (process-disable process)
+	   (process-enable process)))
 
 (defun enable-process (process)
   #+allegro (mp:process-enable process)
-  #+sbcl  (bt:process-enable process))
+  #+sbcl  (setf *sbcl-interupter* nil))
 
 (defun disable-process (process)
   #+allegro (mp:process-disable process)
-  #+sbcl (bt:process-disable process))
+  #+sbcl (bt:interrupt-thread
+	  process
+	  (lamda ()
+		 (do ()
+		     (unless *sbcl-interupter*)
+		   (process-wait-with-timeout nil 0.01
+					      (lambda ()))))))
 
 (defun process-name (process)
   (bt:thread-name process))
@@ -220,4 +231,4 @@
 
 (defun process-whostate (process)
   #+allegro (mp:process-whostate process)
-  #+sbcl (bt:process-whostate process))
+  #+sbcl (bt:thread-name process))

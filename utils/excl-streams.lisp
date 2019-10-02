@@ -10,13 +10,13 @@
 (defgeneric pathname (stream))
 
 (defmethod pathname (stream)
-  (lisp:pathname stream))
+  (cl:pathname stream))
 
-(deftype pathname () 'lisp:pathname)
+(deftype pathname () 'cl:pathname)
 
 
 #-PCL
 (defgeneric truename (stream))
 
 (defmethod truename (stream)
-  (lisp:truename stream))
+  (cl:truename stream))

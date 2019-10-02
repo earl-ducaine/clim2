@@ -292,7 +292,7 @@
             &key partial-completers allow-any-input
                  possibility-printer (help-displays-possibilities t)) 
            &body body)
-  (declare (values object success string nmatches)
+  (declare #+allegro (values object success string nmatches)
            (ignore allow-any-input possibility-printer help-displays-possibilities))
   #+Genera (declare (zwei:indentation 0 3 1 1))
   (let ((string '#:string)
@@ -331,7 +331,7 @@
 
 ;;; From MENUS.LISP
 ;;; For now, MENU-CHOOSE requires that you pass in a parent.
-(defmacro with-menu ((menu &optional (associated-window nil aw-p)
+(defmacro with-menu ((menu (associated-window nil aw-p)
                       &rest options &key label scroll-bars) &body body)
   (declare (ignore label scroll-bars))
   (let ((window '#:associated-window))
@@ -346,12 +346,12 @@
 ;;; From ACCEPTING-VALUES.LISP
 (defmacro accepting-values ((&optional stream &rest args) &body body)
   (declare (arglist (&optional stream
-                     &key frame-class command-table own-window
-                             background foreground text-style
-                          exit-boxes resize-frame align-prompts
-                          initially-select-query-identifier modify-initial-query
-                          resynchronize-every-pass (check-overlapping t)
-                          label x-position y-position width height (scroll-bars nil))
+			       &key frame-class command-table own-window
+                               background foreground text-style
+                               exit-boxes resize-frame align-prompts
+                               initially-select-query-identifier modify-initial-query
+                               resynchronize-every-pass (check-overlapping t)
+                               label x-position y-position width height (scroll-bars nil))
                     &body body))
   #+Genera (declare (zwei:indentation 0 3 1 1))
   (default-input-stream stream accepting-values)
@@ -371,7 +371,7 @@
 ;; the cursor was.  Finally, leave the cursor at the end of the output.
 ;; HEIGHT is useful when you are doing this inside of incremental redisplay,
 ;; and the graphics are going to change size from pass to pass.
-(defmacro with-room-for-graphics ((&optional stream 
+(defmacro with-room-for-graphics ((stream 
                                    &key height (first-quadrant t fq-p) (move-cursor t)
                                         record-type)
                                   &body body)

@@ -11,8 +11,7 @@
 (defgeneric transform-region (transformation region))
 (defgeneric untransform-region (transformation region))
 
-(defgeneric point-position (point)
-  #-aclpc (declare (values x y)))
+(defgeneric point-position (point))
 (defgeneric point-x (point))
 (defgeneric point-y (point))
 
@@ -21,58 +20,40 @@
 (defgeneric region-contains-position-p (region x y))
 (defgeneric region-contains-region-p (region1 region2))
 (defgeneric region-intersects-region-p (region1 region2))
-
 (defgeneric region-set-function (region))
 (defgeneric region-set-regions (region &key normalize))
-(defgeneric map-over-region-set-regions (function region &key normalize)
-  (declare (dynamic-extent function)))
-
+(defgeneric map-over-region-set-regions (function region &key normalize))
 (defgeneric region-union (region1 region2))
 (defgeneric region-intersection (region1 region2))
 (defgeneric region-difference (region1 region2))
-
 (defgeneric polyline-closed (polyline))
 (defgeneric polygon-points (polygon))
-(defgeneric map-over-polygon-coordinates (function polygon)
-  (declare (dynamic-extent function)))
-(defgeneric map-over-polygon-segments (function polygon)
-  (declare (dynamic-extent function)))
-
+(defgeneric map-over-polygon-coordinates (function polygon))
+(defgeneric map-over-polygon-segments (function polygon))
 (defgeneric line-start-point (line))
 (defgeneric line-end-point (line))
 (defgeneric line-start-point* (line))
 (defgeneric line-end-point* (line))
-
 (defgeneric rectangle-min-point (rectangle))
 (defgeneric rectangle-max-point (rectangle))
-(defgeneric rectangle-edges* (rectangle)
-  #-aclpc (declare (values min-x min-y max-x max-y)))
+(defgeneric rectangle-edges* (rectangle))
 (defgeneric rectangle-min-x (rectangle))
 (defgeneric rectangle-min-y (rectangle))
 (defgeneric rectangle-max-x (rectangle))
 (defgeneric rectangle-max-y (rectangle))
 (defgeneric rectangle-width (rectangle))
 (defgeneric rectangle-height (rectangle))
-(defgeneric rectangle-size (rectangle)
-  #-aclpc (declare (values width height)))
-
+(defgeneric rectangle-size (rectangle))
 (defgeneric ellipse-center-point (ellipse))
 (defgeneric ellipse-center-point* (ellipse))
-(defgeneric ellipse-radii (ellipse)
-  #-aclpc (declare (values radius-1-dx radius-1-dy radius-2-dx radius-2-dy)))
+(defgeneric ellipse-radii (ellipse))
 (defgeneric ellipse-start-angle (ellipse))
 (defgeneric ellipse-end-angle (ellipse))
-
 (defgeneric opacity-value (opacity))
-
-(defgeneric bounding-rectangle* (region)
-  #-aclpc (declare (values left top right bottom)))
-(defgeneric bounding-rectangle-set-edges (region left top right bottom)
-  #-aclpc (declare (values region)))
-(defgeneric bounding-rectangle-set-position (region x y)
-  #-aclpc (declare (values region)))
-(defgeneric bounding-rectangle-set-size (region width height)
-  #-aclpc (declare (values region)))
+(defgeneric bounding-rectangle* (region))
+(defgeneric bounding-rectangle-set-edges (region left top right bottom))
+(defgeneric bounding-rectangle-set-position (region x y))
+(defgeneric bounding-rectangle-set-size (region width height))
 
 (defmacro define-symmetric-region-method (name (region1 region2) &body body)
   `(progn
@@ -207,6 +188,7 @@
     `(make-point ,x ,y)))
 
 (defmethod point-position ((point standard-point))
+  (declare (values x y))
   (with-slots (x y) point
     (values x y)))
 
@@ -343,6 +325,7 @@
 		    ,(rectangle-max-x rectangle) ,(rectangle-max-y rectangle)))
 
 (defmethod rectangle-edges* ((rectangle standard-rectangle))
+  (declare (values min-x min-y max-x max-y))
   (with-slots (min-x min-y max-x max-y) rectangle
     (values min-x min-y max-x max-y)))
 
@@ -371,11 +354,13 @@
     (- max-y min-y)))
 
 (defmethod rectangle-size ((rectangle standard-rectangle))
+  (declare (values width height))
   (with-slots (min-x min-y max-x max-y) rectangle
     (declare (type coordinate min-x min-y max-x max-y))
     (values (- max-x min-x) (- max-y min-y))))
 
 (defmethod map-over-polygon-coordinates (function (rectangle standard-rectangle))
+  (declare (dynamic-extent function))
   (with-slots (min-x min-y max-x max-y) rectangle
     (funcall function min-x min-y)
     (funcall function min-x max-y)
@@ -384,6 +369,7 @@
     nil))
 
 (defmethod map-over-polygon-segments (function (rectangle standard-rectangle))
+  (declare (dynamic-extent function))
   (with-slots (min-x min-y max-x max-y) rectangle
     (funcall function min-x min-y min-x max-y)
     (funcall function min-x max-y max-x max-y)
@@ -497,6 +483,7 @@
   (make-point (slot-value rectangle 'right) (slot-value rectangle 'bottom)))
 
 (defmethod rectangle-edges* ((rectangle standard-bounding-rectangle))
+  (declare (values min-x min-y max-x max-y))
   (with-slots (left top right bottom) rectangle
     (values left top right bottom)))
 
@@ -511,12 +498,14 @@
     (- bottom top)))
 
 (defmethod rectangle-size ((rectangle standard-bounding-rectangle))
+  (declare (values width height))
   (with-slots (left top right bottom) rectangle
     (declare (type coordinate left top right bottom))
     (values (- right left)
 	    (- bottom top))))
 
 (defmethod map-over-polygon-coordinates (function (rectangle standard-bounding-rectangle))
+  (declare (dynamic-extent function))
   (with-slots (left top right bottom) rectangle
     (funcall function left top)
     (funcall function left bottom)
@@ -525,6 +514,7 @@
     nil))
 
 (defmethod map-over-polygon-segments (function (rectangle standard-bounding-rectangle))
+  (declare (dynamic-extent function))
   (with-slots (left top right bottom) rectangle
     (funcall function left top left bottom)
     (funcall function left bottom right bottom)
@@ -565,7 +555,7 @@
   #+Genera (declare (zwei:indentation 1 3 2 1))
   `(multiple-value-bind (,left ,top ,right ,bottom)
        (bounding-rectangle* ,region) 
-     #-acl86win32 (declare (type coordinate ,left ,top ,right ,bottom))
+     (declare (type coordinate ,left ,top ,right ,bottom))
      ,@body))
 
 (defmethod bounding-rectangle* ((rectangle standard-bounding-rectangle))
@@ -588,7 +578,8 @@
 ;; LEFT, TOP, RIGHT, and BOTTOM had better be of type COORDINATE
 (defmethod bounding-rectangle-set-edges ((rectangle standard-bounding-rectangle)
 					 left top right bottom)
-  (declare (type real left top right bottom))
+  (declare (type real left top right bottom)
+	   (values region))
   #+++ignore (assert (<= left right))
   #+++ignore (assert (<= top bottom))
   (with-slots ((bl left) (bt top) (br right) (bb bottom)) rectangle
@@ -817,12 +808,13 @@
   (list region))
 
 (defmethod map-over-region-set-regions (function (region region) &key normalize)
-  (declare (dynamic-extent function) (ignore normalize))
+  (declare (dynamic-extent function)
+	   (ignore normalize))
   (funcall function region))
 
 (defmethod map-over-region-set-regions (function (region region-set) &rest args &key normalize)
-  (declare (dynamic-extent function args))
-  (declare (ignore normalize))
+  (declare (dynamic-extent function args)
+	   (ignore normalize))
   (map nil function (apply #'region-set-regions region args)))
 
 #+++ignore

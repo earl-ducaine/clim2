@@ -52,9 +52,9 @@
 (defmacro with-drawing-options ((medium &rest options) &body body)
   (declare (arglist (medium
                      &key ink clipping-region transformation
-                          line-style line-unit line-thickness line-dashes
-                          line-joint-shape line-cap-shape
-                          text-style text-family text-face text-size)))
+                     line-style line-unit line-thickness line-dashes
+                     line-joint-shape line-cap-shape
+                     text-style text-family text-face text-size)))
   #+Genera (declare (zwei:indentation 0 3 1 1))
   (default-output-stream medium)
   `(flet ((with-drawing-options-body () ,@body))

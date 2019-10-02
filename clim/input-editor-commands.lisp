@@ -1070,7 +1070,7 @@ This may confused the input editor" gestures))
   (declare (values arglist found-p))
   #+Genera (values (sys:arglist function) T)
   #+Cloe-Runtime (sys::arglist function)
-  #+allegro (values (excl::arglist function) t)
+  (values (arglist function) t)
   #+Lucid (values (lucid-common-lisp:arglist function) t))
 
 (defun word-start-and-end (string start-chars &optional (start 0))

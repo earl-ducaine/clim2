@@ -24,23 +24,14 @@
 (defgeneric compose-translation-with-transformation (transform dx dy))
 (defgeneric compose-scaling-with-transformation (transform mx my &optional origin))
 (defgeneric compose-rotation-with-transformation (transform angle &optional origin))
+(defgeneric transform-position (transform x y))
+(defgeneric untransform-position (transform x y))
+(defgeneric transform-distance (transform dx dy))
+(defgeneric untransform-distance (transform dx dy))
+(defgeneric transform-rectangle* (transform x1 y1 x2 y2))
+(defgeneric untransform-rectangle* (transform x1 y1 x2 y2))
 
-(defgeneric transform-position (transform x y)
-  #-aclpc (declare (values x y)))
-(defgeneric untransform-position (transform x y)
-  #-aclpc (declare (values x y)))
 
-(defgeneric transform-distance (transform dx dy)
-  #-aclpc (declare (values dx dy)))
-(defgeneric untransform-distance (transform dx dy)
-  #-aclpc (declare (values dx dy)))
-
-(defgeneric transform-rectangle* (transform x1 y1 x2 y2)
-  #-aclpc (declare (values x1 y1 x2 y2)))
-(defgeneric untransform-rectangle* (transform x1 y1 x2 y2)
-  #-aclpc (declare (values x1 y1 x2 y2)))
-
-
 ;;; Transformations
 
 ;;--- Watch out, we define methods on this protocol class!
@@ -684,7 +675,8 @@
 ;;; Transforming and untransforming of points
 
 (defmethod transform-position ((transform identity-transformation) x y)
-  (declare (type real x y))
+  (declare (type real x y)
+	   (values x y))
   (values (coordinate x) (coordinate y)))
 
 ;; This macro is specially designed for the transformation functions
@@ -699,7 +691,8 @@
 
 (defmethod transform-position ((transform translation-transformation) x y)
   #+original
-  (declare (type real x y))
+  (declare (type real x y)
+	   (values x y))
   #+original
   (let ((x (coordinate x))
 	(y (coordinate y)))
@@ -719,21 +712,24 @@
 ;; ... why *don't* we?
 (defmethod transform-position ((transform standard-transformation) x y)
 ;;  (declare (optimize (speed 3) (safety 1) (debug 0)))
-  (declare (type real x y))
+  (declare (type real x y)
+	   (values x y))
   (let ((x #-ignore (float x 0f0) #+ignore (coordinate x))
 	(y #-ignore (float y 0f0) #+ignore (coordinate y)))
     (declare (type #-ignore single-float #+ignore coordinate x y))
     (with-slots (mxx mxy myx myy tx ty) transform
-      (declare (type single-float mxx mxy myx myy tx ty))
+      #+allegro (declare (type single-float mxx mxy myx myy tx ty))
       (values (the #-ignore single-float #+ignore coordinate (+ (* x mxx) (* y mxy) tx))
 	      (the #-ignore single-float #+ignore coordinate (+ (* x myx) (* y myy) ty))))))
 
 (defmethod untransform-position ((transform identity-transformation) x y)
-  (declare (type real x y))
+  (declare (type real x y)
+	   (values x y))
   (values (coordinate x) (coordinate y)))
 
 (defmethod untransform-position ((transform translation-transformation) x y)
-  (declare (type real x y))
+  (declare (type real x y)
+	   (values x y))
   (let ((x (coordinate x))
 	(y (coordinate y)))
     (declare (type coordinate x y))
@@ -742,22 +738,26 @@
       (values (coordinate (- x tx)) (coordinate (- y ty))))))
 
 (defmethod untransform-position ((transform standard-transformation) x y)
-  (declare (type real x y))
+  (declare (type real x y)
+	   (values x y))
   (transform-position (slot-value transform 'inverse) x y))
 
 
 ;;; Transforming and untransforming of distances
 
 (defmethod transform-distance ((transform identity-transformation) dx dy)
-  (declare (type real dx dy))
+  (declare (type real dx dy)
+	   (values dx dy))
   (values (coordinate dx) (coordinate dy)))
 
 (defmethod transform-distance ((transform translation-transformation) dx dy)
-  (declare (type real dx dy))
+  (declare (type real dx dy)
+	   (values dx dy))
   (values (coordinate dx) (coordinate dy)))
 
 (defmethod transform-distance ((transform standard-transformation) dx dy)
-  (declare (type real dx dy))
+  (declare (type real dx dy)
+	   (values dx dy))
   (let ((dx (coordinate dx))
 	(dy (coordinate dy)))
     (declare (type coordinate dx dy))
@@ -768,27 +768,32 @@
 
 
 (defmethod untransform-distance ((transform identity-transformation) dx dy)
-  (declare (type real dx dy))
+  (declare (type real dx dy)
+	   (values dx dy))
   (values (coordinate dx) (coordinate dy)))
 
 (defmethod untransform-distance ((transform translation-transformation) dx dy)
-  (declare (type real dx dy))
+  (declare (type real dx dy)
+	   (values dx dy))
   (values (coordinate dx) (coordinate dy)))
 
 (defmethod untransform-distance ((transform standard-transformation) dx dy)
-  (declare (type real dx dy))
+  (declare (type real dx dy)
+	   (values dx dy))
   (transform-distance (slot-value transform 'inverse) dx dy))
 
 
 ;;; Transforming and untransforming of points
 
 (defmethod transform-rectangle* ((transform identity-transformation) x1 y1 x2 y2)
-  (declare (type real x1 y1 x2 y2))
+  (declare (type real x1 y1 x2 y2)
+	   (values x1 y1 x2 y2))
   (values (coordinate x1) (coordinate y1)
 	  (coordinate x2) (coordinate y2)))
 
 (defmethod transform-rectangle* ((transform translation-transformation) x1 y1 x2 y2)
   (declare (type real x1 y1 x2 y2)
+	   (values x1 y1 x2 y2)
 	   (optimize (speed 3) (safety 0)))
   (let ((x1 (coordinate x1))
 	(y1 (coordinate y1))
@@ -806,7 +811,8 @@
 	      (quickadd y2 ty)))))
 
 (defmethod transform-rectangle* ((transform standard-transformation) x1 y1 x2 y2)
-  (declare (type real x1 y1 x2 y2))
+  (declare (type real x1 y1 x2 y2)
+	   (values x1 y1 x2 y2))
   (assert (rectilinear-transformation-p transform) (transform)
 	  "Bounding rectangles can only be transformed by a rectilinear transformation")
   (let ((x1 (coordinate x1))
@@ -823,12 +829,14 @@
 
 
 (defmethod untransform-rectangle* ((transform identity-transformation) x1 y1 x2 y2)
-  (declare (type real x1 y1 x2 y2))
+  (declare (type real x1 y1 x2 y2)
+	   (values x1 y1 x2 y2))
   (values (coordinate x1) (coordinate y1)
 	  (coordinate x2) (coordinate y2)))
 
 (defmethod untransform-rectangle* ((transform translation-transformation) x1 y1 x2 y2)
-  (declare (type real x1 y1 x2 y2))
+  (declare (type real x1 y1 x2 y2)
+	   (values x1 y1 x2 y2))
   (let ((x1 (coordinate x1))
 	(y1 (coordinate y1))
 	(x2 (coordinate x2))
@@ -840,5 +848,6 @@
 	      (coordinate (- x2 tx)) (coordinate (- y2 ty))))))
 
 (defmethod untransform-rectangle* ((transform standard-transformation) x1 y1 x2 y2)
-  (declare (type real x1 y1 x2 y2))
+  (declare (type real x1 y1 x2 y2)
+	   (values x1 y1 x2 y2))
   (transform-rectangle* (slot-value transform 'inverse) x1 y1 x2 y2))
