@@ -331,7 +331,7 @@
 
 ;;; From MENUS.LISP
 ;;; For now, MENU-CHOOSE requires that you pass in a parent.
-(defmacro with-menu ((menu (associated-window nil aw-p)
+(defmacro with-menu ((menu &optional (associated-window nil aw-p)
                       &rest options &key label scroll-bars) &body body)
   (declare (ignore label scroll-bars))
   (let ((window '#:associated-window))
