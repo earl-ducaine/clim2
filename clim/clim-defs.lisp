@@ -75,7 +75,7 @@
            (progn ,@body)
          (window-set-viewport-position ,stream ,x ,y)))))
 
-(defmacro with-output-recording-options 
+(defmacro with-output-recording-options
           ((stream &key (draw nil draw-supplied)
                         (record nil record-supplied))
            &body body)
@@ -149,7 +149,7 @@
 ;;; Presentation type stuff
 
 (defvar *allow-sensitive-inferiors* t)
-(defmacro with-output-as-presentation ((stream object type 
+(defmacro with-output-as-presentation ((stream object type
                                         &rest options
                                         &key modifier single-box
                                              (allow-sensitive-inferiors t asi-p)
@@ -207,12 +207,12 @@
               new-clauses)))))        ;eval-when
 
 #+allegro
-(excl:defun-proto invoke-with-input-context (type override body-continuation 
+(excl:defun-proto invoke-with-input-context (type override body-continuation
 				  context-continuation)
   (declare (dynamic-extent body-continuation context-continuation)))
 
 
-(defmacro with-input-context ((type &key override) 
+(defmacro with-input-context ((type &key override)
                               (&optional object-var type-var event-var options-var)
                               form
                               &body clauses)
@@ -240,7 +240,7 @@
          #'body-continuation #'context-continuation))))
 
 ;;; A problem can arise if the a command is launched asynchronous
-;;; (e.g. the command is launched by the program, not as the 
+;;; (e.g. the command is launched by the program, not as the
 ;;; result of user-input).
 ;;; Specifically, the input-focus can be snatched away from the
 ;;; current user frame.
@@ -248,18 +248,18 @@
 ;;; The current rules are:
 ;;; 1] On entry, note the original input-focus.
 ;;;    Only set the input-focus to a new value if the frame
-;;;    of the new-input-focus is the same as the frame of 
+;;;    of the new-input-focus is the same as the frame of
 ;;;    the original- input-focus.
 ;;;    (I.e. don't snatch the input focus away if we are, for
 ;;;    example, running an asynchronously launched command.)
-;;; 
+;;;
 ;;; 2] On exit, note the then current input-focus.
 ;;;    Only re-set the input-focus to the original-input-focus
 ;;;    if the frame of the now-current-input-focus is the
 ;;;    same as the "new" value set above.
-;;;    (I.e. worry whether the input focus has been swapped 
+;;;    (I.e. worry whether the input focus has been swapped
 ;;;    out from under us while we were waiting.)
-;;; 
+;;;
 (defmacro with-input-focus ((stream &optional (doit t)) &body body)
   (let ((old-input-focus '#:old-input-focus)
 	(orig-input-focus '#:orig-input-focus)
@@ -276,7 +276,7 @@
        (unwind-protect
            (progn
              (when (and ,doit
-			(eq ,stream-frame 
+			(eq ,stream-frame
 			    ,orig-input-focus-frame))
                (setq ,old-input-focus (stream-set-input-focus ,stream)))
              ,@body)
@@ -287,10 +287,10 @@
            (stream-restore-input-focus ,stream ,old-input-focus))))))
 
 
-(defmacro completing-from-suggestions 
+(defmacro completing-from-suggestions
           ((stream &rest options
             &key partial-completers allow-any-input
-                 possibility-printer (help-displays-possibilities t)) 
+                 possibility-printer (help-displays-possibilities t))
            &body body)
   (declare #+allegro (values object success string nmatches)
            (ignore allow-any-input possibility-printer help-displays-possibilities))
@@ -331,9 +331,9 @@
 
 ;;; From MENUS.LISP
 ;;; For now, MENU-CHOOSE requires that you pass in a parent.
-(defmacro with-menu ((menu (associated-window nil aw-p)
+(defmacro with-menu ((menu &optional (associated-window nil aw-p)
                       &rest options &key label scroll-bars) &body body)
-  (declare (ignore label scroll-bars))
+  (declare (ignore scroll-bars))
   (let ((window '#:associated-window))
     `(let ((,window ,(if aw-p
                          associated-window
@@ -371,7 +371,7 @@
 ;; the cursor was.  Finally, leave the cursor at the end of the output.
 ;; HEIGHT is useful when you are doing this inside of incremental redisplay,
 ;; and the graphics are going to change size from pass to pass.
-(defmacro with-room-for-graphics ((stream 
+(defmacro with-room-for-graphics ((stream
                                    &key height (first-quadrant t fq-p) (move-cursor t)
                                         record-type)
                                   &body body)
