@@ -861,7 +861,7 @@
 
 (defmethod ellipse-radii ((ellipse ellipse-mixin))
   (with-slots (radius-1-dx radius-1-dy radius-2-dx radius-2-dy) ellipse
-    (declare (values radius-1-dx radius-1-dy radius-2-dx radius-2-dy))
+    (declare (CLIM-UTILS::values radius-1-dx radius-1-dy radius-2-dx radius-2-dy))
     (values radius-1-dx radius-1-dy radius-2-dx radius-2-dy)))
 
 

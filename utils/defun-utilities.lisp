@@ -10,7 +10,7 @@
 
 ;; #+(or CCL-2 allegro Minima)	;not part of ANSI CL, but they're nice to have around
 (eval-when (compile load eval)
-  ;; (proclaim '(declaration values))
+  ;;#-allegro (proclaim '(declaration values))
   (proclaim '(declaration arglist)))
 
 #+aclpc

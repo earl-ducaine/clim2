@@ -425,7 +425,7 @@
            #+aclpc acl:class-finalized-p class)
     (#-aclpc clos:finalize-inheritance
      #+aclpc acl:finalize-inheritance class))
-  (class-precedence-list class))
+  (clos:class-precedence-list class))
 
 ;;; Hide the long name when printing these
 (defmethod print-object ((object presentation-type-class) stream)
@@ -460,7 +460,7 @@
   (not (flavor:flavor-is-abstract (clos-internals::class-instance-information class))))
 
 ;;; COMPILE-TIME-CLASSes, while the right place to hang all this information,
-;;; unfortunately do NOT have CLASS-PRECEDENCE-LISTS, or any information of
+;;; unfortunately do NOT have CLOS:CLASS-PRECEDENCE-LISTS, or any information of
 ;;; value other than name.
 #+CCL-2
 (defmethod acceptable-presentation-type-class ((class ccl::compile-time-class))
@@ -719,7 +719,7 @@
           (analyze-inherit-from inherit-from parameters-ll options-ll)
 
         ;; Make sure we have a class adequate to use at macro expansion time.
-        ;; It has to have the right class-precedence-list, as well as serving
+        ;; It has to have the right clos:class-precedence-list, as well as serving
         ;; as a key for the second position of *presentation-type-being-defined*.
         ;; If not compiling to a file, it has to be EQ to the class that will
         ;; be used for real when methods are invoked.  If compiling to a file, it
@@ -847,7 +847,7 @@
                         name (class-proper-name superclass environment)
                         'define-presentation-type
                         (typecase superclass
-                          (funcallable-standard-class 'defgeneric)
+                          (clos:funcallable-standard-class 'defgeneric)
                           (standard-class 'defclass)
                           #+Symbolics                ;Symbolics CLOS, that is
                           (clos:structure-class 'defstruct)
@@ -1014,19 +1014,19 @@
        (name class function-var parameters-var options-var type-var
         &optional environment)
   (let ((superclasses
-          #-(or aclpc allegro) (cdr (class-precedence-list class))
+          #-(or aclpc allegro) (cdr (clos:class-precedence-list class))
           #+aclpc
           (progn
             (unless (acl:class-finalized-p class)
               (acl:finalize-inheritance class))
-            (cdr (class-precedence-list class)))
+            (cdr (clos:class-precedence-list class)))
           #+allegro ;; Work around bug in CLOS compilation environments...
           (multiple-value-bind (no-errorp result)
               (excl:errorset (progn
                                ;; Finalization is necessary according to AMOP. -smh 18may93
                                  (unless (clos:class-finalized-p class)
                                  (clos:finalize-inheritance class))
-                               (cdr (class-precedence-list class)))
+                               (cdr (clos:class-precedence-list class)))
                              nil)
             (if no-errorp
                 result
@@ -1373,19 +1373,19 @@
 (defun generate-presentation-type-inheritance-methods
     (name class parameters-var options-var &optional environment)
   (let ((superclasses
-         #-(or allegro aclpc) (cdr (class-precedence-list class))
+         #-(or allegro aclpc) (cdr (clos:class-precedence-list class))
          #+aclpc
           (progn
             (unless (acl:class-finalized-p class)
               (acl:finalize-inheritance class))
-            (cdr (class-precedence-list class)))
+            (cdr (clos:class-precedence-list class)))
          #+allegro ;; Work around bug in CLOS compilation environments...
          (multiple-value-bind (no-errorp result)
              (excl:errorset (progn
                               ;; Finalization is necessary according to AMOP. -smh 18may93
                               (unless (clos:class-finalized-p class)
                                 (clos:finalize-inheritance class))
-                              (cdr (class-precedence-list class)))
+                              (cdr (clos:class-precedence-list class)))
                             nil)
            (if no-errorp
                result
@@ -1532,14 +1532,15 @@
 (defmacro apply-presentation-generic-function (presentation-function-name &body arguments)
   `(call-presentation-generic-function apply ,presentation-function-name ,@arguments))
 
-;;; Presentation generic functions have their own class just so we can define
-;;; one method that aids in implementing presentation-method-combination
+;;; Presentation generic functions have their own class just so we can
+;;; define one method that aids in implementing
+;;; presentation-method-combination
 #-CCL-2
 (eval-when (eval load compile)
 (defclass presentation-generic-function
           (standard-generic-function #+Minima-Developer standard-object)
   ()
-  (:metaclass funcallable-standard-class))
+  (:metaclass clos:funcallable-standard-class))
 )        ;end of (eval-when (eval load compile)
 
 #+CLIM-extends-CLOS
