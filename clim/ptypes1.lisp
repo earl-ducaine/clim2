@@ -23,7 +23,7 @@
 ;;; actually was incorporated into the result.
 ;;; We use uninterned symbols as the dummy values.
 (defun meta-evaluate-form (form lambda-list &optional another-lambda-list)
-  (declare (values value bindings more-bindings))
+  #+allegro (declare (values value bindings more-bindings))
   (let ((bindings nil) (more-bindings nil))
     (labels ((do-lambda-list (lambda-list)
                (dolist (item lambda-list)
@@ -477,7 +477,7 @@
 
 ;;; Given a presentation type class get its internal inheritance information
 (defun presentation-type-inheritance (class &optional environment)
-  (declare (values direct-supertypes                ;These three values are lists of
+  #+allegro (declare (values direct-supertypes                ;These three values are lists of
                    parameter-massagers                ;equal length and parallel contents.
                    options-massagers))
   (let ((list (cond ((eq class (second *presentation-type-being-defined*))
@@ -599,7 +599,7 @@
 
 ;;; Like macroexpand-1
 (defun expand-presentation-type-abbreviation-1 (type &optional environment)
-  (declare (values expansion expanded))
+  #+allegro (declare (values expansion expanded))
   (with-presentation-type-decoded (name parameters options) type
     (let ((expander (or (and (compile-file-environment-p environment)
                              (compile-time-property name 'presentation-type-abbreviation))
@@ -639,7 +639,7 @@
 
 ;;; Like macroexpand
 (defun expand-presentation-type-abbreviation (type &optional environment)
-  (declare (values expansion expanded))
+  #+allegro (declare (values expansion expanded))
   (let ((flag nil))
     (loop
       (multiple-value-bind (expansion expanded)
@@ -853,7 +853,7 @@
                           (clos:structure-class 'defstruct)
                           #+CCL-2 (structure-class 'defstruct)
                           #+aclpc (cl:structure-class 'defstruct)
-                          #+allegro (structure-class 'defstruct))
+                          (structure-class 'defstruct))
                         name)))
              (let ((class-name `(presentation-type ,name)))
                (setq class
@@ -1113,7 +1113,7 @@
 ;;; The second value is a list of elements (class parameters-form options-form)
 (defun generate-type-massagers (class superclasses parameters-var options-var accuratep
                                 &optional environment)
-  (declare (values bindings alist))
+  #+allegro (declare (values bindings alist))
   (let ((paths nil)
         (classes-seen nil)
         (class-bindings-used nil)        ;((class parameters-count options-count)...)
@@ -1277,7 +1277,7 @@
 ;;; if the length is 1, each value is just the list element, to save space in
 ;;; compiled files.
 (defun analyze-inherit-from (backquote parameters-ll options-ll)
-  (declare (values direct-supertypes parameter-massagers options-massagers))
+  #+allegro (declare (values direct-supertypes parameter-massagers options-massagers))
   (multiple-value-bind (expansion parameters-bindings options-bindings)
       (meta-evaluate-form backquote parameters-ll options-ll)
     (with-presentation-type-decoded (expanded-name expanded-parameters expanded-options)
@@ -1674,7 +1674,7 @@
   #-(or aclpc acl86win32 CCL-2)
   (declare (arglist type-key parameters options type stream view
                     &key default default-type)
-           (values object type)))
+           #+allegro (values object type)))
 
 (define-presentation-generic-function describe-presentation-type-method
                                       describe-presentation-type
@@ -1687,7 +1687,7 @@
 (define-presentation-generic-function presentation-subtypep-method
                                       presentation-subtypep
   (type-key type putative-supertype)
-  #-(or aclpc CCL-2)
+  #+allegro 
   (declare (values subtype-p known-p)))
 
 (define-presentation-generic-function presentation-type-history-method
@@ -1700,9 +1700,9 @@
             ;; &key &allow-other-keys allows methods to receive only the keyword arguments
             ;; that they are interested in.  We know the caller will never supply
             ;; misspelled keywords since only the CLIM system calls this.
-  #-(or aclpc acl86win32 CCL-2)
   (declare (arglist type-key default type &key default-type)
-           (values default default-type)))
+           #+allegro (values default default-type)
+	   ))
 
 (define-presentation-generic-function presentation-type-specifier-p-method
                                       presentation-type-specifier-p

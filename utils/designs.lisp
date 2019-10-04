@@ -32,9 +32,10 @@
 (defconstant +transparent-ink+ +nowhere+)	;i.e., (make-opacity 0)
 
 
-;; Black and white are the same everywhere
-(defconstant +black+ (make-gray-color-1 0f0))
-(defconstant +white+ (make-gray-color-1 1f0))
+(eval-when (:compile-toplevel)
+  ;; Black and white are the same everywhere
+  (defconstant +black+ (make-gray-color-1 0f0))
+  (defconstant +white+ (make-gray-color-1 1f0)))
 
 
 ;;; Gray colors
@@ -118,13 +119,15 @@
   `(defconstant ,color-name
 		(make-rgb-color-1 (float ,r 0f0) (float ,g 0f0) (float ,b 0f0))))
 
-;; The primary colors, constant across all platforms
-(define-primary-color +red+     1 0 0)
-(define-primary-color +green+   0 1 0)
-(define-primary-color +blue+    0 0 1)
-(define-primary-color +cyan+    0 1 1)
-(define-primary-color +magenta+ 1 0 1)
-(define-primary-color +yellow+  1 1 0)
+(eval-when (:compile-toplevel)
+
+  ;; The primary colors, constant across all platforms
+  (define-primary-color +red+     1 0 0)
+  (define-primary-color +green+   0 1 0)
+  (define-primary-color +blue+    0 0 1)
+  (define-primary-color +cyan+    0 1 1)
+  (define-primary-color +magenta+ 1 0 1)
+  (define-primary-color +yellow+  1 1 0))
 
 
 (defvar *default-named-color-table*
@@ -561,7 +564,9 @@ then restart your application.")
     (with-slots (design1 design2) design
       (format stream "~A and ~A" design1 design2))))
 
-(defconstant +flipping-ink+ (make-flipping-ink-1 +foreground-ink+ +background-ink+))
+(eval-when (:compile-toplevel)
+  (defconstant +flipping-ink+
+    (make-flipping-ink-1 +foreground-ink+ +background-ink+)))
 
 (defmethod make-flipping-ink (design1 design2)
   (cond ((eq design1 design2)

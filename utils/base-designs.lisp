@@ -167,7 +167,8 @@
 
 ;;; Foreground and background (indirect) inks
 
-(defconstant +foreground-ink+ (make-instance 'design))
+(eval-when (:compile-toplevel)
+  (defconstant +foreground-ink+ (make-instance 'design)))
 
 (defmethod make-load-form ((design (eql (symbol-value '+foreground-ink+)))
 			   #-aclpc &optional #-aclpc environment)
@@ -175,8 +176,8 @@
   #-aclpc '+foreground-ink+
   #+aclpc '(symbol-value '+foreground-ink+))
 
-
-(defconstant +background-ink+ (make-instance 'design))
+(eval-when (:compile-toplevel)
+  (defconstant +background-ink+ (make-instance 'design)))
 
 (defmethod make-load-form ((design (eql (symbol-value '+background-ink+)))
 			   #-aclpc &optional #-aclpc environment)

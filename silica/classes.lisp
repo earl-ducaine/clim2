@@ -63,8 +63,15 @@
 
 ;;;; NOTE: ics-target-case used in defclass forms causes source file
 ;;;; recording warnings.
+#-allegro
+(defun mapping-table-initform ()
+  (make-hash-table :test #'equal))
 
-#-(or aclpc acl86win32) 
+#-allegro
+(defun mapping-cache-initform ()
+  (cons nil nil))
+
+#+allegro
 (defun mapping-table-initform ()
   (excl:ics-target-case
    (:+ics (let ((v (make-array 4 :adjustable t)))
@@ -74,7 +81,7 @@
 	    v))
    (:-ics (make-hash-table :test #'equal))))
 
-#-(or aclpc acl86win32) 
+#+allegro
 (defun mapping-cache-initform ()
   (excl:ics-target-case
    (:+ics (let ((v (make-array 4 :adjustable t)))
