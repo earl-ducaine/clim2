@@ -48,8 +48,7 @@
 (defclass sheet-single-child-mixin (sheet-parent-mixin)
     ((children :initform nil :accessor sheet-children)))
 
-#-(or aclpc acl86win32)
-(define-dynamic-extent-args map-over-sheets (function sheet)
+#+allegro (define-dynamic-extent-args map-over-sheets (function sheet)
   function)
 
 (defun map-over-sheets (function sheet)
@@ -221,7 +220,7 @@
           (sheet-children sheet)))))
 
 (defgeneric map-over-sheets-containing-position (function sheet x y)
-  (declare (dynamic-extent function)))
+  #+allegro (declare (dynamic-extent function)))
 (defmethod map-over-sheets-containing-position (function (sheet basic-sheet) x y)
   (declare (dynamic-extent function))
   (dolist (child (sheet-children sheet))
@@ -232,7 +231,7 @@
       (funcall function child))))
 
 (defgeneric map-over-sheets-overlapping-region (function sheet region)
-  (declare (dynamic-extent function)))
+  #+allegro (declare (dynamic-extent function)))
 (defmethod map-over-sheets-overlapping-region (function (sheet basic-sheet) region)
   (declare (dynamic-extent function))
   (if (or (null region)                                ;--- kludge

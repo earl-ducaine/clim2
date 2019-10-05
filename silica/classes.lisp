@@ -238,20 +238,16 @@
 (define-event-class focus-in-event (focus-event) ())
 (define-event-class focus-out-event (focus-event) ())
 
-#+(or aclpc acl86win32)
-(define-event-class window-change-event (pointer-button-event) ;was window-event
-  ((mswin-control :reader event-mswin-control :initarg :mswin-control)))
-#+(or aclpc acl86win32)
-(define-event-class window-close-event (window-event) ())
 
 ;;; Values used in event objects
+
 
 (defconstant +pointer-left-button+   (ash 1 8))
 (defconstant +pointer-middle-button+ (ash 1 9))
 (defconstant +pointer-right-button+  (ash 1 10))
 
 ;; The order of this must match the values above
-(defconstant *pointer-buttons* '#(:left :middle :right))
+(defparameter *pointer-buttons* '#(:left :middle :right))
 
 (deftype button-name () '(member :left :middle :right))
 
@@ -267,7 +263,7 @@
 (defconstant +double-key+  (ash 1 5))
 
 ;; The order of this must match the values above
-(defconstant *modifier-keys* '#(:shift :control :meta :super :hyper :double))
+(defparameter *modifier-keys* '#(:shift :control :meta :super :hyper :double))
 
 (deftype shift-keysym   () '(member :left-shift :right-shift))
 (deftype double-keysym  () '(member :left-double :right-double))

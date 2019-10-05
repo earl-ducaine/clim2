@@ -220,5 +220,6 @@
                options))))
 
 (defmethod make-pane-arglist ((framem standard-frame-manager) type &rest options)
-  (declare (ignore type) (non-dynamic-extent options))
+  (declare (ignore type)
+	   #+allegro (non-dynamic-extent options))
   options)

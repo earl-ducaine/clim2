@@ -701,16 +701,12 @@
   ;; Gosh, this macro is bad style, and violates the MOP.
   ;; Piling warts upon warts, we have to force finalization at
   ;; macroexpand time... - smh 18may93
-  (#+allegro clos:finalize-inheritance 
-   #+aclpc acl:finalize-inheritance
-   #-(or allegro aclpc) cl:finalize-inheritance
+  (clos:finalize-inheritance 
    (find-class event-class)) ;smh 18may93
-  (let* ((slots #+aclpc  (acl:class-slots (find-class event-class))
-                #-(or CCL-2 aclpc) (clos:class-slots (find-class event-class))
-                #+CCL-2 (ccl:class-slots (find-class event-class)))
-         (slot-names #+aclpc (mapcar #'acl:slot-definition-name slots)
-                     #-(or CCL-2 aclpc) (mapcar #'clos:slot-definition-name slots)
-                     #+CCL-2 (mapcar #'ccl:slot-definition-name slots))
+  (let* ((slots 
+          (clos:class-slots (find-class event-class))
+          )
+         (slot-names (mapcar #'clos:slot-definition-name slots))
          (resource-name (fintern "*~A-~A*" event-class 'resource)))
     `(progn
        (defvar ,resource-name nil)

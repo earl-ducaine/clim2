@@ -585,17 +585,17 @@ toggle button base. This way they can share the draw code.
             (center-y (floor original-height 2))
             (intermediate-array
               (make-array (list original-height new-width)
-                          :element-type `(unsigned-byte ,(integer-length (1- (length designs)))) 
+                          :element-type integer ;; `(unsigned-byte ,(integer-length (1- (length designs)))) 
                           :initial-element 0))
             (final-array 
               (make-array (list new-height new-width) 
-                          :element-type `(unsigned-byte ,(integer-length (1- (length designs))))
+                          :element-type integer ;; `(unsigned-byte ,(integer-length (1- (length designs))))
                           :initial-element 0)))
         (loop for x from 0 to center-x
               do (loop for y from 0 to (1- original-height)
                        do (setf (aref intermediate-array y x) (aref original-array y x))))
         (loop for x from (1- new-width) downto (- new-width center-x)
-              for old-x from (1- original-width) by -1
+              for old-x from (1- original-width) by 1
               do (loop for y from 0 to (1- original-height)
                        do (setf (aref intermediate-array y x) (aref original-array y old-x))))
         (loop for x from (1+ center-x) to (- new-width center-x 1)
@@ -607,7 +607,7 @@ toggle button base. This way they can share the draw code.
               do (loop for x from 0 to (1- new-width)
                        do (setf (aref final-array y x) (aref intermediate-array y x))))
         (loop for y from (1- new-height) downto (- new-height center-y)
-              for old-y from (1- original-height) by -1
+              for old-y from (1- original-height) by 1
               do (loop for x from 0 to (1- new-width)
                        do (setf (aref final-array y x) (aref intermediate-array old-y x))))
         (loop for y from (1+ center-y) to (- new-height center-y 1)

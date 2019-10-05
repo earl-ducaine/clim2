@@ -174,13 +174,13 @@
 ;; Returns the coordinates of sheet's mirror in the coordinates of the
 ;; parent of the mirror
 (defgeneric mirror-region* (port sheet)
-  #-aclpc (declare (values left top right bottom)))
+  #+allegro (declare (values left top right bottom)))
 
 ;; Returns the coordinates of sheet's mirror in the coordinates of the
 ;; mirror itself.  That is, it will return 0,0,WIDTH,HEIGHT for most
 ;; known window systems
 (defgeneric mirror-inside-region* (port sheet)
-  (declare (values left top right bottom)))
+  #+allegro (declare (values left top right bottom)))
 
 (defgeneric mirror-native-edges* (port sheet))
 (defgeneric mirror-inside-edges* (port sheet))
@@ -212,7 +212,6 @@
 	 (sheet-mirrored-ancestor
 	   (sheet-parent sheet)))))
 
-#-acl86win32
 (defun-inline mirror->sheet (port mirror)
   (gethash mirror (port-mirror->sheet-table port)))
 
