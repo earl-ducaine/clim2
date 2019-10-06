@@ -468,7 +468,8 @@
 (defun presentation-type-of (object)
   (dolist (class (find-class-precedence-list (class-of object)) 'expression)
     (let ((name (class-proper-name class)))
-      (unless (eq name 't)        ;prefer EXPRESSION over T
+      ;; prefer EXPRESSION over T
+      (unless (eq name 't)        
         (when (or (acceptable-presentation-type-class class)
                   (and (symbolp name)
                        (find-presentation-type-class name nil)

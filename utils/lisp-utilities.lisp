@@ -943,7 +943,7 @@
 	  (vals '#:vals))
       `(define-compiler-macro ,name (&rest ,arglist)
 	 (destructuring-bind ,lambda-list ,arglist
-	   ,@(lambda-vars lambda-list)
+	   ;;,@(lambda-vars lambda-list)
 	   (let ((,vars nil)
 		 (,vals nil))
 	     (mapc #'(lambda (x y)

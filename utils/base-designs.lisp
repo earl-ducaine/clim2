@@ -219,7 +219,7 @@
 ;;; Patterns
 
 (defclass pattern (design)
-    ((array   :type (array * (* *)) :initarg :array
+    ((array    :initarg :array
               :reader pattern-array)
      (designs :type vector            :initarg :designs 
               :reader pattern-designs)))

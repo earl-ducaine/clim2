@@ -269,16 +269,17 @@
 ;;;; Presentation Type Classes
 
 ;;; The metaclass for classes created by DEFINE-PRESENTATION-TYPE.
-;;; They have their own metaclass just for CLASS-PRESENTATION-TYPE-NAME,
-;;; ACCEPTABLE-PRESENTATION-TYPE-CLASS, and PRESENTATION-TYPE-CLASS-P.
-(defclass presentation-type-class (standard-class #+Minima-Developer standard-object) ())
+;;; They have their own metaclass just for
+;;; CLASS-PRESENTATION-TYPE-NAME, ACCEPTABLE-PRESENTATION-TYPE-CLASS,
+;;; and PRESENTATION-TYPE-CLASS-P.
+(defclass presentation-type-class (standard-class) ())
 
-;;; JonL says that the latest CLOS spec says that you aren't allowed to mix
-;;; objects of different metaclasses unless there is a VALIDATE-SUPERTYPE
-;;; method that says that you can.
-#+Lucid
-(defmethod clos-system::validate-superclass
-           ((class presentation-type-class) (meta standard-class))
+;;; JonL says that the latest CLOS spec says that you aren't allowed
+;;; to mix objects of different metaclasses unless there is a
+;;; VALIDATE-SUPERTYPE method that says that you can.
+#-Allegro
+(defmethod clos:validate-superclass
+    ((class presentation-type-class) (meta standard-class))
   t)
 
 #+Symbolics
@@ -314,11 +315,11 @@
      ',(class-presentation-type-name object #+Symbolics 'compile-file)
      ',(presentation-type-parameters object)
      ',(presentation-type-options object)
-     ',(let ((superclasses (class-direct-superclasses object)))
+     ',(let ((superclasses (clos:class-direct-superclasses object)))
          (if (cdr superclasses)
              (mapcar #'(lambda (class)
                          (class-presentation-type-name class #+Symbolics 'compile-file))
-                     (class-direct-superclasses object))
+                     (clos:class-direct-superclasses object))
              ;; Use an atom instead of a one-element list to work around a Lucid bug
              ;; where it blows up if anything here is a list that gets consed freshly
              ;; each time make-load-form is called, because make-load-form gets called
@@ -419,12 +420,9 @@
   ;; Do this to ensure that the class is finalized.  This prevents us
   ;; from consing the CPL over and over again in degenerate cases that
   ;; can come up with structure classes
-  #+Symbolics (find-class-prototype class)
   ;; Finalization is necessary according to AMOP. -smh 18may93
-  (unless (#-aclpc clos:class-finalized-p
-           #+aclpc acl:class-finalized-p class)
-    (#-aclpc clos:finalize-inheritance
-     #+aclpc acl:finalize-inheritance class))
+  (unless (clos:class-finalized-p class)
+    (clos:finalize-inheritance class))
   (clos:class-precedence-list class))
 
 ;;; Hide the long name when printing these
@@ -688,7 +686,6 @@
               "T, NIL, or the name of another presentation type")
   (check-type description (or string null))
   (check-type parameters-are-types boolean)
-
   (with-warnings-for-definition name define-presentation-type
     (let* ((parameters-var '#:parameters)
            (options-var '#:options)
@@ -700,24 +697,21 @@
            (direct-superclasses (and class
                                      (mapcar #'(lambda (class)
                                                  (class-proper-name class environment))
-                                             (class-direct-superclasses class))))
+                                             (clos:class-direct-superclasses class))))
            ;; Default the supertype if unsupplied or nil
            ;; This assumes consistency of the compile-time and load-time environments.  Okay?
            (inherit-from (cond (inherit-from)
                                ((null class) `'standard-object)
                                ((cdr direct-superclasses) `'(and ,@direct-superclasses))
                                (t `',(first direct-superclasses)))))
-
       ;; Default the :description option
       (unless description
         (setq description (substitute #\space #\- (string-downcase
                                                     (if (symbolp name) name
                                                         (class-name name))))))
-
       ;; Convert :inherit-from into what we need to inherit methods and map over supertypes
       (multiple-value-bind (direct-supertypes parameter-massagers options-massagers)
           (analyze-inherit-from inherit-from parameters-ll options-ll)
-
         ;; Make sure we have a class adequate to use at macro expansion time.
         ;; It has to have the right clos:class-precedence-list, as well as serving
         ;; as a key for the second position of *presentation-type-being-defined*.
@@ -736,12 +730,10 @@
                                                 parameters-are-types
                                                 parameter-massagers options-massagers
                                                 environment)))
-
         ;; Establish the information needed at macro expansion time
         (let ((*presentation-type-being-defined*
                 (list name class parameters options
                       direct-supertypes parameter-massagers options-massagers)))
-
           ;; Generate the form that stores all the information and defines the
           ;; automatically-defined presentation methods
           `(progn
@@ -776,24 +768,18 @@
                                  parameters-are-types
                                  parameter-massagers options-massagers
                                  &optional environment)
-  (when (or (eq direct-supertypes 't)                ;In CLOS there's an intervening class
-            (null direct-supertypes))                ;If the :inherit-from was erroneous
-    (unless (eq name 't)                        ;Don't create a bootstrapping problem
+  ;; In CLOS there's an intervening class
+  (when (or (eq direct-supertypes 't)
+	    ;; If the :inherit-from was erroneous
+            (null direct-supertypes))                
+    ;; Don't create a bootstrapping problem
+    (unless (eq name 't)                        
       (typecase (find-class-that-works name nil environment)
-        #+(or Symbolics LispWorks)                ;Symbolics CLOS, that is
-        (clos:structure-class
-          (setq direct-supertypes 'clos:structure-object))
         #+allegro
         (structure-class
-          (setq direct-supertypes 'common-lisp:structure-object))
-        #+CCL-2
-        (structure-class
-          (setq direct-supertypes 'structure-object))
-        #+aclpc
-        (cl:structure-class
-          (setq direct-supertypes 'cl:structure-object))
+         (setq direct-supertypes 'common-lisp:structure-object))
         (t
-          (setq direct-supertypes 'standard-object)))))
+         (setq direct-supertypes 'standard-object)))))
   (with-warnings-for-definition name define-presentation-type
     (let* ((supertypes-list (if (listp direct-supertypes)
                                 direct-supertypes
@@ -801,24 +787,24 @@
            (direct-superclasses (mapcar #'(lambda (name)
                                             (find-presentation-type-class name t environment))
                                         supertypes-list))
-           old-inheritance new-inheritance
+           old-inheritance
+	   new-inheritance
            (clos-class (find-class-that-works name nil environment))
            (class (find-presentation-type-class name nil environment))
            #-CLIM-extends-CLOS
            (old-direct-superclasses (if class
-                                        (class-direct-superclasses class)
+                                        (clos:class-direct-superclasses class)
                                         direct-superclasses))
            #+(or CCL-2 aclpc)
            (registered-class-name
-             (let ((keyword-package (find-package :keyword))
-                   (*package* (find-package :lisp)))
-               (intern (lisp:format nil "~A ~S" 'ptype name) keyword-package)))
+            (let ((keyword-package (find-package :keyword))
+                  (*package* (find-package :lisp)))
+              (intern (lisp:format nil "~A ~S" 'ptype name) keyword-package)))
            #+aclntignore
            (registered-class-name
-             (let ((ptype-package (find-package :registered-presentation-classes))
-                   (*package* (find-package :lisp)))
-               (intern (lisp:format nil "~A ~S" 'ptype name) ptype-package))))
-
+            (let ((ptype-package (find-package :registered-presentation-classes))
+                  (*package* (find-package :lisp)))
+              (intern (lisp:format nil "~A ~S" 'ptype name) ptype-package))))
       ;; If both a regular class and a presentation type class exist,
       ;; get rid of the presentation type class, with a warning
       (when (and (not (compile-file-environment-p environment))
@@ -831,7 +817,6 @@
               name clos-class)
         (remhash name *presentation-type-class-table*)
         (setq class clos-class))
-
       ;; Create a presentation-type-class if one does not already exist
       (cond ((not class)
              (dolist (superclass direct-superclasses)
@@ -856,35 +841,28 @@
                           (structure-class 'defstruct))
                         name)))
              (let ((class-name `(presentation-type ,name)))
-               (setq class
-                     #-Lucid
-                     (make-instance 'presentation-type-class
+	       (format t "(make-instance 'presentation-type-class
                         :direct-superclasses direct-superclasses
-                        ;; Symbolics CLOS, that is
-                        #+(or Genera Cloe-Runtime) 'clos-internals::name
-                        #+(or Genera Cloe-Runtime) class-name
-                        #+(or aclpc CCL-2) :name
-                        #+CCL-2 class-name
-                        #+aclpc registered-class-name
-                        #-(or PCL aclpc CCL-2 allegro) :slots
-                        #+(or PCL aclpc CCL-2 allegro) :direct-slots
-                        nil)
-                     #+Lucid (make-instance 'presentation-type-class
-                                     :direct-superclasses direct-superclasses
-                                     :name class-name))
+                        :direct-slots nil):~% ~s~%" `(make-instance 'presentation-type-class
+								    :direct-superclasses ,direct-superclasses
+								    :direct-slots nil))
+               (setq class
+                     (make-instance 'presentation-type-class
+				    :direct-superclasses direct-superclasses
+				    :direct-slots nil))
                ;; Workaround for apparent MCL bug that otherwise causes
                ;; very bad things to happen
                #+CCL-2 (setf (slot-value class 'ccl::slots) (cons nil (vector)))
                ;; If the class name couldn't be set while making the class, set it now
                #-(or Genera Cloe-Runtime Lucid aclpc CCL-2) (setf (class-name class) class-name)))
-            ((not (or (equal (class-direct-superclasses class) direct-superclasses)
+            ((not (or (equal (clos:class-direct-superclasses class) direct-superclasses)
                       ;; The above equal would suffice if it were not for the fact that when
                       ;; a CLOS class in the compile-file environment has a superclass in the
                       ;; runtime environment, CLOS uses a forward-referenced-class instead
                       ;; of using the run-time class
                       (every #'(lambda (class type)
                                  (eq (class-proper-name class environment) type))
-                             (class-direct-superclasses class) supertypes-list)
+                             (clos:class-direct-superclasses class) supertypes-list)
                       (presentation-type-class-p class)))
              ;; Inheritance must be consistent between CLOS and CLIM classes,
              ;; but only when CLOS and CLIM use the same class object.
@@ -895,30 +873,27 @@
                    name supertypes-list class
                    (mapcar #'(lambda (class)
                                (class-proper-name class environment))
-                           (class-direct-superclasses class)))))
-
-      ;; This used to be done only in the case where we were creating a class
-      ;; "de novo".  However, CCL-2 currently doesn't record anything about
-      ;; DEFCLASS at compile time, so we may write the new methods for this
-      ;; presentation class on this "registered" name instead of on the
-      ;; official class name.  The following line hooks up the class and the
-      ;; registered name at load time.  -- rsl & York, 4 June 1991
+                           (clos:class-direct-superclasses class)))))
+      ;; This used to be done only in the case where we were creating
+      ;; a class "de novo".  However, CCL-2 currently doesn't record
+      ;; anything about DEFCLASS at compile time, so we may write the
+      ;; new methods for this presentation class on this "registered"
+      ;; name instead of on the official class name.  The following
+      ;; line hooks up the class and the registered name at load time.
+      ;; -- rsl & York, 4 June 1991
       #+(or CCL-2 aclpc) (setf (gethash class *presentation-class-type-table*) registered-class-name
-                    ;;--- Should the following be done at compile time?  It's unclear.
-                    (find-class registered-class-name) class)
+			       ;;--- Should the following be done at compile time?  It's unclear.
+			       (find-class registered-class-name) class)
       #+aclpc (setf (gethash class *presentation-class-name-table*)
                     name)
-
       ;; Always put the class into the table, even if FIND-CLASS could find it, for better
       ;; virtual memory locality in systems where FIND-CLASS uses the property list.
       (when (symbolp name)
         (if (compile-file-environment-p environment)
             (setf (compile-time-property name 'presentation-type-class) class)
             (setf (gethash name *presentation-type-class-table*) class)))
-
       (setq old-inheritance (gethash class *presentation-type-inheritance-table*)
             new-inheritance (list direct-supertypes parameter-massagers options-massagers))
-
       ;; Store the information about the presentation type into the tables
       (cond ((compile-file-environment-p environment)
              (setf (compile-time-property class 'presentation-type-parameters) parameters))
@@ -953,35 +928,40 @@
       (if (compile-file-environment-p environment)
           (setf (compile-time-property class 'presentation-type-inheritance) new-inheritance)
           (setf (gethash class *presentation-type-inheritance-table*) new-inheritance))
-
       ;; If it used to be an abbreviation, undefine the abbreviation
       (cond ((compile-file-environment-p environment)
              (setf (compile-time-property name 'presentation-type-abbreviation) nil))
             (t
              #+Genera (sys:fundefine `(presentation-type-abbreviation ,name))
              #-Genera (remhash name *presentation-type-abbreviation-table*)))
-
-      ;; If class already existed, make sure its inheritance is up to date.
-      ;; This cannot be done until after the information is stored into the tables,
-      ;; since this will recompute method combination, which accesses the tables.
-      ;; This must be done even if class-direct-superclasses equals
-      ;; direct-superclasses, since if there is both a defclass and a
-      ;; define-presentation-type, when changing superclasses the defclass
-      ;; will be redefined first, then when the define-presentation-type
-      ;; is redefined, we need to make sure that methods are recombined based
-      ;; on the new information in *presentation-type-inheritance-table*.
-      ;; If a CLOS implementation optimizes out recombining methods when
-      ;; reinitialize-instance doesn't appear to be changing anything, it will lose.
-      ;; If we don't do method combination based on the presentation type class inheritance
-      ;; tables, and the direct superclasses haven't changed, then don't call
-      ;; reinitialize-instance.  This gets around a bug in some CLOS implementations.
+      ;; If class already existed, make sure its inheritance is up to
+      ;; date.  This cannot be done until after the information is
+      ;; stored into the tables, since this will recompute method
+      ;; combination, which accesses the tables. This must be done
+      ;; even if class-direct-superclasses equals direct-superclasses,
+      ;; since if there is both a defclass and a
+      ;; define-presentation-type, when changing superclasses the
+      ;; defclass will be redefined first, then when the
+      ;; define-presentation-type is redefined, we need to make sure
+      ;; that methods are recombined based on the new information in
+      ;; *presentation-type-inheritance-table*.  If a CLOS
+      ;; implementation optimizes out recombining methods when
+      ;; reinitialize-instance doesn't appear to be changing anything,
+      ;; it will lose. If we don't do method combination based on the
+      ;; presentation type class inheritance tables, and the direct
+      ;; superclasses haven't changed, then don't call
+      ;; reinitialize-instance. This gets around a bug in some CLOS
+      ;; implementations.
       (unless (compile-file-environment-p environment)
         (unless (equal new-inheritance old-inheritance)
-          (unless #+CLIM-extends-CLOS nil        ;always recompute method combination
-                  #-CLIM-extends-CLOS                ;if not massaging the parameters/options during method inheritance
+	  ;; always recompute method combination
+          (unless #+CLIM-extends-CLOS nil        
+		  ;; if not massaging the parameters/options during method inheritance
+                  #-CLIM-extends-CLOS                
                   (equal direct-superclasses old-direct-superclasses)
-            (reinitialize-instance class :direct-superclasses direct-superclasses))))
-
+		  (format t "reinitialize-instance: ~%~s~%"
+			  `(reinitialize-instance ,class :direct-superclasses ,direct-superclasses))
+		  (reinitialize-instance class :direct-superclasses direct-superclasses))))
       class)))
 
 ;;; Called by MAKE-LOAD-FORM forms
@@ -1014,13 +994,11 @@
        (name class function-var parameters-var options-var type-var
         &optional environment)
   (let ((superclasses
-          #-(or aclpc allegro) (cdr (clos:class-precedence-list class))
-          #+aclpc
-          (progn
-            (unless (acl:class-finalized-p class)
-              (acl:finalize-inheritance class))
-            (cdr (clos:class-precedence-list class)))
-          #+allegro ;; Work around bug in CLOS compilation environments...
+         #-allegro (progn (unless (clos:class-finalized-p class)
+			    (clos:finalize-inheritance class))
+			  (cdr (clos:class-precedence-list class)))
+	 ;; Work around bug in CLOS compilation environments...
+          #+allegro 
           (multiple-value-bind (no-errorp result)
               (excl:errorset (progn
                                ;; Finalization is necessary according to AMOP. -smh 18may93
@@ -1031,7 +1009,6 @@
             (if no-errorp
                 result
                 (return-from generate-map-over-presentation-type-supertypes-method-if-needed)))))
-    #+Minima (setq superclasses (elide-nonessential-superclasses superclasses))
     (multiple-value-bind (bindings alist)
         (generate-type-massagers class superclasses parameters-var options-var t environment)
       (unless (every #'(lambda (class)
@@ -1122,7 +1099,7 @@
     (labels ((map-over-superclasses (function class &rest trail)
                (declare (dynamic-extent trail))
                (funcall function class trail)
-               (dolist (superclass (class-direct-superclasses class))
+               (dolist (superclass (clos:class-direct-superclasses class))
                  (apply #'map-over-superclasses function superclass class trail)))
              (note-path (class trail)
                (unless (assoc class paths)

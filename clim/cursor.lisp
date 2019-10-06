@@ -51,9 +51,10 @@
     ;; cares?? --CIM
     (values x y (+ x width) (+ y width))))
 
-(defconstant cursor_active (byte 1 0))
-(defconstant cursor_state  (byte 1 1))
-(defconstant cursor_focus  (byte 1 2))
+(eval-when (:compile-toplevel)
+  (defconstant cursor_active (byte 1 0))
+  (defconstant cursor_state  (byte 1 1))
+  (defconstant cursor_focus  (byte 1 2)))
 
 (defun decode-cursor-flags (flags)
   #+Genera (declare (values active state focus))
