@@ -55,7 +55,7 @@
                    (not (member keysym *printable-keysyms*))
                  (logtest modifier-state
                           (make-modifier-state :control :meta :super :hyper)))))))
-    (declare (dynamic-extent #'add-aarray-entry #'bucky-char-p))
+    #+allegro (declare (dynamic-extent #'add-aarray-entry #'bucky-char-p))
     (cond ((atom gestures)
            (unless (bucky-char-p gestures)
              (warn "~S does not correspond to non-printing gesture. ~
@@ -167,9 +167,9 @@ This may confused the input editor" gestures))
 	   (excl:ics-target-case
             (:+ics (eq command-mode *kana-input-editor-command-aarray*)))
            #-allegro nil
-           (setq last-command-type 'character)
-	   (excl:ics-target-case
-            (:+ics (kana-process-gesture istream gesture type))))
+           #+allegro (setq last-command-type 'character)
+	   #+allegro (excl:ics-target-case
+		      (:+ics (kana-process-gesture istream gesture type))))
           ((eq command-state command-mode)
            (setq last-command-type 'character)
            (values gesture type))

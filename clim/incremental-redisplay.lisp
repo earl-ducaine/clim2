@@ -126,7 +126,7 @@
 ;; FIND-CHILD-OUTPUT-RECORD.  FIND-CHILD-OUTPUT-RECORD is the exported
 ;; interface, and is defined in the protocol.
 (defun find-child-output-record-1 (record record-type &rest initargs)
-  (declare (dynamic-extent initargs))
+  #+allegro (declare (dynamic-extent initargs))
    (apply #'find-child-output-record
           record
           (and (not (output-record-contents-ok record))
@@ -141,7 +141,7 @@
          (eq (output-record-generation-tick record) *generation-tick*))))
 
 (defun find-cached-output-record-1 (record record-type &rest initargs)
-  (declare (dynamic-extent initargs))
+  #+allegro (declare (dynamic-extent initargs))
    (apply #'find-cached-output-record
           record
           (and (not (output-record-contents-ok record))
@@ -155,7 +155,7 @@
            ;; that are strings, and one of the ID tests is STRING-EQUAL?
            (and (eq (class-of item1) (class-of item2))
                 (funcall test item1 item2))))
-    (declare (dynamic-extent #'robust-test))
+    #+allegro (declare (dynamic-extent #'robust-test))
     (if test
         (find item sequence :key key :test #'robust-test)
         (find item sequence :key key))))
@@ -163,7 +163,7 @@
 (defmethod find-child-output-record
            ((record output-record-mixin) use-old-children record-type
             &rest initargs &key unique-id id-test &allow-other-keys)
-  (declare (dynamic-extent initargs))
+  #+allegro (declare (dynamic-extent initargs))
   ;; Other types can write their own FIND-CHILD-OUTPUT-RECORD.  This is 
   ;; the default, stupid one.
   (flet ((do-match (candidate)
@@ -212,7 +212,7 @@
                    (no-unique-id (candidate)
                      (when (do-match candidate)
                        (return-from find-one candidate))))
-              (declare (dynamic-extent #'unique-id-test #'unique-id-no-id-test #'no-unique-id))
+              #+allegro (declare (dynamic-extent #'unique-id-test #'unique-id-no-id-test #'no-unique-id))
               (map-over-output-records 
                 (if unique-id
                     (if id-test #'unique-id-test #'unique-id-no-id-test)
@@ -279,7 +279,7 @@
                                         (and (= delta-x our-delta-x)
                                              (= delta-y our-delta-y))))))
                    (return-from recompute-contents-ok nil))))
-          (declare (dynamic-extent #'recompute))
+          #+allegro (declare (dynamic-extent #'recompute))
           (map-over-output-records #'recompute record))
         ;; If we reached here, then the contents are ok, but they are shifted.
         ;; Make sure that bounding rectangle of the record agrees.
@@ -353,7 +353,7 @@
                            (declare (ignore parent))
                            (with-output-recording-options (stream :draw nil) 
                              (compute-new-output-records record stream))))
-                    (declare (dynamic-extent #'redisplay-new-output-records))
+                    #+allegro (declare (dynamic-extent #'redisplay-new-output-records))
                     (with-output-record-1 #'redisplay-new-output-records
                                           stream parent sup-x sup-y))))))))
       (multiple-value-bind (erases moves draws erase-overlapping move-overlapping)
@@ -496,7 +496,7 @@
                          (bounding-rectangle-shift-position
                            region x-offset y-offset))
                    draws)))
-      (declare (dynamic-extent #'erase #'move #'draw))
+      #+allegro (declare (dynamic-extent #'erase #'move #'draw))
       (with-slots (old-bounding-rectangle contents-ok) record
         (cond (contents-ok
                ;; just check position, we know bounding-rect is ok if contents is ok.
@@ -536,7 +536,7 @@
                                         (nconc erase-overlapping nerase-overlapping))
                                   (setq move-overlapping
                                         (nconc move-overlapping nmove-overlapping)))))
-                         (declare (dynamic-extent #'compute-diffs))
+                         #+allegro (declare (dynamic-extent #'compute-diffs))
                          (map-over-output-records #'compute-diffs record))))))))))
     (values erases moves draws erase-overlapping move-overlapping)))
 
@@ -582,7 +582,7 @@
                        (map-over-output-records
                          #'augment-draws record (coordinate 0) (coordinate 0)
                          x-offset y-offset old-x-offset old-y-offset)))))))
-      (declare (dynamic-extent #'augment-draws))
+      #+allegro (declare (dynamic-extent #'augment-draws))
       (augment-draws record x-offset y-offset old-x-offset old-y-offset))
     (values erases moves (nconc (nreverse new-draws) draws)
             erase-overlapping move-overlapping)))
@@ -980,7 +980,7 @@
                                unique-id id-test cache-value cache-test
                                copy-cache-value parent-cache old-output-record
                                &rest args &key all-new &allow-other-keys)
-  #-aclpc (declare (non-dynamic-extent args))
+  #+allegro (declare (non-dynamic-extent args))
   (let* ((current-output-record 
            (or (stream-current-output-record stream)
                (stream-output-history stream)))

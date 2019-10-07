@@ -786,7 +786,7 @@
 
 (defun find-keystroke-item (keystroke command-table
                             &key (test #'keyboard-event-matches-gesture-name-p) (errorp t))
-  (declare (values menu-item command-table))
+  #+allegro (declare (values menu-item command-table))
   (let* ((command-table (find-command-table command-table))
          (entry (block find-entry
                   ;; Do it the hard way so that GESTURE-SPEC-EQL doesn't see NILs
@@ -919,7 +919,7 @@
           (funcall function translator))))))
 
 (defun find-presentation-translator (translator-name command-table &key (errorp t))
-  (declare (values command command-table))
+  #+allegro (declare (values command command-table))
   (when (presentation-translator-p translator-name)
     (setq translator-name (presentation-translator-name translator-name)))
   (do-command-table-inheritance (comtab command-table)
@@ -1178,7 +1178,7 @@
 (defvar *define-command-options* '(:command-table :name :menu :keystroke))
 
 (defun decode-name-and-options (name-and-options &optional command-table-name)
-  (declare (values command-name command-options))
+  #+allegro (declare (values command-name command-options))
   (if (symbolp name-and-options)
       (values name-and-options nil)
     (let ((name (first name-and-options))

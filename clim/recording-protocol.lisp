@@ -325,7 +325,7 @@
 (defgeneric map-over-output-records-overlapping-region
             (function record region
              &optional x-offset y-offset &rest continuation-args)
-  (declare (dynamic-extent function continuation-args)))
+  #+allegro (declare (dynamic-extent function continuation-args)))
 
 ;;; This must map over the children in such a way that, when it maps over
 ;;; overlapping children, the topmost (most recently inserted) child is
@@ -337,7 +337,7 @@
 (defgeneric map-over-output-records-containing-position
             (function record x y
              &optional x-offset y-offset &rest continuation-args)
-  (declare (dynamic-extent function continuation-args)))
+  #+allegro (declare (dynamic-extent function continuation-args)))
 
 ;;; X-offset and Y-offset represent the accumulated offset between the
 ;;; regions's native coordinates and "our" coordinates and must be added

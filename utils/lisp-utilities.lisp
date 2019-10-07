@@ -753,7 +753,7 @@
 
 (defun canonicalize-and-match-lambda-lists (canonical-order user-specified
 					    &optional allow-user-keys)
-  (declare (values lambda-list ignores))
+  #+allegro (declare (values lambda-list ignores))
   (check-type canonical-order list)
   (check-type user-specified list)
   (let* ((new-lambda-list nil)

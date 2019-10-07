@@ -841,39 +841,39 @@
                           (structure-class 'defstruct))
                         name)))
              (let ((class-name `(presentation-type ,name)))
-	       (format t "(make-instance 'presentation-type-class
-                        :direct-superclasses direct-superclasses
-                        :direct-slots nil):~% ~s~%" `(make-instance 'presentation-type-class
-								    :direct-superclasses ,direct-superclasses
-								    :direct-slots nil))
                (setq class
                      (make-instance 'presentation-type-class
 				    :direct-superclasses direct-superclasses
 				    :direct-slots nil))
-               ;; Workaround for apparent MCL bug that otherwise causes
-               ;; very bad things to happen
-               #+CCL-2 (setf (slot-value class 'ccl::slots) (cons nil (vector)))
+               
                ;; If the class name couldn't be set while making the class, set it now
-               #-(or Genera Cloe-Runtime Lucid aclpc CCL-2) (setf (class-name class) class-name)))
-            ((not (or (equal (clos:class-direct-superclasses class) direct-superclasses)
-                      ;; The above equal would suffice if it were not for the fact that when
-                      ;; a CLOS class in the compile-file environment has a superclass in the
-                      ;; runtime environment, CLOS uses a forward-referenced-class instead
-                      ;; of using the run-time class
-                      (every #'(lambda (class type)
-                                 (eq (class-proper-name class environment) type))
-                             (clos:class-direct-superclasses class) supertypes-list)
-                      (presentation-type-class-p class)))
-             ;; Inheritance must be consistent between CLOS and CLIM classes,
-             ;; but only when CLOS and CLIM use the same class object.
-             ;; When using different class objects, e.g. for built-in-classes, the
-             ;; inheritance will necessarily be different since the metaclasses differ.
-             (warn "The direct supertypes of presentation type ~S, ~S,~@
+               #-(or Genera Cloe-Runtime Lucid aclpc CCL-2) (setf (class-name class) class-name)))	    
+            ((not  
+		       (or (equal (clos:class-direct-superclasses class)
+				  direct-superclasses)
+			   ;; The above equal would suffice if it were
+			   ;; not for the fact that when a CLOS class
+			   ;; in the compile-file environment has a
+			   ;; superclass in the runtime environment,
+			   ;; CLOS uses a forward-referenced-class
+			   ;; instead of using the run-time class
+			   (every #'(lambda (class type)
+                                      (eq (class-proper-name class environment) type))
+				  (clos:class-direct-superclasses class) supertypes-list)
+			   (presentation-type-class-p class)))
+	     ;; Inheritance must be consistent between CLOS and CLIM
+	     ;; classes, but only when CLOS and CLIM use the same
+	     ;; class object.  When using different class objects,
+	     ;; e.g. for built-in-classes, the inheritance will
+	     ;; necessarily be different since the metaclasses
+	     ;; differ. Only warn for non-standard classes.
+	     (unless (member (class-name class) '(sequence))
+	       (warn "The direct supertypes of presentation type ~S, ~S,~@
                     do not match the direct superclasses of ~S, ~S."
-                   name supertypes-list class
-                   (mapcar #'(lambda (class)
-                               (class-proper-name class environment))
-                           (clos:class-direct-superclasses class)))))
+		     name supertypes-list class
+		     (mapcar #'(lambda (class)
+				 (class-proper-name class environment))
+			     (clos:class-direct-superclasses class))))))
       ;; This used to be done only in the case where we were creating
       ;; a class "de novo".  However, CCL-2 currently doesn't record
       ;; anything about DEFCLASS at compile time, so we may write the
@@ -881,9 +881,10 @@
       ;; name instead of on the official class name.  The following
       ;; line hooks up the class and the registered name at load time.
       ;; -- rsl & York, 4 June 1991
-      #+(or CCL-2 aclpc) (setf (gethash class *presentation-class-type-table*) registered-class-name
-			       ;;--- Should the following be done at compile time?  It's unclear.
-			       (find-class registered-class-name) class)
+      #+(or CCL-2 aclpc)
+      (setf (gethash class *presentation-class-type-table*) registered-class-name
+	    ;; --- Should the following be done at compile time?  It's unclear.
+	    (find-class registered-class-name) class)
       #+aclpc (setf (gethash class *presentation-class-name-table*)
                     name)
       ;; Always put the class into the table, even if FIND-CLASS could find it, for better
@@ -1350,23 +1351,23 @@
 (defun generate-presentation-type-inheritance-methods
     (name class parameters-var options-var &optional environment)
   (let ((superclasses
-         #-(or allegro aclpc) (cdr (clos:class-precedence-list class))
-         #+aclpc
-          (progn
-            (unless (acl:class-finalized-p class)
-              (acl:finalize-inheritance class))
+         #-allegro
+	  (progn
+            ;; Finalization is necessary according to AMOP. -smh 18may93
+            (unless (clos:class-finalized-p class)
+              (clos:finalize-inheritance class))
             (cdr (clos:class-precedence-list class)))
-         #+allegro ;; Work around bug in CLOS compilation environments...
-         (multiple-value-bind (no-errorp result)
-             (excl:errorset (progn
-                              ;; Finalization is necessary according to AMOP. -smh 18may93
-                              (unless (clos:class-finalized-p class)
-                                (clos:finalize-inheritance class))
-                              (cdr (clos:class-precedence-list class)))
-                            nil)
-           (if no-errorp
-               result
-             (return-from generate-presentation-type-inheritance-methods))))
+          #+allegro ;; Work around bug in CLOS compilation environments...
+          (multiple-value-bind (no-errorp result)
+              (excl:errorset (progn
+                               ;; Finalization is necessary according to AMOP. -smh 18may93
+                               (unless (clos:class-finalized-p class)
+                                 (clos:finalize-inheritance class))
+                               (cdr (clos:class-precedence-list class)))
+                             nil)
+            (if no-errorp
+		result
+		(return-from generate-presentation-type-inheritance-methods))))
         (to-type-name-var '#:to-type-name)
         (from-type-name-var '#:from-type-name))
     #+Minima (setq superclasses (elide-nonessential-superclasses superclasses))
