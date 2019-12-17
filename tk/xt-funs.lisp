@@ -55,20 +55,21 @@
   :arg-checking nil)
 
 (ff-wrapper:def-foreign-call (alisp_xt_app_set_error_handler "XtAppSetErrorHandler")
-    ((x :foreign-address) y)
+    ((x :foreign-address) #-allegro (y :foreign-address) #+allegro y)
   :returning :int
   :call-direct t
   :arg-checking nil)
 
 (ff-wrapper:def-foreign-call (alisp_xt_app_set_warning_handler "XtAppSetWarningHandler")
-    ((x :foreign-address) y)
+    ((x :foreign-address) #-allegro (y :foreign-address) #+allegro y)
   :returning :int
   :call-direct t
   :arg-checking nil)
 
 (ff-wrapper:def-foreign-call (alisp_xt_open_display "XtOpenDisplay")
-    ((a :foreign-address)(b :foreign-address)(c :foreign-address)(d :foreign-address)
-			 (e :foreign-address)(f :int fixnum)(g :foreign-address)(h :foreign-address))
+    ((a :foreign-address)(b :foreign-address)(c :string)(d :string)
+     (e :foreign-address)(f :int fixnum)(g :foreign-address)
+     (h :foreign-address))
   :returning :foreign-address
   :call-direct t
   :arg-checking nil)

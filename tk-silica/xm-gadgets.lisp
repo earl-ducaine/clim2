@@ -838,7 +838,8 @@
     (and m
 	 (let  ((x (tk::xm_text_field_get_selection m)))
 	   (and (not (zerop x))
-		(values (excl:native-to-string x)))))))
+		(values #-allegro (cffi:foreign-string-to-lisp x)
+			#+allegro (excl:native-to-string x)))))))
 
 (defmethod (setf gadget-value) :after
     (nv (gadget motif-text-field) &key invoke-callback)
@@ -865,7 +866,7 @@
 	   (ptr (tk::xm-text-block-rec-ptr text-block))
 	   (text (if (zerop length)
 		     ""
-		   (excl:native-to-string ptr)))
+		   (#+allegro excl:native-to-string #-allegro cffi:foreign-string-to-lisp ptr)))
 	   (start-pos (tk::xm-text-field-callback-struct-start-pos callback-struct))
 	   (end-pos (tk::xm-text-field-callback-struct-end-pos callback-struct)))
       (with-slots (silica::value) sheet
@@ -1000,7 +1001,7 @@
     (and m
 	 (let  ((x (tk::xm_text_get_selection m)))
 	   (and (not (zerop x))
-		(values (excl:native-to-string x)))))))
+		(values (#+allegro excl:native-to-string #-allegro cffi:foreign-string-to-lisp x)))))))
 
 (defmethod silica::set-selection ((tf motif-text-editor) startpos endpos)
   (let ((m (sheet-direct-mirror tf)))
@@ -2315,6 +2316,7 @@
   (let ((sub-menu (tk::get-values m :sub-menu-id)))
     (silica::port-set-pane-foreground port pane sub-menu color)))
 
+#+allegro
 (excl:ics-target-case
 (:+ics
 
@@ -2335,6 +2337,7 @@
 	 (text-style (or text-style
 			 (sheet-text-style port sheet)))
 	 (font-list (text-style-mapping port text-style *all-character-sets*)))
+    #+allegro
     (excl:ics-target-case
      (:+ics (when (gadget-needs-font-set-p sheet)
 	     (setq font-list
@@ -2353,10 +2356,8 @@
   (declare (ignore filename associated-window))
   (error "not yet implemented for UNIX"))
 
-#+(version>= 5 0)
 (in-package :tk)
 
-#+(version>= 5 0)
 (defun reinitialize-silica-callbacks ()
   (xm-silica::setup-mda)
   (setq xm-silica::*file-search-proc-callback-address*

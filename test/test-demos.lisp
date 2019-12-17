@@ -303,6 +303,7 @@
 
 ;; japanese-graphics-editor
 
+#+allegro
 (excl:ics-target-case
 (:+ics
 
@@ -482,7 +483,7 @@
 (defun run-all-demos (&optional (errorp clim-test:*catch-errors-in-tests*))
   (dolist (demo clim-demo::*demos*)
     (flet ((doit ()
-	     (mp::with-timeout (20)
+	     (#+allegro mp::with-timeout #+allegro (20) #-allegro progn
 	       (clim-demo::run-demo demo :force t))))
       (if errorp
 	  (handler-case (doit)

@@ -57,6 +57,11 @@
     (setq *ports* nil))
   (push `reset-ports excl::*restart-actions*))
 
+#-allegro
+(defun reset-ports ()
+    ;;--- Should this do more?
+  (setq *ports* nil))
+
 (defun port-match (port server-path)
   (equal (port-server-path port) server-path))
 

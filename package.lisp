@@ -6,8 +6,11 @@
   (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff)))
 
 (eval-when (eval load compile)
-  ;;(push :use-cffi *features*)
-  )
+  (push :use-cffi *features*))
+
+#-allegro (rename-package
+	   :closer-mop :closer-mop
+	   (cons :clos (package-nicknames :closer-mop)))
 
 (defpackage :ff-wrapper
   (:use cl)
@@ -38,6 +41,7 @@
    register-foreign-callable))
 
 (defpackage :x11
+  #-allegro (:use clim-lisp)
   ;; I don't know if this is OK (can we assume clim-utils?).  In any
   ;; case we want that definition of fintern.
   (:import-from :clim-utils :fintern)
@@ -50,7 +54,7 @@
 	   #:pixmap #:window #:display))
 
 (defpackage :tk
-  (:use :common-lisp)
+  (:use :clim-lisp)
   (:nicknames :xt)
   (:import-from :clim-utils #:fintern #:package-fintern)
   (:import-from :x11 def-c-type def-c-typedef)

@@ -954,7 +954,8 @@
 ;;;; Sequence Presentation Types
 
 (define-presentation-type sequence (element-type)
-  :inherit-from t                        ;enforce CL definition
+  ;; enforce CL definition
+  :inherit-from t                        
   :parameters-are-types t
   :options ((separator #\,)
             (echo-space t)))

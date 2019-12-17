@@ -55,7 +55,7 @@
 ;;     (setup-error-handlers)
 ;;     (fixup-class-entry-points)))
 
-
+#+allegro
 (push 'reinitialize-toolkit excl::*restart-actions*)
 
 ;; #+(and (not (version>= 5 0)) dlfcn)

@@ -962,7 +962,8 @@
                   (equal direct-superclasses old-direct-superclasses)
 		  (format t "reinitialize-instance: ~%~s~%"
 			  `(reinitialize-instance ,class :direct-superclasses ,direct-superclasses))
-		  (reinitialize-instance class :direct-superclasses direct-superclasses))))
+		  (unless (member (class-name class) '(sequence))
+		    (reinitialize-instance class :direct-superclasses direct-superclasses)))))
       class)))
 
 ;;; Called by MAKE-LOAD-FORM forms
@@ -1730,7 +1731,7 @@
 ;;; lexical bindings of the presentation type parameters and options.
 (defmacro define-presentation-method (presentation-function-name &rest body
                                       &environment environment)
-  (declare (arglist presentation-function-name [qualifiers]* specialized-lambda-list &body body))
+  #+allegro (declare (arglist presentation-function-name [qualifiers]* specialized-lambda-list &body body))
   (define-presentation-method-1 presentation-function-name body ':massage environment))
 
 ;;; The next level down from define-presentation-method, this doesn't create

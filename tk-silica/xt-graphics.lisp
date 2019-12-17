@@ -4,47 +4,90 @@
 (in-package :tk-silica)
 
 (defclass ink-gcontext (tk::gcontext)
-  ((last-clip-region-tick :initform nil excl::fixed-index 2)
-   (last-line-style :initform nil excl::fixed-index 3)
-   (shift-tile-origin :initform nil excl::fixed-index 4)
-   (ink-clip-region :initform nil excl::fixed-index 5)))
+  ((last-clip-region-tick :initform nil
+			  #+allegro excl::fixed-index
+			  #+allegro 2)
+   (last-line-style :initform nil
+		    #+allegro excl::fixed-index
+		    #+allegro 3)
+   (shift-tile-origin :initform nil
+		      #+allegro excl::fixed-index
+		      #+allegro 4)
+   (ink-clip-region :initform nil
+		    #+allegro excl::fixed-index
+		    #+allegro 5)))
 
 (defmacro ink-gcontext-last-clip-region-tick (gcontext)
   `(locally (declare (optimize (speed 3) (safety 0)))
-     (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
+     #-allegro (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					'last-clip-region-tick)
+     #+allegro (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					'last-clip-region-tick)))
+
 (defsetf ink-gcontext-last-clip-region-tick (gcontext) (value)
   `(locally (declare (optimize (speed 3) (safety 0)))
+     #-allegro (setf (clos:slot-value-using-class 'ink-gcontext ,gcontext
+						  'last-clip-region-tick)
+		     ,value)
+     #+allegro
      (setf (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					      'last-clip-region-tick)
        ,value)))
 
 (defmacro ink-gcontext-last-line-style (gcontext)
   `(locally (declare (optimize (speed 3) (safety 0)))
+     #-allegro
+     (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					'last-line-style)
+      #+allegro
      (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					'last-line-style)))
+
 (defsetf ink-gcontext-last-line-style (gcontext) (value)
   `(locally (declare (optimize (speed 3) (safety 0)))
-     (setf (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
+     #-allegro (setf (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					      'last-line-style)
+       ,value)
+     #+allegro (setf (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					      'last-line-style)
        ,value)))
 
 (defmacro ink-gcontext-shift-tile-origin (gcontext)
   `(locally (declare (optimize (speed 3) (safety 0)))
+     #-allegro
+     (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					'shift-tile-origin)
+     #+allegro
      (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					'shift-tile-origin)))
+
 (defsetf ink-gcontext-shift-tile-origin (gcontext) (value)
   `(locally (declare (optimize (speed 3) (safety 0)))
+     #-allegro
+     (setf (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					      'shift-tile-origin)
+       ,value)
+     #+allegro
      (setf (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					      'shift-tile-origin)
        ,value)))
 
 (defmacro ink-gcontext-ink-clip-region (gcontext)
   `(locally (declare (optimize (speed 3) (safety 0)))
+     #-allegro
+     (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					'ink-clip-region)
+     #+allegro
      (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					'ink-clip-region)))
+
 (defsetf ink-gcontext-ink-clip-region (gcontext) (value)
   `(locally (declare (optimize (speed 3) (safety 0)))
+     #-allegro
+     (setf (clos:slot-value-using-class 'ink-gcontext ,gcontext
+					      'ink-clip-region)
+	   ,value)
+     #+allegro
      (setf (excl::slot-value-using-class-name 'ink-gcontext ,gcontext
 					      'ink-clip-region)
        ,value)))
@@ -466,7 +509,7 @@
 	   (:round :round)))
 	(when (eq gc-line-style :dash)
 	  (setf (tk::gcontext-dashes gc)
-	    (if (excl::sequencep dashes) dashes *default-dashes*))
+	    (if (typep dashes 'sequence) dashes *default-dashes*))
 	  ;; The following isn't really right, but it's better than nothing.
 	  (setf (tk::gcontext-dash-offset gc) (1- y-origin))))
       (setf (ink-gcontext-last-line-style gc) line-style)))
@@ -677,6 +720,22 @@
 	 (aref (the (simple-array t (*)) vector) index)))
     (t #'aref)))
 
+
+
+(defmacro ansi-with-underlying-simple-vector
+    ((array simple-vector-var displacement-var) &body body)
+  `(#+cmu lisp::with-array-data #+sbcl sb-kernel:with-array-data
+          ((,array ,simple-vector-var :offset-var ,displacement-var) (start) (end))
+          (declare (ignore start end))
+          ,@body))
+
+(defmacro local-with-underlying-simple-vector ((array simple-vector-var displacement-var) &body body)
+  #-allegro `(ansi-with-underlying-simple-vector (,array ,simple-vector-var ,displacement-var)
+	       ,@body)
+  #+allegro `(excl:with-underlying-simple-vector (,array ,simple-vector-var ,displacement-var)
+	       ,@body))
+  
+
 (defun pixmap-from-pattern (pattern medium &optional format)
   (declare (optimize (speed 3) (safety 0)))
   (multiple-value-bind (array designs)
@@ -738,7 +797,7 @@
 			   (or (position +nowhere+ designs)
 			       (position +background-ink+ designs)
 			       0))))
-	      (excl::with-underlying-simple-vector (array vector displacement)
+	      (local-with-underlying-simple-vector (array vector displacement)
 		(let ((reader (get-simple-vector-reader vector))
 		      (i displacement))
 		  (dotimes (h height)
@@ -750,7 +809,7 @@
 		      (incf i)))))
 	      (unless (eq bg 0)
 		(rotatef (svref pixels 0) (svref pixels 1))))
-	  (excl::with-underlying-simple-vector (array vector displacement)
+	  (local-with-underlying-simple-vector (array vector displacement)
 	    (let ((reader (get-simple-vector-reader vector))
 		  (i displacement))
 	      (declare (fixnum i))
@@ -825,7 +884,11 @@
   (error "Drawing with design: ~A not yet implemented" design))
 
 
-
+(defun local-prompt-for-input (symbol object string)
+           (format t "~&~a ~a ~a: " symbol object string)
+           (finish-output)
+           (read nil 'eof nil))
+  
 (defmethod decode-color-in-palette ((color color) (palette xt-palette))
   (let ((color-cache (palette-color-cache palette)))
     (or (gethash color color-cache)
@@ -841,7 +904,8 @@
 		    :report (lambda (s)
 			      (format s "Use another color"))
 		    :interactive (lambda ()
-				   (list (excl::prompt-for-input 'color t
+				   (list (#+allegro excl::prompt-for-input #-allegro local-prompt-for-input
+					  'color t
 				           "Enter another color to use: ")))
 		  (decode-color-in-palette other palette)))
 	    ;;-- support gray-scale here
@@ -941,7 +1005,10 @@
 ;; barf on numbers very close to 32768.
 
 (defmacro valid-point-p (x y)
-  `(and (excl:fixnump ,x) (excl:fixnump ,y)
+  `(and #+allegro (excl:fixnump ,x)
+	#-allegro (typep ,x 'fixnum)
+	#+allegro (excl:fixnump ,y)
+	#-allegro (typep ,y 'fixnum)
 	(< (the fixnum ,x) 32000) (> (the fixnum ,x) -32000)
 	(< (the fixnum ,y) 32000) (> (the fixnum ,y) -32000)))
 
@@ -1548,7 +1615,11 @@
               (setf x (- x left)
                     y (+ y up)))
           (let ((drawable (medium-drawable medium))
-                (font (excl:ics-target-case
+                (font
+		 #-allegro
+		  (text-style-mapping port text-style *all-character-sets*)
+		 #+allegro
+		  (excl:ics-target-case
                         (:-ics (text-style-mapping port text-style
                                                    *all-character-sets*))
                         (:+ics (text-style-font-set port text-style)))))
@@ -1561,6 +1632,12 @@
                          x
                          (- y height))))
                 (if (and towards-x towards-y)
+		    #-allegro
+		    (progn
+                       (setf (tk::gcontext-font gc) (text-style-mapping port text-style nil))
+                       (port-draw-rotated-text port drawable gc x y string start end
+                                               font towards-x towards-y transform-glyphs))
+		    #+allegro
                     (excl:ics-target-case
                       (:+ics
                        (port-draw-rotated-multibyte-text port drawable gc x y string start end
@@ -1570,7 +1647,12 @@
                        (setf (tk::gcontext-font gc) (text-style-mapping port text-style nil))
                        (port-draw-rotated-text port drawable gc x y string start end
                                                font towards-x towards-y transform-glyphs)))
-                    (excl:ics-target-case
+                    #-allegro
+		    (progn
+                       (setf (tk::gcontext-font gc) (text-style-mapping port text-style nil))
+                       (tk::draw-string drawable gc x y string start end))
+		    #+allegro
+		    (excl:ics-target-case
                       (:+ics
                        (tk::draw-multibyte-string drawable font
                                                   gc x y string start end))

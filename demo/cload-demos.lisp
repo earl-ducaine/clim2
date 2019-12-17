@@ -28,18 +28,18 @@
       "custom-records"
       "browser"))
 
-(defun compile-and-load-demos (&key forcep
-				    (directory
-				     (make-pathname
-				      :directory (pathname-directory
-						  #.(truename
-						     excl::*source-pathname*)))))
-  (mapcar #'(lambda (name)
-	      (let ((name (merge-pathnames
-			   directory
-			   name)))
-		(if forcep
-		    (compile-file name)
-		  (excl::compile-file-if-needed name))
-		(load name)))
-	  *demo-files*))
+;; (defun compile-and-load-demos (&key forcep
+;; 				    (directory
+;; 				     (make-pathname
+;; 				      :directory (pathname-directory
+;; 						  #.(truename
+;; 						     excl::*source-pathname*)))))
+;;   (mapcar #'(lambda (name)
+;; 	      (let ((name (merge-pathnames
+;; 			   directory
+;; 			   name)))
+;; 		(if forcep
+;; 		    (compile-file name)
+;; 		  (excl::compile-file-if-needed name))
+;; 		(load name)))
+;; 	  *demo-files*))

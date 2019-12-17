@@ -7,7 +7,6 @@
 ;; def-exported-foreign-synonym-type need to be reimplemented in cffi
 ;; to be made portable.
 
-
 (defparameter *builtin-ctypes*
   '(char unsigned-char short unsigned-short int unsigned-int long unsigned-long
     long-long unsigned-long-long uchar ushort uint ulong llong llong ullong
@@ -44,8 +43,8 @@
 			      (eq (car type) :array))
 			  :pointer
 			  (mapcar (lambda (symbol)
-				    (convert-builtin-ctypes-to-keyword symbol)
-				    type))))
+				    (convert-builtin-ctypes-to-keyword symbol))
+				    type)))
 	(t (convert-builtin-ctypes-to-keyword type)
 	   )))
 
@@ -101,16 +100,16 @@
     (eval
      `(defun (setf ,function-symbol) (value) value))))
 
-(define-setf-expander lastguy (x &environment env)
-   "Set the last element in a list to the given value."
-   (multiple-value-bind (dummies vals newval setter getter)
-       (get-setf-expansion x env)
-     (let ((store (gensym)))
-       (values dummies
-               vals
-               `(,store)
-               `(progn (rplaca (last ,getter) ,store) ,store)
-               `(lastguy ,getter)))))
+;; (define-setf-expander lastguy (x &environment env)
+;;    "Set the last element in a list to the given value."
+;;    (multiple-value-bind (dummies vals newval setter getter)
+;;        (get-setf-expansion x env)
+;;      (let ((store (gensym)))
+;;        (values dummies
+;;                vals
+;;                `(,store)
+;;                `(progn (rplaca (last ,getter) ,store) ,store)
+;;                `(lastguy ,getter)))))
 
 
 
@@ -154,7 +153,6 @@
   (reverse (reduce (lambda (slots slot)
 		     (reformat-and-push-slot name-and-options slots slot))
 		   slots :initial-value '())))
-
 
 (defmacro def-exported-foreign-struct-cffi (name-and-options &rest slots)
   (let ((name (if (listp name-and-options)

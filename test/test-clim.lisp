@@ -171,14 +171,14 @@
 
 (define-frame-test-command com-frame-test-display-dialogs
     ()
-  (mp::with-timeout (3) (select-file *application-frame*))
+  #+allegro (mp::with-timeout (3) (select-file *application-frame*))
   (dolist (style '(:inform :error :question :warning))
-    (mp:with-timeout (3)
+    #+allegro (mp:with-timeout (3)
       (notify-user *application-frame*
 		   "Just say no to sega games"
 		   :title (format nil "The style is ~A" style)
 		   :style style)))
-  (mp:with-timeout (3)
+  #+allegro (mp:with-timeout (3)
     (select-file *application-frame*
 		 :pattern "Makefile*"
 		 :documentation "Find Makefiles"
@@ -312,7 +312,7 @@
   (clim-test:with-test-success-expected ('find-frame-manager-test)
     (let ((fm (find-frame-manager)))
       (with-frame-manager (fm)
-	(let ((*default-server-path*
+	#+allegro (let ((*default-server-path*
 	       `(,(if (excl::featurep :clim-motif)
 		      :motif :openlook)
 		    :display "mysparc10:0")))

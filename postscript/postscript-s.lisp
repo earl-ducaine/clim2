@@ -7,6 +7,27 @@
 
 (in-package :postscript-clim)
 
+
+;; #-allegro
+;; (eval-when (:compile-toplevel :load-toplevel :execute)
+;;   (defmacro def-ps-stubs (functions macros)
+;;     `(progn
+;;        ,@(mapcar #'(lambda (fn)
+;; 		     `(excl::def-autoload-function ,fn "climps.fasl"))
+;; 		 functions)
+;;        ,@(mapcar #'(lambda (macro)
+;; 		     `(excl::def-autoload-macro ,macro "climps.fasl"))
+;; 		 macros))))
+
+;; #-allegro
+;; (def-ps-stubs
+;;     ;;-- We have to do this because its not exported.
+;;     ;;-- if it were we could make the package autoloaded too
+;;     (invoke-with-output-to-postscript-stream)
+;;     (with-output-to-postscript-stream))
+
+
+#+allegro
 (macrolet ((def-ps-stubs (functions macros)
 	       `(progn
 		  ,@(mapcar #'(lambda (fn)

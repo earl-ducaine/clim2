@@ -3,6 +3,7 @@
 
 (in-package :xm-silica)
 
+
 (defclass xt-port (basic-port)
     ((application-shell :reader port-application-shell)
      (display :reader port-display)
@@ -41,7 +42,7 @@
   ':xt)
 
 (defmethod port-name ((port xt-port))
-  (values (excl:native-to-string
+  (values (tk::local-native-to-string
 	   (x11:display-display-name (port-display port)))))
 
 ;; access to port-copy-gc should be within a without-scheduling
@@ -77,12 +78,15 @@
     (when process
       (clim-sys:destroy-process process))
     (setq process
-      (mp:process-run-function
-       (list :name (format nil "CLIM Event Dispatcher for ~A"
-			   (port-server-path port))
-	     :priority 1000)
-       #'port-event-loop port))
-    (setf (getf (mp:process-property-list process) :no-interrupts) t)
+	  #-allegro (bt:make-thread (lamda () (port-event-loop port))
+		     :name (format nil "CLIM Event Dispatcher for ~A"
+				   (port-server-path port)))
+	  #+allegro (mp:process-run-function
+		     (list :name (format nil "CLIM Event Dispatcher for ~A"
+					 (port-server-path port))
+			   :priority 1000)
+		     #'port-event-loop port))
+    #+allegro (setf (getf (mp:process-property-list process) :no-interrupts) t)
     (setf (port-process port) process)
     ;; Find out the modifier->modbit mapping on the display.
     (setup-modifier-key-mapping port)))
@@ -90,8 +94,9 @@
 (defparameter *use-color* t)		; For debugging monochrome
 
 (defvar *unreliable-server-vendors*
-    '("Solbourne Computer, Inc" "Network Computing Devices"
-      "Tektronix"))
+  '("Solbourne Computer, Inc"
+    "Network Computing Devices"
+    "Tektronix"))
 
 (defmethod initialize-instance :after ((port xt-port) &key server-path)
   (setq tk::*x-io-error-hook* #'xt-fatal-error-handler)
@@ -117,7 +122,7 @@
 	(let* ((screen (x11:xdefaultscreenofdisplay display))
 	       (bs-p (not (zerop (x11::screen-backing-store screen))))
 	       (su-p (not (zerop (x11::screen-save-unders screen))))
-	       (vendor (excl:native-to-string (x11::display-vendor display))))
+	       (vendor (tk::local-native-to-string (x11::display-vendor display))))
 	  (if (and bs-p su-p
 		   ;; An amazing crock.  XXX
 		   (notany #'(lambda (x) (search x vendor)) *unreliable-server-vendors*))
@@ -164,8 +169,16 @@
                      (list (nth 3 font*) (nth 4 font*)))))
       (first fonts)))
 
+(defmacro local-with-foreign-string ((foreign-string lisp-string) &body body)
+  #+allegro
+  `(excl:with-native-string (,foreign-string ,lisp-string)
+			    ,@body)
+  #-allegro
+  `(cffi:with-foreign-string (,foreign-string ,lisp-string)
+			    ,@body))
+
 (defun font-name-of-aliased-font (display fontname)
-  (excl:with-native-string (nfn fontname)
+  (local-with-foreign-string (nfn fontname)
     (let ((font (x11:xloadqueryfont display nfn)))
       (unless (zerop font)
         (unwind-protect
@@ -174,13 +187,22 @@
                                   (* i 2 #-64bit 4 #+64bit 8)
                                   (x11:xfontstruct-properties font))
                   when (eql x11:xa-font (x11:xfontprop-name fontprop))
-                    do (return (values (excl:native-to-string
+                    do (return (values (tk::local-native-to-string
                                         (x11:xgetatomname display
                                                           (x11:xfontprop-card32 fontprop))))))
           (x11:xfreefont display font))))))
 
 ;;; END SPR30362
+#-allegro
+(defparameter *xt-font-families*
+  ;; ascii
+  `((0 "fixed"
+       (:fix "-*-courier-*-*-*-*-*-*-*-*-*-*-iso8859-1")
+       (:sans-serif "-*-helvetica-*-*-*-*-*-*-*-*-*-*-iso8859-1")
+       (:serif "-*-new century schoolbook-*-*-*-*-*-*-*-*-*-*-iso8859-1"
+	       "-*-times-*-*-*-*-*-*-*-*-*-*-iso8859-1"))))
 
+#+allegro
 (defparameter *xt-font-families*
     `(
       ;; ascii
@@ -265,7 +287,7 @@
                        (not (null (tk::list-font-names display fallback))))
                       (fallback-loadable-p ;fallback actually loadable?
                        (and fallback-matches-p
-                            (excl:with-native-string (nfn fallback)
+                            (local-with-foreign-string (nfn fallback)
                               (if query-first-p
                                   (let ((info (x11:xqueryfont display nfn)))
                                     (unless (zerop info)
@@ -309,7 +331,15 @@
                                               character-set)
                           fallback))
                    ((and matchesp fallback-matches-p)
-                    (excl:ics-target-case
+		    #-allegro
+                      ;; The +ics case tries to load several more
+                      ;; character sets, for many of which lack of a
+                      ;; fallback is inconsequential. Let's not annoy
+                      ;; users with an error in this case.
+                    (warn "Fallback font ~A, for character set ~A, matches with XListFonts,
+but is not loadable by XLoadFont or XQueryFont.  Something may be wrong with the X font
+setup." fallback character-set)
+		    #+allegro (excl:ics-target-case
                       ;; The +ics case tries to load several more
                       ;; character sets, for many of which lack of a
                       ;; fallback is inconsequential. Let's not annoy
@@ -349,7 +379,8 @@ setup."
         ;; Since we don't have any font alias names to rely on, we use
         ;; the "fixed" alias to find out at least a sensible default
         ;; weight and slant.
-        (excl:ics-target-case
+	#+allegro
+	(excl:ics-target-case
          (:+ics
           (let* ((default-fallback (disassemble-x-font-name (font-name-of-aliased-font display *default-fallback-font*)))
                  (weight (nth 3 default-fallback))
@@ -1025,7 +1056,9 @@ setup."
 		  (/= target-top ny)
 		  (/= w nw)
 		  (/= h nh))
-	  (let ((*error-output* excl:*initial-terminal-io*))
+	  (let (
+		#+allegro (*error-output* excl:*initial-terminal-io*)
+			  )
 	    (warn "Geo set fail, ~S, ~S,~S"
 		  sheet
 		  (list  target-left  target-top w h)
@@ -1065,6 +1098,38 @@ setup."
         :height
         (x11:xrectangle-height xr)))
 
+#-allegro
+(defmethod port-glyph-for-character ((port xt-port)
+                                     character text-style
+                                     &optional our-font)
+  (let* ((index (char-int character))
+         (x-font (or our-font
+                     (text-style-mapping port text-style
+                                         (char-character-set-and-index character)))))
+    (when (null x-font)
+      ;; Throw a more meaningful error-message
+      ;; when the x-font is not found.
+      ;; This will happen, for example, when
+      ;; a Japanese/foreign is not set up correctly.
+      (let ((character-set (char-character-set-and-index character)))
+        (error "X-Font not found for text-style: ~S on port:~S~% (character-set: ~A, character:~C, char-index:~S)"
+               text-style
+               port
+               character-set
+               character
+               index)))
+    (let* ((escapement-x (tk::char-width x-font index))
+           (escapement-y 0)
+           (origin-x 0)
+           (origin-y (tk::font-ascent x-font))
+           (bb-x escapement-x)
+           (bb-y (+ origin-y (tk::font-descent x-font))))
+      (when (zerop escapement-x)
+        (setq escapement-x (tk::font-width x-font)))
+      (values index x-font escapement-x escapement-y
+              origin-x origin-y bb-x bb-y))))
+
+#+allegro
 (excl:ics-target-case
   (:-ics
    (defmethod port-glyph-for-character ((port xt-port)
@@ -1154,11 +1219,28 @@ setup."
 		(let ((*trying-fallback* t)
 		      ;; rebinding *error-output* prevents recursive
 		      ;; errors when *error-output* is a CLIM stream
-		      (*error-output* excl:*initial-terminal-io*))
+		      #+allegro (*error-output* excl:*initial-terminal-io*)
+		      )
 		  (warn "Failed to open font ~S, trying fallback" name)
 		  (text-style-mapping
 		   port *undefined-text-style* character-set)))))))))
 
+#-allegro
+(defmethod text-style-mapping :around
+	   ((port xt-port) text-style
+	    &optional (character-set *standard-character-set*) window)
+  (declare (ignore window))
+  (let ((mapping (call-next-method)))
+    (if (stringp mapping)
+	(setf (text-style-mapping port text-style character-set)
+	  (find-named-font port mapping character-set))
+      mapping)))
+
+(defmethod font-set-from-font-list ((port xt-port) font-list)
+  (declare (ignore font-list))
+  (error "not yet implemented for non-ics lisp"))
+
+#+allegro
 (excl:ics-target-case
   (:+ics
 
@@ -1547,7 +1629,8 @@ setup."
   ;; Like cltl1:make-char but prevents the need to (require :cltl1)
   (if (zerop bits)
       character
-    (excl::old-code-char (char-code character) bits)))
+      #-allegro (error "Non Allegro systems don't support old character codes")
+    #+allegro (excl::old-code-char (char-code character) bits)))
 
 (defvar +super-modifier-mask+ 0)
 (defvar +hyper-modifier-mask+ 0)
@@ -1574,9 +1657,13 @@ setup."
                 for mod-keyword in `(,x11:mod1mask ,x11:mod2mask ,x11:mod3mask
                                          ,x11:mod4mask ,x11:mod5mask)
                 do (loop for j from 0 below max-keypermod
-                         for key = (sys:memref-int mods
-                                                   (+ (* i max-keypermod) j)
-                                       0 :unsigned-byte)
+                      for key =
+			#-allegro
+			(cffi:mem-ref mods :unsigned-char (+ (* i max-keypermod) j))
+			#+allegro
+			(sys:memref-int mods
+                                        (+ (* i max-keypermod) j)
+					0 :unsigned-byte)
                          unless (zerop key)
                            do (case (translate-key key)
                                 ((#.x11:|XK-Meta-L| #.x11:|XK-Meta-R|)
@@ -2331,5 +2418,8 @@ the geometry of the children. Instead the parent has control. "))
 
 
 (defmacro with-toolkit-dialog-component ((tag value) &body body)
+  #-allegro
+  `(error "This macro is not implemented in non-allegro systems")
+  #+allegro
   `(letf-globally (((getf (mp:process-property-list mp:*current-process*) ',tag) ,value))
        ,@body))

@@ -1,0 +1,57 @@
+
+
+
+
+
+* Initialization Lab
+
+** verify: xt-funs-wrapper.lisp
+   Functions in this file are wrappers are lowerlevel calls to
+   cffi. The should be verified to work, each through a test harness
+   that can be found in the inialiaion-lab.lisp file.
+
+*** Add function to calls to 
+
+** CFFI Initialization Sequence
+
+*** (CLIM:FIND-PORT :SERVER-PATH (:MOTIF))
+
+    #+BEGIN_SRC lisp :tangle no
+      (clim::map-over-ports (lambda (port)
+			(format t "~A" port))) 
+    #+END_SRC
+
+
+**** (CLIM-SILICA::MAKE-PORT :SERVER-PATH (:MOTIF))
+
+***** (:METHOD INITIALIZE-INSTANCE :AROUND (CLIM:BASIC-PORT))
+
+      #+BEGIN_SRC lisp :tangle no
+	(defparameter cl-user::*port* clim::port)
+      #+END_SRC
+
+
+****** (:METHOD INITIALIZE-INSTANCE :AFTER (TK-SILICA::XT-PORT))
+
+****** (TK::INITIALIZE-TOOLKIT)
+
+        #+BEGIN_SRC lisp :tangle no
+	  (defparameter cl-user::*context* context)
+	  (defparameter cl-user::*display* display)
+	  (defparameter cl-user::*class* class)
+	  (defparameter cl-user::*handle* handle)
+	  (defparameter cl-user::*arglist* #.(SB-SYS:INT-SAP #X7F9C0C003ED0))
+        #+END_SRC
+
+       - xt_app_set_fallback_reseources
+
+******* (TK::APP-CREATE-SHELL :DISPLAY #<TK::DISPLAY {1017CE7F13}> :WIDGET-CLASS TK::APPLICATION-SHELL)
+
+******** (alisp_xt_app_create_shell a b c d e f)
+
+          #+BEGIN_SRC lisp :tangle no
+	    (instrumented-defun xt_app_create_shell (a b c d e f)
+	      (alisp_xt_app_create_shell a b c d e f))
+          #+END_SRC
+
+	 

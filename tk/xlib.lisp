@@ -21,7 +21,8 @@
 
 (defclass display-object (ff-wrapper:foreign-pointer)
   ((display :initarg :display
-	    excl::fixed-index 0)))
+	    #+allegro excl::fixed-index
+	    #+allegro 0)))
 
 (defclass screen (display-object) ())
 
@@ -178,6 +179,14 @@
 (defun make-xrmvalue ()
   (allocate-cstruct 'x11::xrmvalue :initialize t))
 
+;; Note, native in allegro parlence is foreign in cffi parlence.
+
+;; Unused?
+#-allegro
+(defun get-resource (db name class)
+  (error "Should never be called."))
+
+#+allegro
 (defun get-resource (db name class)
   (with-ref-par ((type 0 *))
     (let ((xrmvalue (make-xrmvalue)))
@@ -262,6 +271,12 @@
   ((display :reader x-error-display :initarg :display))
   (:report report-x-connection-lost))
 
+
+#-allegro
+(defun report-x-connection-lost (condition stream)
+    (error "should never get called"))
+
+#+allegro
 (defun report-x-connection-lost (condition stream)
     (let ((display (x-error-display condition)))
       (format stream "Xlib: Connection to X11 server '~a' lost"
@@ -278,7 +293,8 @@
   (let ((s (x11:system-malloc 1000)))	; bug16585
     (x11::xgeterrortext display-handle code s 1000)
     (prog1
-	(excl:native-to-string s)
+	#-allegro (cffi:foreign-string-to-lisp s)
+	#+allegro (excl:native-to-string s)
       (clim-utils::system-free s))))
 
 (defvar *x-error-handler-address* nil)
@@ -779,11 +795,12 @@
 (defmacro with-server-grabbed ((display) &body body)
   `(let ((.display. ,display))
      (unwind-protect
-	 (let ((result nil))
-	  (x11:xgrabserver .display.)
-	  (x11:xflush .display.)
-	  (excl:errorset (setq result (multiple-value-list (progn ,@body))) t)
-	  (values-list (cdr result)))
+	  (let ((result nil))
+	    (x11:xgrabserver .display.)
+	    (x11:xflush .display.)
+	    #+allegro (excl:errorset (setq result (multiple-value-list (progn ,@body))) t)
+	    #-allegro (setq result (multiple-value-list (progn ,@body)))
+	    (values-list (cdr result)))
        (x11:xungrabserver .display.)
        (x11:xflush .display.))))
 
@@ -814,7 +831,9 @@
    x11:xa-string
    8
    x11:propmodereplace
-   (excl::string-to-native string) ;; spr25829
+   ;; spr25829
+   #-allegro (cffi::lisp-string-to-foreign string) 
+   #+allegro (excl::string-to-native string) 
    (length string)))
 
 (defun get-cut-buffer (display)
@@ -838,4 +857,5 @@
        &nitems
        &bytes-after
        &prop)
-      (values (excl:native-to-string prop)))))
+      (values #+allegro (excl:native-to-string prop)
+	      #-allegro (cffi:foreign-string-to-lisp prop)))))

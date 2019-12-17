@@ -47,7 +47,7 @@
 	;; In particular, this can occur when listing
 	;; the Japanese graphics-editor when the correct
 	;; Japanese fonts are not accessible.	
-	(let ((result (catch 'excl::printer-error
+	(let ((result (catch #+allegro 'excl::printer-error #-allegro :printer-error
 			(with-output-as-presentation (stream demo 'demo)
 			  (format stream "~A~%" name))
 			nil)))
@@ -97,12 +97,17 @@
 		     (note-frame-deiconified (frame-manager frame) frame))
 		   (raise-frame frame))
 	       (run-frame-top-level frame)))))
-    (if background 
-	(mp:process-run-function 
-	 `(:name ,(demo-name demo)
-	   :initial-bindings ((*package* . ',*package*)))
-	 #'do-it)
-      (do-it))))
+    (if background
+	;; bt:make-thread has a an :initial-bindings flag, but it's
+	;; not clear what the intent is of the Allegro code that the
+	;; non-allegro compile time option code is based. Therefor
+	;; we're omitting it.
+	#-allegro (bt:make-thread #'do-it :name (demo-name demo))
+	#+allegro (mp:process-run-function 
+		   `(:name ,(demo-name demo)
+			   :initial-bindings ((*package* . ',*package*)))
+		   #'do-it)
+	(do-it))))
 	
 (defvar *demo-frame* nil)
 

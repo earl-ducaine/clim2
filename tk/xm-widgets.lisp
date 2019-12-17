@@ -21,20 +21,24 @@
 (defmethod make-widget ((w xm-menu-shell) name parent &rest args)
   (apply #'create-popup-shell name (class-of w) parent args))
 
+(defun local-string-to-native (string)
+  #-allegro (let* ((buff-size (1+ (length string)))
+		  (buffer (cffi:foreign-alloc :uchar :count buff-size)))
+	     (cffi:lisp-string-to-foreign string buffer buff-size))
+  #+allegro (excl:string-to-native string))
+
 (tk::add-resource-to-class (find-class 'vendor-shell)
 			   (make-instance 'resource
 					  :name :delete-response
 					  :type 'tk::delete-response
-					  :original-name
-					  (excl:string-to-native
-					   "deleteResponse")))
+					  :original-name (local-string-to-native "deleteResponse")))
 
 (tk::add-resource-to-class (find-class 'xm-text)
 			   (make-instance 'resource
 					  :name :font-list
 					  :type 'font-list
 					  :original-name
-					  (excl:string-to-native
+					  (local-string-to-native
 					   "fontList")))
 
 (tk::add-resource-to-class (find-class 'vendor-shell)
@@ -42,14 +46,14 @@
 					  :name :keyboard-focus-policy
 					  :type 'tk::keyboard-focus-policy
 					  :original-name
-					  (excl:string-to-native
+					  (local-string-to-native
 					   "keyboardFocusPolicy")))
 
 (tk::add-resource-to-class (find-class 'vendor-shell)
                            (make-instance 'resource
                               :name :preedit-type
                               :type 'string
-                              :original-name (excl:string-to-native
+                              :original-name (local-string-to-native
                                               "preeditType")))
 
 (tk::add-resource-to-class (find-class 'xm-cascade-button-gadget)
@@ -57,7 +61,7 @@
 					  :name :label-type
 					  :type 'tk::label-type
 					  :original-name
-					  (excl:string-to-native
+					  (local-string-to-native
 					   "labelType")))
 
 
@@ -89,7 +93,11 @@
           ;;--- xm_string_get_l_to_r and make sure it works with multiple
           ;;-- segment strings
           (let ((result (xm_string_unparse value 0 0 tk:XmMULTIBYTE_TEXT 0 0 tk:XmOUTPUT_ALL)))
-            (unwind-protect (excl:native-to-string result)
+            (unwind-protect
+		 #-allegro
+		 (cffi:foreign-string-to-lisp result)
+		 #+allegro
+		 (excl:native-to-string result)
               (xt_free result))))
       (tk::add-widget-cleanup-function parent
                                        #'destroy-generated-xm-string
@@ -105,6 +113,31 @@
       (push (convert-resource-in parent 'xm-string (x-arglist table i))
 	    r))))
 
+#-allegro
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun partition-compound-string (s f &key (start 0) (end (length s)))
+    ;;(declare (ignore s))
+    (funcall f nil start end))
+
+  (defmethod convert-resource-out ((parent t) (type (eql 'xm-string)) value)
+    (let ((s1 (string-to-foreign value))
+	  (s2 (string-to-foreign "")))
+      (tk::add-widget-cleanup-function parent
+				       #'destroy-generated-string
+				       s1)
+      (tk::add-widget-cleanup-function parent
+				       #'destroy-generated-string
+				       s2)
+      (let ((temp (xm_string_create_l_to_r
+		   s1
+		   s2)))
+	(tk::add-widget-cleanup-function parent
+					 #'destroy-generated-xm-string
+					 temp)
+	temp))))
+
+
+#+allegro
 (excl:ics-target-case
  (:+ics
 
@@ -237,7 +270,7 @@
 					  :name :scroll-horizontal
 					  :type 'tk::boolean
 					  :original-name
-					  (excl:string-to-native
+					  (local-string-to-native
 					   "scrollHorizontal")))
 
 (tk::add-resource-to-class (find-class 'xm-text)
@@ -245,7 +278,7 @@
 					  :name :scroll-vertical
 					  :type 'tk::boolean
 					  :original-name
-					  (excl:string-to-native
+					  (local-string-to-native
 					   "scrollVertical")))
 
 (tk::add-resource-to-class (find-class 'xm-text)
@@ -253,7 +286,7 @@
 					  :name :word-wrap
 					  :type 'tk::boolean
 					  :original-name
-					  (excl:string-to-native
+					  (local-string-to-native
 					   "wordWrap")))
 
 (defun make-xm-string-table (&key (number 1))
@@ -296,7 +329,8 @@
 
 (defmacro with-lookup-string-buffer ((var) &body body)
   `(let ((,var (or (clim-utils::without-scheduling (pop *lookup-string-buffers*))
-                   (excl::aclmalloc *lookup-string-buffer-size*))))
+		   #-allegro (cffi:foreign-alloc :uchar :count *lookup-string-buffer-size*)
+                   #+allegro(excl::aclmalloc *lookup-string-buffer-size*))))
      (multiple-value-prog1
        (progn ,@body)
        (clim-utils::without-scheduling (push buffer *lookup-string-buffers*)))))
@@ -323,5 +357,7 @@
                               (= status x11::XLookupKeySym)))
                  (charsp (or (= status x11::XLookupKeyBoth)
                              (= status x11::XLookupChars))))
-             (values (and charsp (excl:native-to-string buffer :length nbytes))
+             (values (and charsp
+			  #-allegro (cffi:foreign-string-to-lisp buffer :count nbytes)
+			  #+allegro (excl:native-to-string buffer :length nbytes))
                      (and keysymp keysym)))))))))

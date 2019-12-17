@@ -7,7 +7,7 @@
 
 (defparameter *capture-args-return-results* t)
 
-(defparameter *sequential-calls* '())
+;; (defparameter *sequential-calls* '())
 
 (defparameter *calls-to-methods* '())
 
@@ -16,7 +16,9 @@
   `(setf (fdefinition ',method-name)
 	 (lambda ,args
 	   (let ((,local-results (progn ,@body)))
-	     (push (list :args ,@args :results ,local-results)
+	     (push (list :method-name ',method-name
+			 :args (list ,@args)
+			 :results ,local-results)
 		   *calls-to-methods*)
 	     ,local-results)))))
 

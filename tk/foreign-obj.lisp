@@ -9,8 +9,20 @@
 (defclass display (ff-wrapper:foreign-pointer)
   ((context :initarg :context :reader display-context)
    (xid->object-mapping :initform (make-hash-table :test #'equal)
-			excl::fixed-index 0)))
+			#+allegro excl::fixed-index
+			#+allegro 0)))
 
+(defun get-direct-slot-by-name (slot-name class-name)
+  (cadr (assoc slot-name
+	       (mapcar (lambda (slot)
+			 (list (clos:slot-definition-name slot) slot))
+		       (clos:class-direct-slots (find-class class-name))))))
+  
+#-allegro
+(defun display-xid->object-mapping (object)
+  (slot-value  object  'xid->object-mapping))
+
+#+allegro
 (defmacro display-xid->object-mapping (object)
   `(locally (declare (optimize (speed 3) (safety 0)))
      (excl::slot-value-using-class-name 'display ,object 'xid->object-mapping)))

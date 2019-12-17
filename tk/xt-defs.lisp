@@ -6,11 +6,31 @@
 
 ;;; Foreign Structure Constructors
 
+
 ;; This is here to limit need for ff package to compile time.
+
+#-allegro
+(defun system-free (x)
+  (cffi:foreign-free x))
+
+#+allegro
 (defun system-free (x)
   (excl:free x))
 
+#-allegro
 (defun allocate-memory (size init)
+  ;; In 'words' used only by allocate-cstruct.
+  (let ((pointer (cffi:foreign-alloc :pointer :count size)))
+    (when init
+      ;; Assume pointers are 64bit only
+      (do ((i 0 (+ i (cffi:foreign-type-size :pointer))))
+	  ((>= i size))
+	(declare (fixnum i))
+	(setf (cffi:mem-aptr pointer :pointer i) 0)))
+    pointer))
+
+#+allegro
+  (defun allocate-memory (size init)
   ;; Used only by allocate-cstruct.
   (let ((pointer (excl:malloc size)))
     (when init
@@ -39,10 +59,8 @@
 ;;; using ff-wrapper::make-cstruct because it uses excl:aclmalloc.
 
 #+use-cffi
-(defun allocate-cstruct (name &key
-			      (number 1)
-				initialize)
-  (declare (ignor (number initialize)))
+(defun allocate-cstruct (name &key (number 1) initialize)
+  (declare (ignore initialize))
   (cffi:foreign-alloc name :count number))
 
 #-use-cffi
@@ -64,6 +82,17 @@
 ;;; aclmalloc.
 ;; This now uses the slightly slower (locale-correct) way of
 ;; converting to octets first, then copying to foreign space.
+
+#-Allegro
+(defun string-to-foreign (string &optional address)
+  (unless (stringp string)
+    (error "Type error: string"))
+  (if address
+      (cffi:lisp-string-to-foreign string address (length string))
+      (cffi:foreign-string-alloc string)))
+
+
+#+Allegro
 (defun string-to-foreign (string &optional address)
   "Convert a Lisp string to a C string, by copying."
   (declare (optimize (speed 3))

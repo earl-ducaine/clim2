@@ -618,6 +618,10 @@
 (def-exported-foreign-synonym-type fixnum-int :fixnum)
 (def-exported-foreign-synonym-type fixnum-unsigned-int :fixnum)
 
+#-allegro
+(def-exported-foreign-synonym-type callback-function-addr :pointer)
+
+#+allegro
 (def-exported-foreign-synonym-type callback-function-addr :signed-32bit)
 
 

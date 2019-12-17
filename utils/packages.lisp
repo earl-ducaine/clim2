@@ -16,11 +16,11 @@
   (:use common-lisp #+allegro clos #+allegro excl)
 
   ;; Import these symbols so that we can define methods for them.
-  (:shadow pathname truename)
+  (:shadow pathname truename defconstant)
 
   ;; Shadow this everywhere to make it a generic function
   (:shadow interactive-stream-p)
-
+  
   #+allegro
   (:import-from :excl #:non-dynamic-extent)
 

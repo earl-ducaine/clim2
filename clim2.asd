@@ -18,14 +18,12 @@
    (:file "tk-silica/pkg")
    ;;(:file "xlib/pkg")
    (:file "wnn/pkg")
-
    (:file "tk/ff-wrapper-for-ff")
    (:file "cat-alt")
    (:file "utils/defun-utilities")
    (:file "utils/reader")
    (:file "utils/processes")
    (:file "utils/lisp-utilities")
-
    (:file "utils/clos-patches")
    (:file "utils/clos")
    (:file "utils/utilities")
@@ -65,8 +63,6 @@
    (:file "silica/db-button")
    (:file "silica/db-slider")
    (:file "silica/db-label")
-   ;; Invalid
-   ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
    (:file "silica/db-scroll")
    (:file "clim/recording-defs")
    (:file "clim/gestures")
@@ -101,7 +97,7 @@
    (:file "clim/pixmap-streams")
    (:file "clim/completer")
    (:file "clim/histories")
-   (:file "clim/excl-presentations")
+   #+allegro (:file "clim/excl-presentations")
    (:file "clim/standard-types")
    (:file "clim/table-formatting")
    (:file "clim/graph-formatting")
@@ -123,41 +119,28 @@
    (:file "clim/drag-and-drop")
    (:file "clim/item-list-manager")
    (:file "clim/stream-trampolines")
-   ;; Invalid here
-   ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
    (:file "xlib/ffi")
-   ;; valid here
-   ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
    (:file "xlib/load-xlib")
-					; valid here
-					; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
    (:file "xlib/xlib-defs")
-   (:file "xlib/xlib-funs")
-   ;; Valid here
-					; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
+   
+   #+allegro (:file "xlib/xlib-funs")
+   #-allegro (:file "xlib/xlib-funs-cffi-defs")
+   #-allegro (:file "xlib/xlib-funs-cffi")
    (:file "xlib/x11-keysyms")
    (:file "xlib/last")
    (:file "xlib/xlib-defs-lab")
    (:file "xlib/def-exported-foreign-struct-cffi")
-   ;; Valid here
-					; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
    (:file "tk/macros")
    (:file "tk/xt-defs" :depends-on ("tk/ff-wrapper-for-ff"))
    (:file "tk/xt-defs-wrapper")
-
    (:file "tk/xt-funs")
-   ;; Valid here
-   ;; (assert  (find-symbol "CSTRUCT-PROPERTY-INITIALIZE" :ff))
-
    (:file "tk/xt-funs-wrapper")
    (:file "tk/foreign-obj")
-
    ;; Xlib stuff
    (:file "tk/xlib")
    (:file "tk/font")
    (:file "tk/gcontext")
    (:file "tk/graphics")
-
    ;; Toolkit stuff
    (:file "tk/meta-tk")
    (:file "tk/make-classes")
@@ -168,8 +151,6 @@
    (:file "tk/callbacks")
    (:file "tk/xt-classes")
    (:file "tk/xt-init")
-
-
    (:file "tk/xm-defs")
    (:file "tk/xm-defs-wrapper")
    (:file "tk/xm-funs")
@@ -182,7 +163,6 @@
    (:file "tk/xm-protocols")
    (:file "tk/convenience")
    (:file "tk/make-widget")
-
    (:file "tk-silica/xt-silica")
    (:file "tk-silica/xt-stipples")
    (:file "tk-silica/xm-silica")
@@ -193,68 +173,67 @@
    (:file "tk-silica/xm-dialogs")
    (:file "tk-silica/xt-gadgets")
    (:file "tk-silica/xm-gadgets")
+      (:file "tk-silica/xt-pixmaps")
+      (:file "tk-silica/gc-cursor")
 
-   (:file "tk-silica/xt-pixmaps")
-   (:file "tk-silica/gc-cursor")
+      #+allegro (:file "clim/japanese-input-editor")
 
-   (:file "clim/japanese-input-editor")
+      ;; system: testing
+      (:file "test/test-driver")
+      (:file "test/test-clim")
+      (:file "test/test-clim-tests")
+      (:file "test/test-demos")
 
-   ;; system: testing
-   (:file "test/test-driver")
-   (:file "test/test-clim")
-   (:file "test/test-clim-tests")
-   (:file "test/test-demos")
+      ;;     (:file "wnn/load-wnn")
+      #+allegro (:file "wnn/jl-defs")
+      #+allegro (:file "wnn/jl-funs")
+      #+allegro (:file "wnn/jserver")
 
-   ;;     (:file "wnn/load-wnn")
-   (:file "wnn/jl-defs")
-   (:file "wnn/jl-funs")
-   (:file "wnn/jserver")
+      (:file "hpgl/pkg")
+      (:file "hpgl/hpgl-port")
+      (:file "hpgl/hpgl-medium")
 
-   (:file "hpgl/pkg")
-   (:file "hpgl/hpgl-port")
-   (:file "hpgl/hpgl-medium")
+      (:file "postscript/postscript-s")
+   ;;;     (:file "postscript/postscript-clim-stubs")
+      (:file "postscript/postscript-port")
+      (:file "postscript/postscript-medium")
+      (:file "postscript/read-afm")
+      (:file "postscript/laserwriter-metrics")
+   ;;;     (:file "postscript/climps")
 
-   (:file "postscript/postscript-s")
-;;;     (:file "postscript/postscript-clim-stubs")
-   (:file "postscript/postscript-port")
-   (:file "postscript/postscript-medium")
-   (:file "postscript/read-afm")
-   (:file "postscript/laserwriter-metrics")
-;;;     (:file "postscript/climps")
-
-   (:module demo
-	    :depends-on (:package :load-clim)
-	    :serial t
-	    :components
-	    (
-;;;	       (:file "packages")
-	     (:file "demo-driver")
-	     (:file "address-book")
-	     (:file "bitmap-editor")
-	     (:file "browser")
-	     (:file "cad-demo")
-	     (:file "cload-demos")
-	     (:file "color-editor")
-	     (:file "custom-records")
-	     (:file "default-frame-top-level")
-	     (:file "demo-activity")
-	     (:file "demo-last")
-	     (:file "graphics-demos")
-	     (:file "graphics-editor")
-	     (:file "ico")
-	     (:file "japanese-graphics-editor")
-	     (:file "listener")
-	     (:file "navdata")
-	     (:file "navfun")
-	     (:file "palette")
-	     (:file "peek-frame")
-	     (:file "plot")
-	     (:file "process-browser")
-	     (:file "puzzle")
-	     (:file "thinkadot")
-	     ))
-   (:file "clim-example" :depends-on (:demo))
-   (:file "test/test-suite")
+      (:module demo
+   	    :depends-on (:package :load-clim)
+   	    :serial t
+   	    :components
+   	    (
+   ;;;	       (:file "packages")
+   	     (:file "demo-driver")
+   	     (:file "address-book")
+   	     (:file "bitmap-editor")
+   	     (:file "browser")
+   	     (:file "cad-demo")
+   	     (:file "cload-demos")
+   	     (:file "color-editor")
+   	     (:file "custom-records")
+   	     (:file "default-frame-top-level")
+   	     (:file "demo-activity")
+   	     (:file "demo-last")
+   	     (:file "graphics-demos")
+   	     (:file "graphics-editor")
+   	     (:file "ico")
+   	     (:file "japanese-graphics-editor")
+   	     (:file "listener")
+   	     (:file "navdata")
+   	     (:file "navfun")
+   	     (:file "palette")
+   	     (:file "peek-frame")
+   	     (:file "plot")
+   	     (:file "process-browser")
+   	     (:file "puzzle")
+   	     (:file "thinkadot")
+   	     ))
+      (:file "clim-example" :depends-on (:demo))
+      (:file "test/test-suite")
    ))
 
 (format t "~%to run demo: (clim-demo:start-demo)" nil)

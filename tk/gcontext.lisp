@@ -106,7 +106,9 @@
        ',name)))
 
 (defclass gcontext (display-object)
-  ((cached-clip-mask :initform nil excl::fixed-index 1)))
+  ((cached-clip-mask :initform nil
+		     #+allegro excl::fixed-index
+		     #+allegro 1)))
 
 (defmethod initialize-instance :after ((gcontext gcontext)
 				       &key
@@ -445,7 +447,10 @@
   (declare (optimize (speed 3) (safety 0))
 	   (ignore gc))
   (let* ((n (length nv))
-	 (v (make-array n :allocation :static :element-type '(unsigned-byte 8))))
+	 (v (make-array n
+			#+allegro :allocation
+			#+allegro :static
+			:element-type '(unsigned-byte 8))))
     (declare (fixnum n)
 	     (type (simple-array (unsigned-byte 8) (*)) v))
     (etypecase nv

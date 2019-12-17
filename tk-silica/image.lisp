@@ -101,31 +101,63 @@
 (defmethod read-image-file ((format t) pathname palette)
   (multiple-value-bind (format filter)
       (compute-filter-for-bitmap-format format)
-    (let* ((tempname (system:make-temp-file-name))
-	   (truename (truename pathname))
-	   (command (format nil "cat ~A | ~A" tempname filter)))
-      (unwind-protect
-	  (progn
-	    (system:copy-file truename tempname
-			      :link t)
-	    (with-open-stream (fstream (excl:run-shell-command
-					command
-					:wait nil
-					:output :stream))
-	      (handler-case (read-image-file format fstream palette)
-		(error (c)
-		  (error "Unable to read image file: ~s (from ~s), \"~a\" ~
+    #-allegro
+    (uiop:with-temporary-file (:stream stream :pathname tempname)
+      (let* ((truename (truename pathname))
+	     (command (format nil "cat ~A | ~A" tempname filter)))
+	(unwind-protect
+	     (progn
+	       (uiop:copy-file truename tempname)
+	       (with-open-stream (fstream (make-string-input-stream (uiop:run-program
+								     command
+								     :force-shell t
+								     :output string)))
+		 (handler-case (read-image-file format fstream palette)
+		   (error (c)
+		     (error "Unable to read image file: ~s (from ~s), \"~a\" ~
+			while executing ~s." tempname pathname c command))))))))
+      #+allegro
+      (let* ((tempname (system:make-temp-file-name))
+	     (truename (truename pathname))
+	     (command (format nil "cat ~A | ~A" tempname filter)))
+	(unwind-protect
+	     (progn
+	       (system:copy-file truename tempname
+				 :link t)
+	       (with-open-stream (fstream (excl:run-shell-command
+					   command
+					   :wait nil
+					   :output :stream))
+		 (handler-case (read-image-file format fstream palette)
+		   (error (c)
+		     (error "Unable to read image file: ~s (from ~s), \"~a\" ~
 			while executing ~s." tempname pathname c command)))))
-	(sys:os-wait)
-	(delete-file tempname)))))
+	  (sys:os-wait)
+	  (delete-file tempname)))))
 
 (defmethod write-image-file ((format t) pathname array designs)
   (multiple-value-bind (format read-filter filter)
       (compute-filter-for-bitmap-format format)
     (declare (ignore read-filter))
+    #-allegro
+    (uiop:with-temporary-file (:stream stream :pathname tempname)
+      (let* ((truename (translate-logical-pathname
+			(merge-pathnames (pathname pathname))))
+	     (command (format nil "~A > ~A" filter tempname)))
+	(unwind-protect
+	     (progn
+	       (with-open-stream (fstream (make-string-input-stream (uiop:run-program
+								     command
+								     :force-shell t
+								     :output string)))
+		 (handler-case (write-image-file format fstream array designs)
+		   (error (c)
+		     (error "Unable to write image file: ~s (from ~s), \"~a\" ~
+			while executing ~s." tempname pathname c command))))
+	       (uiop:copy-file tempname truename)))))
     ;; copied from code/streamc.cl - basically a truename but without
     ;; the probe-file
-    (let* ((tempname (system:make-temp-file-name))
+    #+allegro (let* ((tempname (system:make-temp-file-name))
 	   (truename (translate-logical-pathname
 		      (merge-pathnames (pathname pathname))))
 	   (command (format nil "~A > ~A" filter tempname)))
@@ -281,7 +313,7 @@
 	     (pixels (read-strings))
 	     (i 0))
 	(declare (type (simple-array t (* *)) array))
-	(excl::fast
+	(#+allegro excl::fast #-allegro progn
 	 (dolist (row pixels)
 	   (let ((index 0))
 	     (dotimes (j width)

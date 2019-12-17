@@ -65,17 +65,17 @@
 ;;   (list dummies vals newval setter getter))
 
 
-(defun run-define-setf-expander-lastguy ()
-  (define-setf-expander lastguy (x &environment env)
-    "Set the last element in a list to the given value."
-    (multiple-value-bind (dummies vals newval setter getter)
-	(get-setf-expansion x env)
-      (let ((store (gensym)))
-	(values dummies
-		vals
-		`(,store)
-		`(progn (rplaca (last ,getter) ,store) ,store)
-		`(lastguy ,getter))))))
+;; (defun run-define-setf-expander-lastguy ()
+;;   (define-setf-expander lastguy (x &environment env)
+;;     "Set the last element in a list to the given value."
+;;     (multiple-value-bind (dummies vals newval setter getter)
+;; 	(get-setf-expansion x env)
+;;       (let ((store (gensym)))
+;; 	(values dummies
+;; 		vals
+;; 		`(,store)
+;; 		`(progn (rplaca (last ,getter) ,store) ,store)
+;; 		`(lastguy ,getter))))))
 
 (defun run-foreign-slot-value-cffi ()
   (define-setf-expander foreign-slot-value-cffi (x &environment env)
@@ -103,16 +103,16 @@
 (defun run-cffi-test ()
   (let ((size-hints (x11::xallocsizehints)))))
 
-(defun lastguy (x) (car (last x)))
+;; (defun lastguy (x) (car (last x)))
 
-(defun reset-lastguy ()
-  (setf a (list 'a 'b 'c 'd))
-  (setf b (list 'x))
-  (setf c (list 1 2 3 (list 4 5 6))))
+;; (defun reset-lastguy ()
+;;   (setf a (list 'a 'b 'c 'd))
+;;   (setf b (list 'x))
+;;   (setf c (list 1 2 3 (list 4 5 6))))
 
-(defun run-setf-lastguy ()
-  (setf (lastguy a) 3)
-  (setf (lastguy b) 7))
+;; (defun run-setf-lastguy ()
+;;   (setf (lastguy a) 3)
+;;   (setf (lastguy b) 7))
 
 ;; Old way of creating interface to xcomposestatus.
 ;; (def-exported-foreign-struct-cffi xcomposestatus-ffi

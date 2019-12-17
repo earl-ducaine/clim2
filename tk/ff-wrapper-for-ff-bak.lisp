@@ -3,6 +3,12 @@
 
 (in-package :ff-wrapper)
 
+
+(cffi:define-foreign-type clim-object-type ()
+  ()
+  (:actual-type :pointer)
+  (:simple-parser clim-object))
+
 ;; (defparameter *structs* '())
 (eval-when (:compile-toplevel :load-toplevel :execute)
   ;; There are two namespaces for types in c (that we care about) one
@@ -150,12 +156,8 @@
 	   (cond
 	     ((typep struct-pointer 'cons)
 	      (getf struct-pointer ',accessor-name-symbol))
-	     ((typep struct-pointer 'foreign-pointer)
-	      (cffi:foreign-slot-value  (foreign-pointer-address struct-pointer)
-	   				(quote (:struct ,struct-name))
-	   				(quote ,slot-name)))
-	      (t
-	       (cffi:foreign-slot-value struct-pointer
+	     (t
+	      (cffi:foreign-slot-value  struct-pointer
 	   				(quote (:struct ,struct-name))
 	   				(quote ,slot-name)))))
 	 (defun (setf ,accessor-name-symbol) (value struct-pointer)
@@ -168,31 +170,22 @@
       (possibly-composite-type)
     ;; We only know how to handle pointer composite types
     (cond
-      ;; (:pointer char) --> string
       ((and (consp possibly-composite-type)
-	    (= (length possibly-composite-type) 2))
-       (let ((type-1 (emit-cffi-type-specfier (car possibly-composite-type)))
-	     (type-2 (emit-cffi-type-specfier (cadr possibly-composite-type))))
-	 (cond
-	   ((or (eq type-1 :pointer)
-		(eq type-1 'clim-object))
-	    (if (eq type-2 :char) :string (list :pointer type-2)))
-	   (t
-	    (error "unrecognized ffi type")))))
+	    (= (length possibly-composite-type) 2)
+	    (or (eq (emit-cffi-type-specfier (car possibly-composite-type)) :pointer)
+		(eq (emit-cffi-type-specfier (car possibly-composite-type)) 'clim-object)))
+       (list :pointer  (emit-cffi-type-specfier (cadr possibly-composite-type))))
       ((atom possibly-composite-type)
        (emit-cffi-type-specfier possibly-composite-type))
       (t
        (error "Unrecognized composite-type: ~s~%" possibly-composite-type))))
 
-  (defun generate-cffi-defcstruct (struct-name slots &key (union nil))
+  (defun generate-cffi-defcstruct (struct-name slots)
     (format t "generate-cffi-defcstruct name:~s ff-cstruct-body:~s~%" struct-name
 	    slots)
     (let* ((struct-name (if (consp struct-name) (car struct-name) struct-name))
 	   (slot-accessors '())
-	   (cffi-defcstruct
-	    (list (if union struct-name
-		      (list struct-name :class (intern (format nil "~A-~A" struct-name 'type))))
-	     (if union 'cffi:defcunion 'cffi:defcstruct))))
+	   (cffi-defcstruct (list struct-name 'cffi:defcstruct)))
       (dolist (slot slots)
 	(push slot *ffi-c-slot-defs*)
 	(let ((slot-name (car slot)))
@@ -296,7 +289,8 @@
 		(consp (car body)))
 	    (symbolp (cadr body)))
        :define-c-base-type)
-      ((and (symbolp (car body))
+      ((and (or (symbolp (car body))
+		(consp (car body)))
 	    (eq (cadr body) '*)
 	    (symbolp (caddr body)))
        :define-c-pointer-type)
@@ -319,23 +313,7 @@
 
   (defun emit-cffi (body)
     (format t "emit-cffi: ~s~%" body)
-    (ecase (get-ffi-type-def-category body)
-      (:define-c-base-type
-       (destructuring-bind (name type) body
-	 (let ((name (if (consp name) (car name) name)))
-	   (list `(cffi:defctype ,name
-		      ,(emit-cffi-type-specfier type))))))
-      ; (GC * _XGC)
-      (:define-c-pointer-type
-       (destructuring-bind (name pointer type) body
-	 (declare (ignore pointer))
-	 (list `(cffi:defctype ,name
-		  (:pointer ,(emit-cffi-type-specfier type))))))
-      (:define-pointer-type-array
-       (destructuring-bind (name size pointer type) body
-	 (declare (ignore size pointer))
-	 (let ((name (if (consp name) (car name) name)))
-	   (list (generate-accessor-defun name type)))))
+    (case (get-ffi-type-def-category body)
       (:define-base-type-array
        (destructuring-bind (name size type) body
 	 (declare (ignore size))
@@ -345,12 +323,11 @@
       ;;  (tk::superclass :long) (tk::name * :char)
       ;;  (tk::version tk::xt-version-type)
       ;;  (tk::callback-private * :char))
-      ((:explicit-struct :union)
-       (let* ((union (eq (cadr body) :union))
-	      (name (car body))
+      (:explicit-struct
+       (let* ((name (car body))
 	      (name (if (consp name) (car name) name))
 	      (slots (cddr body)))
-	 (generate-cffi-defcstruct name slots :union union)))
+	 (generate-cffi-defcstruct name slots)))
       ;; ((x11:xfocuschangeevent :no-defuns)
       ;;  (type x11:int)
       ;;  (x11::serial x11:unsigned-long)
@@ -367,30 +344,30 @@
 ;; List of all structs implied and explicit
 (defparameter *structs*
   '(x11::xextdata x11::xextcodes x11::_xextension x11::xgcvalues x11::_xgc
-    x11::visual x11::depth x11::screen x11::screenformat
-    x11::xsetwindowattributes x11::xwindowattributes x11::xhostaddress
-    x11::funcs x11::ximage x11::xwindowchanges x11::xcolor x11::xsegment
-    x11::xpoint x11::xrectangle x11::xarc x11::xkeyboardcontrol
-    x11::xkeyboardstate x11::xtimecoord x11::xmodifierkeymap x11::display
-    x11::xkeyevent x11::xbuttonevent x11::xmotionevent x11::xcrossingevent
-    x11::xfocuschangeevent x11::xkeymapevent x11::xexposeevent
-    x11::xgraphicsexposeevent x11::xnoexposeevent x11::xvisibilityevent
-    x11::xcreatewindowevent x11::xdestroywindowevent x11::xunmapevent
-    x11::xmapevent x11::xmaprequestevent x11::xreparentevent
-    x11::xconfigureevent x11::xgravityevent x11::xresizerequestevent
-    x11::xconfigurerequestevent x11::xcirculateevent
-    x11::xcirculaterequestevent x11::xpropertyevent x11::xselectionclearevent
-    x11::xselectionrequestevent x11::xselectionevent x11::xcolormapevent
-    x11::xclientmessageevent x11::xmappingevent x11::xerrorevent
-    x11::xanyevent x11::_xqevent x11::xcharstruct x11::xfontprop
-    x11::xfontstruct x11::xtextitem x11::xchar2b x11::xtextitem16 x11::xrmvalue
-    x11::xrmoptiondescrec x11::xwmhints x11::xsizehints x11::xcomposestatus
-    tk::xt-class tk::xt-resource tk::xt-offset-rec tk::xt-widget
-    tk::x-push-button-callback-struct tk::x-drawing-area-callback
-    tk::xt-arg tk::xt-widget-geometry tk::xm-text-block-rec
-    tk::xm-text-field-callback-struct
-    tk::xm-file-selection-box-callback-struct tk::xm-list-callback-struct
-    wnn::wnn-buf))
+		x11::visual x11::depth x11::screen x11::screenformat
+		x11::xsetwindowattributes x11::xwindowattributes x11::xhostaddress
+		x11::funcs x11::ximage x11::xwindowchanges x11::xcolor x11::xsegment
+		x11::xpoint x11::xrectangle x11::xarc x11::xkeyboardcontrol
+		x11::xkeyboardstate x11::xtimecoord x11::xmodifierkeymap x11::display
+		x11::xkeyevent x11::xbuttonevent x11::xmotionevent x11::xcrossingevent
+		x11::xfocuschangeevent x11::xkeymapevent x11::xexposeevent
+		x11::xgraphicsexposeevent x11::xnoexposeevent x11::xvisibilityevent
+		x11::xcreatewindowevent x11::xdestroywindowevent x11::xunmapevent
+		x11::xmapevent x11::xmaprequestevent x11::xreparentevent
+		x11::xconfigureevent x11::xgravityevent x11::xresizerequestevent
+		x11::xconfigurerequestevent x11::xcirculateevent
+		x11::xcirculaterequestevent x11::xpropertyevent x11::xselectionclearevent
+		x11::xselectionrequestevent x11::xselectionevent x11::xcolormapevent
+		x11::xclientmessageevent x11::xmappingevent x11::xerrorevent
+		x11::xanyevent x11::_xqevent x11::xcharstruct x11::xfontprop
+		x11::xfontstruct x11::xtextitem x11::xchar2b x11::xtextitem16 x11::xrmvalue
+		x11::xrmoptiondescrec x11::xwmhints x11::xsizehints x11::xcomposestatus
+		tk::xt-class tk::xt-resource tk::xt-offset-rec tk::xt-widget
+		tk::x-push-button-callback-struct tk::x-drawing-area-callback
+		tk::xt-arg tk::xt-widget-geometry tk::xm-text-block-rec
+		tk::xm-text-field-callback-struct
+		tk::xm-file-selection-box-callback-struct tk::xm-list-callback-struct
+		wnn::wnn-buf))
 
 (defun get-structs ()
   (reduce (lambda (definitions definition)
@@ -520,34 +497,6 @@
 
 (defparameter *composite-types* (make-hash-table :test 'eql))
 
-
-
-(defun create-translation (struct-name struct-simple-parser-name foreign-type-name)
-  (let ((definitions
-	   `(progn
-     (cffi:defctype ,struct-simple-parser-name (:pointer (:struct ,struct-name)))
-      (cffi:define-foreign-type ,foreign-type-name ()
-	()
-	(:actual-type :pointer)
-	(:simple-parser ,struct-simple-parser-name))
-      (defmethod cffi::translate-to-foreign (object (type ,foreign-type-name))
-	(ff-wrapper::foreign-pointer-address object))
-      )))
-    (format t "~A~%" definitions)
-  (eval
-   definitions
-   )))
-
-(defun create-translation-for-base-type (base-type)
-  (create-translation
-   base-type
-   (intern (format nil "~A-~A-~A"  'pointer 'struct base-type))
-   (intern (format nil "~A-~A-~A-~A"  'pointer 'struct base-type 'type))))
-
-(defun run-create-translation-for-base-type ()
-  (create-translation-for-base-type 'display)
-  (create-translation-for-base-type 'screen))
-
 ;; also converts simple type, i.e. (not (consp type))
 (defun convert-composite-ff-type-to-cffi-type (type)
   ;; These are the only case we need to worry about as empiracally
@@ -617,23 +566,6 @@
       (t
        (error "unknown type, can't convert ~s" type)))))
 
-
-
-;; (defmethod cffi::translate-to-foreign (object (type display-type))
-;;   (let ((p (foreign-alloc '(:struct struct-pair))))
-;;     (translate-into-foreign-memory object type p)
-;;     (values p t)))
-
-;; (defmethod cffi::translate-to-foreign (object (type x11::display-type))
-;;   (ff-wrapper::foreign-pointer-address object))
-
-
-;; (defmethod translate-to-foreign (object (type pair))
-;;   (let ((p (foreign-alloc '(:struct struct-pair))))
-;;     (translate-into-foreign-memory object type p)
-;;     (values p t)))
-
-
 ;; (defmethod cffi:translate-to-foreign (pointer (type display-type))
 ;;   (declare (ignore type))
 ;;   (foreign-pointer-address pointer))
@@ -657,6 +589,9 @@
 	     (:simple-parser ,simple-parser))))
     (format t "cffi-define-foreign-type~%~s~%" expression)
     (eval expression)))
+
+
+
 
 
 (defun generate-cffi-arg-list (ff-arg-list)
@@ -773,11 +708,6 @@
        (convert-composite-ff-type-to-cffi-type raw-return-type))
       (t
        (error "unidentified return type: ~s" raw-return-type)))))
-
-(cffi:define-foreign-type clim-object-type ()
-  ()
-  (:actual-type :pointer)
-  (:simple-parser clim-object))
 
 ;; (defmethod cffi:translate-to-foreign (pointer (type foreign-pointer))
 ;;   (declare (ignore type))

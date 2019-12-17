@@ -327,6 +327,7 @@
 (defun set-sensitive (widget value)
   (xt_set_sensitive widget (if value 1 0)))
 
+#+allegro
 (excl:ics-target-case
  (:+ics
   (defun setlocale (&optional (category 0) locale)
@@ -346,10 +347,17 @@
 	 (:+ics '("clim*xnlLanguage: japanese"))))
   "A list of resource specification strings")
 
+#-allegro
+(defparameter *external-formats-to-locale-charset-alist*
+  (list '(:utf-8 . "UTF-8")))
+   
+
+#+allegro
 (defparameter *external-formats-to-locale-charset-alist*
               `((,(excl:find-external-format "UTF-8") . "UTF-8")
                 (,(excl:find-external-format "LATIN1") . "ISO-8859-1")))
 
+#+allegro
 (defun try-setting-x-locale (locale)
   (setlocale lc-all locale)
   (let ((supported (x-supports-locale)))
@@ -357,6 +365,12 @@
       (x-set-locale-modifiers "")
       locale)))
 
+#-allegro
+(defun set-supported-x-locale ()
+  ;; For now assume that :utf8 can over-load local ansi C setting.
+  (try-setting-x-locale "C"))
+
+#+allegro
 (defun set-supported-x-locale ()
   (labels ((ef-name (ef)
              (if (excl:composed-external-format-p ef)
@@ -373,8 +387,7 @@
           (try-setting-x-locale "C")))))
 
 (ff-wrapper::defun-foreign-callable xt-current-locale-for-acl ((display (* :void)) (xnl (* :char)) (client-data (* :void)))
-  (declare (:convention :c)
-           (ignore display client-data xnl))
+  (declare (ignore display client-data xnl))
   (set-supported-x-locale))
 
 ;; note that this is different from xt-initialize which calls
@@ -388,10 +401,17 @@
        (let ((n (length *fallback-resources*)))
 	 (with-*-array (v (1+ n))
 	   (dotimes (i n)
+	     (format t "(macroexpand-1 '(setf (*-array v i)
+                   (string-to-foreign (nth i *fallback-resources*))):~% ~s~%"
+		     (macroexpand-1 '(setf (*-array v i)
+				      (string-to-foreign (nth i *fallback-resources*)))))
 	     (setf (*-array v i)
                    (string-to-foreign (nth i *fallback-resources*))))
-	   (setf (*-array v n) 0)
+	   (setf (*-array v n)
+		 #+allegro 0
+		 #-allegro (cffi:null-pointer))
 	   v))))
+    #+allegro
     (excl:ics-target-case
       (:+ics
        (xt_set_language_proc 0 (ff-wrapper::register-foreign-callable
@@ -407,9 +427,21 @@
 		       args)))
       (values context display app))))
 
-(defun xt-name (w) (values (excl:native-to-string (xt_name w))))
-(defun xt-class (w) (values (excl:native-to-string
-			     (xt-class-name (xt_class w)))))
+(defun xt-name (w)
+  #-allegro
+  (values (cffi:foreign-string-to-lisp (xt_name w)))
+  #+allegro
+  (values (excl:native-to-string (xt_name w)))
+  )
+
+(defun xt-class (w)
+  (values
+   #-allegro
+   (cffi:foreign-string-to-lisp
+    (xt-class-name (xt_class w)))
+   #+allegro
+   (excl:native-to-string
+    (xt-class-name (xt_class w)))))
 
 (defun widget-resource-name-and-class (w)
   (do* ((names nil (cons (xt-name w) names))

@@ -3,7 +3,7 @@
 
 (in-package :x11)
 
-#-(version>= 6 1)
-(defforeign-functions-now)
+;; #-(version>= 6 1)
+;; (defforeign-functions-now)
 
 (provide :clim-debug)

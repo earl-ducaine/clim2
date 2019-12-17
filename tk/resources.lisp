@@ -258,7 +258,15 @@
   (or (second (find value *ol-defines* :key #'first))
       (call-next-method)))
 
+;; expansion from xt-defs-lisp in non-allegro.
+;; (DEFUN MAKE-XT-ARGLIST
+;;           (&KEY NUMBER FF-WRAPPER::IN-FOREIGN-SPACE FF-WRAPPER::INITIALIZE)
+;;      (DECLARE (IGNORE FF-WRAPPER::IN-FOREIGN-SPACE FF-WRAPPER::INITIALIZE))
+;;      (CFFI:FOREIGN-ALLOC '(:STRUCT XT-ARG) :COUNT NUMBER))
 
+
+;; non-allegro use the definition in xt-defs.lisp
+#+allegro
 (defun make-xt-arglist (&key (number 1))
   (allocate-cstruct 'xt-arglist
 		    :number number :initialize t))
@@ -496,7 +504,11 @@
 	      (dolist (resource-desc resource-descriptions)
 		(destructuring-bind (get-memref-type convert-p type)
 		    resource-desc
-		  (let ((value (sys:memref-int (xt-arglist-value arglist i) 0 0
+		  (let ((value
+			  #-allegro
+			  (cffi:mem-ref (xt-arglist-value arglist i) get-memref-type)
+			  #+allegro
+			 (sys:memref-int (xt-arglist-value arglist i) 0 0
 					       get-memref-type)))
 		    (incf i)
 		    (if convert-p
@@ -604,7 +616,10 @@
 
 (defmethod convert-resource-out ((parent  t) (type (eql 'string)) value)
   (note-malloced-object
-   (excl:ics-target-case
+   #-allegro
+   (string-to-foreign value)
+  #+allegro
+  (excl:ics-target-case
     (:+ics
      ;; JPM 1/99. We know this EUC stuff is wrong for two reasons:
      ;; 1.  We free everything with SYSTEM-FREE, which can't free
@@ -667,6 +682,9 @@
 
 (defmethod convert-resource-in ((parent t) (type (eql 'string)) value)
   (unless (zerop value)
+    #-allegro
+    (cffi:foreign-string-to-lisp value)
+    #+allegro
     (excl:native-to-string value)))
 
 (defmethod convert-resource-in ((parent t) (type (eql 'boolean)) value)
@@ -781,7 +799,11 @@
 
 (defmethod convert-resource-in ((parent t) (type (eql 'ol-str)) value)
   (unless (zerop value)
-    (values (excl:native-to-string value))))
+    (values
+     #-allegro
+     (cffi:foreign-string-to-lisp value)
+     #+allegro
+     (excl:native-to-string value))))
 
 
 (defmethod convert-resource-out ((parent t) (type (eql 'ol-font)) value)

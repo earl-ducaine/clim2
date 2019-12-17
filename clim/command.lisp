@@ -549,7 +549,7 @@
        (slot-value (find-command-table command-table) 'menu)))
 
 (defun find-menu-item (menu-name command-table &key (errorp t))
-  (declare (values menu-item command-table))
+  #+allegro (declare (values menu-item command-table))
   (let* ((command-table (find-command-table command-table))
          (item (find menu-name (slot-value command-table 'menu)
                      :test #'menu-name-equal :key #'first)))

@@ -228,6 +228,7 @@
 		    :error errorp)))
 
 (defun run-profile-clim-tests (&optional (prefix "notes/profiles"))
+  #+allegro
   (let ((prof::*hidden-packages* nil)
 	(prof::*significance-threshold* 0.001)
 	(prof::*fractional-significance-threshold* .002))

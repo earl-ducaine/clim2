@@ -17,6 +17,13 @@
     (unless ep (error "Entry point ~S not found" x))
     (class-array ep 0)))
 
+(defun local-native-to-string (foreign-string)
+  #+allegro (excl:native-to-string foreign-string)
+  #-allegro (cond
+	      ((null foreign-string) nil)
+	      (t
+	       (cffi:foreign-string-to-lisp foreign-string))))
+	     
 ;; This is only called to fill in the cache, so it can be (real) slow.
 (defun get-resource-internal (class fn resource-class resource-name)
   (with-ref-par ((resources 0 *)
@@ -33,17 +40,18 @@
 	  (dotimes (i n)
 	    (let* ((res (xt-resource-list resources i))
 		   (original-name (xt-resource-name res)))
-	      (when (string-equal (excl:native-to-string original-name)
-				  tk-resource-name)
+	      (when (string-equal
+		     (local-native-to-string original-name)
+		     tk-resource-name)
 		(let ((*package* (find-package :tk)))
 		  (return
 		    (make-instance resource-class
 		      :original-name original-name
 		      :name resource-name
 		      :class (lispify-resource-class
-			      (excl:native-to-string (xt-resource-class res)))
+			      (local-native-to-string (xt-resource-class res)))
 		      :type (lispify-resource-type
-			     (excl:native-to-string (xt-resource-type res))))))))))
+			     (local-native-to-string (xt-resource-type res))))))))))
 	(xt_free resources))
       result)))
 
@@ -105,11 +113,11 @@
 	(push (make-instance
 		  resource-class
 		:original-name (xt-resource-name (xt-resource-list resources i))
-		:name (lispify-resource-name (excl:native-to-string (xt-resource-name (xt-resource-list resources i))))
+		:name (lispify-resource-name (local-native-to-string (xt-resource-name (xt-resource-list resources i))))
 		:class (lispify-resource-class
-			(excl:native-to-string (xt-resource-class (xt-resource-list resources i))))
+			(local-native-to-string (xt-resource-class (xt-resource-list resources i))))
 		:type (lispify-resource-type
-		       (excl:native-to-string (xt-resource-type (xt-resource-list resources i)))))
+		       (local-native-to-string (xt-resource-type (xt-resource-list resources i)))))
 	      r))
       (xt_free resources)
       r)))
@@ -121,6 +129,9 @@
   (get-resource-list-internal class #'xt-get-constraint-resource-list
 			      'constraint-resource))
 
+(defmethod clos:validate-superclass
+    ((class xt-class) (meta standard-class))
+  t)
 
 (defclass xt-root-class (display-object)
   ((events :initform nil :accessor widget-event-handler-data)
@@ -167,6 +178,14 @@
 (defclass constraint-resource (basic-resource)
   ())
 
+(defun handle-to-pointer (handle)
+  (cond
+	  ((cffi:pointerp handle)
+	   handle)
+	  ((integerp handle)
+	   (cffi:make-pointer handle))
+	  (t
+	   (error "handle is not of the correct type."))))
 
 (defun make-classes (classes)
   (let ((clist nil))
@@ -183,6 +202,7 @@
 	((null cs)
 	 (nreverse r))
       (destructuring-bind (handle class-ep) (car cs)
+	(setf handle (handle-to-pointer handle))
 	#+ignore
 	(format excl:*initial-terminal-io* ";; Initializing class ~s~%" class-ep)
 	(let ((class
@@ -208,8 +228,17 @@
 	    (apply #'append classes)
 	    :test #'string=))))
 
-(defun widget-class-name (h)
-  (values (excl:native-to-string (xt-class-name h))))
+(defun widget-class-name (handle)
+  #-allegro
+  (setf handle
+	(cond
+	  ((cffi:pointerp handle)
+	   handle)
+	  ((integerp handle)
+	   (cffi:make-pointer handle))
+	  (t
+	   (error "handle is not of the correct type."))))
+  (values (local-native-to-string (xt-class-name handle))))
 
 (defvar *widget-name-to-class-name-mapping*
     '(((list scrolling-list) ol-list)
@@ -245,7 +274,10 @@
 	  (n 0))
       (declare (fixnum j l m n))
 
-      (ecase excl:*current-case-mode*
+      #-allegro (setq l #.(char-code #\a) m #.(char-code #\z)
+		      n  #.(- (char-code #\A) (char-code #\a)))
+      
+      #+allegro (ecase excl:*current-case-mode*
 	((:case-sensitive-lower :case-insensitive-lower)
 	 (setq l #.(char-code #\A) m #.(char-code #\Z)
 	       n  #.(- (char-code #\a) (char-code #\A))))
@@ -320,18 +352,40 @@
 
 
 (ff-wrapper:defun-foreign-callable toolkit-error-handler ((message :foreign-address))
-  (let ((*error-output* excl:*initial-terminal-io*))
-    (error "Xt: ~a" (excl:native-to-string message))))
+  (let (
+	#+allegro (*error-output* excl:*initial-terminal-io*)
+		  )
+    (error "Xt: ~a" (local-native-to-string message))))
 
 (ff-wrapper:defun-foreign-callable toolkit-warning-handler ((message :foreign-address))
-  (let ((*error-output* excl:*initial-terminal-io*))
-    (warn "Xt: ~a" (excl:native-to-string message))))
+  (let (
+	#+allegro (*error-output* excl:*initial-terminal-io*)
+		  )
+    (warn "Xt: ~a" (local-native-to-string message))))
 
+
+(defun get-subclasses (class)
+  (mapcar (lambda (class)
+	    (cons  (class-name class)
+		   (get-subclasses class)))
+	  (clos:class-direct-subclasses class)))
+
+(defun map-over-subclasses (function class)
+  #+allegro
+  (excl::map-over-subclasses function class)
+  #-allegro
+  (let ((class-names (remove-duplicates (alexandria:flatten
+					 (get-subclasses
+					  (if (symbolp class)
+					      (find-class class)
+					      class))))))
+    ;; Get class names
+    (mapcar function (mapcar #'find-class class-names))))
 
 ;; This is a terrible hack used to compensate for bugs/inconsistencies
 ;; in the XM and OLIT toolkits.
 (defun add-resource-to-class (class resource)
-  (excl::map-over-subclasses
+  (map-over-subclasses
    #'(lambda (c)
        (pushnew resource (slot-value c 'specially-hacked-resources))
        (with-slots (cached-resources get-values-cache set-values-cache
@@ -342,11 +396,10 @@
 	 (clrhash cached-constraint-resources)))
    class))
 
-#+(version>= 5 0)
 (defun fixup-class-entry-points ()
   (let ((root (find-class 'xt-root-class)))
-    (excl::map-over-subclasses #'tk::unregister-address root)
-    (excl::map-over-subclasses
+    (map-over-subclasses #'tk::unregister-address root)
+    (map-over-subclasses
      #'(lambda (class)
 	 (let* ((old-addr (and (typep class 'xt-class)
 			       (ff-wrapper::foreign-pointer-address class)))
@@ -361,22 +414,20 @@
 	       (register-address class ))))
      root)))
 
-
-#+(and (not (version>= 5 0)) dlfcn)
-(defun fixup-class-entry-points ()
-  (let ((root (find-class 'xt-root-class)))
-    (excl::map-over-subclasses #'tk::unregister-address root)
-    (excl::map-over-subclasses
-     #'(lambda (class)
-	 (let* ((old-addr (and (typep class 'xt-class)
-			       (ff-wrapper::foreign-pointer-address class)))
-		(entry-point (and (typep class 'xt-class)
-				  (slot-boundp class 'entry-point)
-				  (slot-value class 'entry-point)))
-		(new-addr (and entry-point
-			       (get-foreign-variable-value entry-point))))
-	   (when entry-point
-	       (unless (equal old-addr new-addr)
-		 (setf (ff-wrapper::foreign-pointer-address class) new-addr))
-	       (register-address class ))))
-     root)))
+;; (defun fixup-class-entry-points ()
+;;   (let ((root (find-class 'xt-root-class)))
+;;     (map-over-subclasses #'tk::unregister-address root)
+;;     (map-over-subclasses
+;;      #'(lambda (class)
+;; 	 (let* ((old-addr (and (typep class 'xt-class)
+;; 			       (ff-wrapper::foreign-pointer-address class)))
+;; 		(entry-point (and (typep class 'xt-class)
+;; 				  (slot-boundp class 'entry-point)
+;; 				  (slot-value class 'entry-point)))
+;; 		(new-addr (and entry-point
+;; 			       (get-foreign-variable-value entry-point))))
+;; 	   (when entry-point
+;; 	       (unless (equal old-addr new-addr)
+;; 		 (setf (ff-wrapper::foreign-pointer-address class) new-addr))
+;; 	       (register-address class ))))
+;;      root)))

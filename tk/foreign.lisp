@@ -9,6 +9,32 @@
 (defclass application-context (ff-wrapper:foreign-pointer)
   ((displays :initform nil :accessor application-context-displays)))
 
+(defmethod cffi:translate-to-foreign (pointer (type ff-wrapper::clim-object-type))
+  (declare (ignore type))
+  (format t "translate-to-foreign ~s~%" pointer)
+  (cond
+    ((typep pointer 'ff-wrapper:foreign-pointer)
+     (let ((foreign-pointer-address
+	    (ff-wrapper::foreign-pointer-address pointer)))
+       (format
+	t
+	"cffi:translate-to-foreign (ff-wrapper::foreign-pointer-address pointer):~%"
+	foreign-pointer-address)	       
+       (cond
+	 ((numberp foreign-pointer-address)
+	  (cffi:make-pointer foreign-pointer-address))
+	 (t
+	  foreign-pointer-address))))
+    ((and (numberp pointer)
+	  (zerop pointer))
+     (cffi:null-pointer))
+    ((null pointer)
+     (cffi:null-pointer))
+    ((stringp pointer)
+     (cffi:foreign-string-alloc pointer))
+    (t
+     pointer)))
+
 (defparameter *error-handler-function-address* nil)
 (defparameter *warning-handler-function-address* nil)
 
@@ -32,30 +58,41 @@
 (defparameter *large-connection-quantum* 20)
 
 (defun open-display (&key (context (create-application-context))
-			  (host nil)
-			  (application-name "clim")
-			  (application-class "Clim")
-			  (options 0)
-			  (num-options 0)
-			  (argc 0)
-			  (argv 0))
+		       (host nil)
+		       (application-name "clim")
+		       (application-class "Clim")
+		       (options 0)
+		       (num-options 0)
+		       (argc 0)
+		       (argv 0))
   (let ((d (with-ref-par ((argc argc :int))
-	     (let ((temp (mp:process-quantum mp:*current-process*)))
+	     (let (
+		   #+allegro (temp (mp:process-quantum mp:*current-process*)))
 	       (unwind-protect
-		   (progn (setf (mp:process-quantum mp:*current-process*) *large-connection-quantum*)
-			  (mp:process-allow-schedule)
-			  (xt_open_display context
-					   (if host
-					       (lisp-string-to-string8 host)
-					     0)
-					   (lisp-string-to-string8 application-name)
+		    (progn
+		      #+allegro (setf (mp:process-quantum mp:*current-process*) *large-connection-quantum*)
+		      #+allegro (mp:process-allow-schedule)
+		      #-allegro (xt_open_display context
+						 (if host
+						     (lisp-string-to-string8 host)
+						     0)
+						 (lisp-string-to-string8 application-name)
 
-					   (lisp-string-to-string8 application-class)
-					   options
-					   num-options &argc argv))
-		 (setf (mp:process-quantum mp:*current-process*) temp)
-		 (mp:process-allow-schedule))))))
-    (if (zerop d)
+						 (lisp-string-to-string8 application-class)
+						 options
+						 num-options &argc argv)
+		      #+allegro (xt_open_display context
+						 (if host
+						     (lisp-string-to-string8 host)
+						     0)
+						 (lisp-string-to-string8 application-name)
+
+						 (lisp-string-to-string8 application-class)
+						 options
+						 num-options &argc argv))
+		 #+allegro (setf (mp:process-quantum mp:*current-process*) temp)
+		 #+allegro (mp:process-allow-schedule))))))
+    (when (or (and (numberp d) (zerop d)) (cffi:null-pointer-p d))
 	(error "cannot open the display: ~A" host))
     ;; Used for debugging:
     #+ignore
@@ -80,5 +117,8 @@
   (with-ref-par ((name 0 *)
 		 (class 0 *))
     (xt_get_application_name_and_class display &name &class)
-    (values (excl:native-to-string name)
-	    (excl:native-to-string class))))
+    (values
+     #-allegro (cffi:foreign-string-to-lisp name)
+     #+allegro (excl:native-to-string name)
+     #-allegro (cffi:foreign-string-to-lisp class)
+     #+allegro (excl:native-to-string class))))

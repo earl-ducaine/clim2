@@ -209,6 +209,8 @@
     (when (typep m 'xt::xm-bulletin-board)
       (tk::set-values m :default-position nil :x x :y y))))
 
+
+#+allegro
 (excl:ics-target-case
 (:+ics
 

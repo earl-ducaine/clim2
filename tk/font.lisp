@@ -112,8 +112,9 @@
 	  (seq (make-sequence result-type n)))
       (prog1
 	  (dotimes (i n seq)
-	    (setf (elt seq i) (excl:native-to-string
-			       (xfontname-list names i))))
+	    (setf (elt seq i)
+		  #+allegro (excl:native-to-string (xfontname-list names i))
+		  #-allegro (cffi:foreign-string-to-lisp (xfontname-list names i))))
 	(x11::xfreefontnames names)))))
 
 #+broken
@@ -142,6 +143,13 @@
 
 ;;; fontset support
 
+#-allegro
+(defun fonts-of-font-set (font-set)
+  (declare (ignore font-set))
+  ;; Generate a meaningful error message
+  (error "A non-ICS lisp that uses 7-bit characters does not support this operation."))
+
+#+allegro
 (excl:ics-target-case
 (:+ics
 

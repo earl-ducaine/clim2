@@ -239,12 +239,13 @@
 ;;;
 
 (defun wait-for-callback-invocation (port predicate &optional (whostate "Waiting for callback"))
-  (if (eq mp:*current-process* (port-process port))
+  (if (eq #+allegro mp:*current-process* #-allegro (bt:current-thread) (port-process port))
       (progn
 	(loop
 	  (when (funcall predicate) (return nil))
 	  (process-next-event port)))
-    (mp:process-wait whostate predicate)))
+      #+allegro (mp:process-wait whostate predicate)
+      #-allegro (bt:thread-yield)))
 
 ;; accelerator and mnemonic support
 

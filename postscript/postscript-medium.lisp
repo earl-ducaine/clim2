@@ -522,7 +522,7 @@
 (defmethod new-page ((medium postscript-medium))
   (error "Obsolete"))
 
-(excl::without-package-locks
+(#+allegro excl::without-package-locks #-allegro sb-ext:without-package-locks
 ;;; XXX: what the dis? Is this intentionally obfuscated?
 (defmacro with-postscript-glyph-for-character (&body body)
   `(macrolet ((port-glyph-for-character (port character style &optional our-font)

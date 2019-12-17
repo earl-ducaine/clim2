@@ -669,7 +669,8 @@ a point. Hence we have 72dpi resolution printer.
 ;;; Text stuff
 
 (defmacro with-hpgl-port-glyph-for-character ((port) &body body)
-  `(excl:without-package-locks
+  `(#-allegro sb-ext:without-package-locks
+    #+allegro excl:without-package-locks
     (macrolet ((port-glyph-for-character (port character style &optional our-font)
 		 `(multiple-value-bind (character-set index)
 		      (char-character-set-and-index ,character)

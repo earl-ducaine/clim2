@@ -101,5 +101,3 @@
   (pushnew 'defun-inline zwei:*irrelevant-functions*)
   (pushnew 'defun-inline zwei:*irrelevant-defining-forms*))
 
-
-;; Backwards compatibility for new ics functions during beta2 development

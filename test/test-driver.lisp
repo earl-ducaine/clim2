@@ -32,7 +32,7 @@
 (defmethod get-invocation-pane ((inv activity-invocation) (name cons))
   (destructuring-bind (frame-type pane-name) name
     (dolist (frame (frame-manager-frames (invocation-activity inv))
-	      (error "Cannot find frame type ~S in activity"))
+	      (error "Cannot find frame type ~S in activity" nil))
       (when (typep frame frame-type)
 	(return (get-frame-pane frame pane-name))))))
 
@@ -79,17 +79,21 @@
 		     (handler-invocation-debugger-hook inv condition)))
 	       (do-it frame))))
     (unless process
-      (setq process (mp:process-run-function
-		     (format nil "~A Test process for" frame)
-		     #'run-frame-top-level-almost
-		     frame)))
+      (setq process #-allegro (bt:make-thread 
+			       (lambda ()
+				 (run-frame-top-level-almost frame))
+			       :name (format nil "~A Test process for" frame))
+	    #+allegro (mp:process-run-function
+		       (format nil "~A Test process for" frame)
+		       #'run-frame-top-level-almost
+		       frame)))
     (setf (invocation-process inv) process)
     (wait-for-clim-input-state inv)))
 
 
 (defun handler-invocation-debugger-hook (invocation condition)
   (declare (ignore invocation))
-  (format excl:*initial-terminal-io* "The following error occurred: ~A~%" condition))
+  (format #-allegro t #+allegro excl:*initial-terminal-io* "The following error occurred: ~A~%" condition))
 
 (defvar *default-input-state-timeout* 300)
 
@@ -99,9 +103,9 @@
       (declare (ignore port))
       ;; (when port #-acl86win32 (xm-silica::port-finish-output port))
       )
-    (mp:process-allow-schedule)
+    #+allegro (mp:process-allow-schedule)
     (flet ((input-state-p (process)
-	     (or (not (mp:process-thread process))
+	     #+allegro (or (not (mp:process-thread process))
 		 (member  (mp::process-whostate process)
 			  '("Returned value"
 			    "Waiting for dialog"
@@ -109,14 +113,14 @@
 			  :test #'string-equal))))
       (if timeout
 	  (let ((done nil))
-	    (mp:process-wait-with-timeout
+	    #+allegro (mp:process-wait-with-timeout
 	     "Waiting for process to sleep"
 	     timeout
 	     #'(lambda ()
 		 (setq done (input-state-p process))))
 	    (unless done
 	      (error "Timed out after ~D seconds" timeout)))
-	(mp:process-wait
+	#+allegro (mp:process-wait
 	 "Waiting for process to sleep"
 	 #'(lambda ()
 	     (input-state-p process)))))))
@@ -127,7 +131,8 @@
   (with-slots (process) invocation
     (write-line "Terminating frame")
     (unless (progn
-	      (mp::process-thread process))
+	      #-allegro (error "not clear what the non-allegro solution is")
+	      #+allegro (mp::process-thread process))
       (error "Frame terminated abnormally"))
     (execute-one-command invocation exit-command)
     (unless (wait-for-death process)
@@ -135,12 +140,14 @@
 
 (defun wait-for-death (process)
   (let (done)
-    (mp:process-wait-with-timeout
-     "Waiting for death"
-     *death-timeout*
-     #'(lambda ()
-	 (setq done
-	   (not (mp::process-thread process)))))
+    ;; If not allegro, wait foreven -_-
+    #-allegro (bt:join-thread process)
+    #+allegro (mp:process-wait-with-timeout
+	       "Waiting for death"
+	       *death-timeout*
+	       #'(lambda ()
+		   (setq done
+			 (not (mp::process-thread process)))))
     done))
 
 (defvar *execute-one-command-hook* nil)
@@ -278,8 +285,9 @@
 						   invocation command-continuation))
 					   (function (funcall command-continuation)))
 					 (unwind-protect
-					   (terminate-invocation invocation exit-command)
-					   (mp::process-kill (invocation-process invocation))
+					      (terminate-invocation invocation exit-command)
+					   #-allegro (bt::destroy-thread (invocation-process invocation))
+					   #+allegro (mp::process-kill (invocation-process invocation))
 					   (unless (wait-for-death (invocation-process invocation))
 						 (warn "Process would not die when killed")))
 					 (destroy-invocation invocation))))))
@@ -764,12 +772,13 @@
   (with-slots (process) invocation
     (let ((avv-frame nil))
       (loop
-	(setf avv-frame nil)
-	(mp::process-interrupt process #'(lambda () (setq avv-frame (list *application-frame*))))
-	(mp:process-wait "Waiting for frame" #'(lambda () avv-frame))
-	(when (typep  (car avv-frame) 'clim-internals::accept-values)
-	  (return-from get-avv-frame (car avv-frame)))
-	(sleep 1)))))
+	 (setf avv-frame nil)
+	 #+allegro (mp::process-interrupt process #'(lambda () (setq avv-frame (list *application-frame*))))
+	 #+allegro (mp::process-interrupt process #'(lambda () (setq avv-frame (list *application-frame*))))
+	 #+allegro (mp:process-wait "Waiting for frame" #'(lambda () avv-frame))
+	 (when (typep  (car avv-frame) 'clim-internals::accept-values)
+	   (return-from get-avv-frame (car avv-frame)))
+	 (sleep 1)))))
 
 #+ignore
 (defun find-avv-query (avv-stream prompt)
@@ -847,7 +856,7 @@
 ;; run some commands on it.
 
 (eval-when (compile load eval)
-  (require :prof))
+  #+allegro (require :prof))
 
 (defun do-frame-test-with-profiling (test &key (type :time) prefix)
   (flet ((profiling-hook (invocation command continuation)
@@ -859,15 +868,15 @@
 	     (progn
 	       (unwind-protect
 		   (progn
-		     (prof::start-profiler :type type :verbose nil)
+		     #+allegro (prof::start-profiler :type type :verbose nil)
 		     (funcall continuation))
-		 (profiler:stop-profiler))
+		 #+allegro (profiler:stop-profiler))
 	       (with-open-file (*standard-output* (format nil "~A/~A.~A-tree.lisp" prefix (car command) type)
 				:direction :output :if-exists :supersede)
-		 (prof:show-call-graph))
+		 #+allegro (prof:show-call-graph))
 	       (with-open-file (*standard-output* (format nil "~A/~A.~A-flat.lisp" prefix (car command) type)
 				:direction :output :if-exists :supersede)
-		 (prof:show-flat-profile))))))
+		 #+allegro (prof:show-flat-profile))))))
     (let ((*execute-one-command-hook* #'profiling-hook))
       (funcall test))))
 
@@ -879,9 +888,9 @@
   (let ((frame nil))
     (flet ((predicate ()
 	     (setq frame (find-frame :type type :framem framem :state state))))
-      (if timeout
-	  (mp::process-wait-with-timeout "Waiting for frame" timeout #'predicate)
-	(mp:process-wait "Waiting for frame" #'predicate))
+      #+allegro (if timeout
+		    (mp::process-wait-with-timeout "Waiting for frame" timeout #'predicate)
+		    (mp:process-wait "Waiting for frame" #'predicate))
       (unless (or frame (not errorp))
 	(error "Cannot find frame of type ~S" type))
       frame)))
@@ -898,28 +907,28 @@
 	   (frame-manager-frames framem)))
 
 (defun find-notify-user (frame)
-  (getf (mp:process-property-list
-	 (clim-internals::frame-top-level-process frame))
-	'notify-user))
+  #+allegro (getf (mp:process-property-list
+		   (clim-internals::frame-top-level-process frame))
+		  'notify-user))
 
 (defun find-menu (frame)
-  (getf (mp:process-property-list (clim-internals::frame-top-level-process frame)) 'menu-choose))
+  #+allegro (getf (mp:process-property-list (clim-internals::frame-top-level-process frame)) 'menu-choose))
 
 
 (defun abort-menu (frame)
-  (mp::process-interrupt (clim-internals::frame-top-level-process frame)
+  #+allegro (mp::process-interrupt (clim-internals::frame-top-level-process frame)
 			 #'(lambda () (throw 'menu-choose nil)))
-  (mp::process-allow-schedule))
+  #+allegro (mp::process-allow-schedule))
 
 (defun select-menu-item (frame value)
-  (mp::process-interrupt (clim-internals::frame-top-level-process frame)
+  #+allegro (mp::process-interrupt (clim-internals::frame-top-level-process frame)
 			 #'(lambda () (throw 'menu-choose value)))
-  (mp::process-allow-schedule))
+  #+allegro (mp::process-allow-schedule))
 
 (defun notify-user-ok (frame)
-  (mp::process-interrupt (clim-internals::frame-top-level-process frame)
+  #+allegro (mp::process-interrupt (clim-internals::frame-top-level-process frame)
 			 #'(lambda () (throw 'notify-user t)))
-  (mp::process-allow-schedule))
+  #+allegro (mp::process-allow-schedule))
 
 (defun find-user-interface-components (frame specifications &key (errorp t))
   (let* ((n (length specifications))
@@ -950,9 +959,9 @@
     (flet ((predicate ()
 	     (setq done
 	       (not (eq (frame-state frame) :enabled)))))
-      (if timeout
-	  (mp::process-wait-with-timeout "Waiting for disable" timeout #'predicate)
-	(mp::process-wait "Waiting for disable" #'predicate)))
+      #+allegro (if timeout
+		    (mp::process-wait-with-timeout "Waiting for disable" timeout #'predicate)
+		    (mp::process-wait "Waiting for disable" #'predicate)))
     (assert done () "Frame did not un enable")))
 
 (defmacro with-frame-invocation ((frame) &body body)
@@ -979,7 +988,7 @@
 				  `(when (car (setq ,result (multiple-value-list ,(car clause))))
 				    (setq ,which ,(incf i))))
 			      clauses))))
-	 (if ,time
+	 #+allegro (if ,time
 	     (mp::process-wait-with-timeout "Waiting" ,time #'predicate)
 	   (mp::process-wait "Waiting" #'predicate)))
        ,(do ((clauses clauses (cdr clauses))
@@ -996,7 +1005,7 @@
 
 ;;; This should be at the end:
 ;;; make the training selective.
-
+#+allegro 
 (locally (declare (special si::*clos-preload-packages*))
   (setq si::*clos-preload-packages*
     (mapcar #'find-package

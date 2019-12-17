@@ -72,7 +72,7 @@
 	  (setq vy-scale (/ (float height) (- maxv minv))))))))
 
 (defgeneric map-over-data-points (function dataset &key start end)
-  (declare (dynamic-extent function)))
+  #+allegro (declare (dynamic-extent function)))
 
 (defmethod map-over-data-points (function (dataset dataset) &key start end)
   (let ((data (dataset-data dataset)))
@@ -80,7 +80,7 @@
       (funcall function element))))
 
 (defgeneric map-over-data-point-uv-positions (function dataset &key start end)
-  (declare (dynamic-extent function)))
+  #+allegro (declare (dynamic-extent function)))
 
 (defmethod map-over-data-point-uv-positions (function (dataset dataset) &key start end)
   (map-over-data-points
@@ -91,7 +91,7 @@
     :start start :end end))
 
 (defgeneric map-over-data-point-xy-positions (function dataset &key start end)
-  (declare (dynamic-extent function)))
+  #+allegro (declare (dynamic-extent function)))
 
 (defmethod map-over-data-point-xy-positions (function (dataset dataset) &key start end)
   ;; This translates from UV to XY coordinates.  This transformation simply
@@ -270,7 +270,7 @@
 (defmethod map-over-output-records-overlapping-region
 	   (function (record dataset-output-record) region 
 	    &optional (x-offset 0) (y-offset 0) &rest continuation-args)
-  (declare (dynamic-extent function continuation-args))
+  #+allegro (declare (dynamic-extent function continuation-args))
   (let ((data (dataset-data record)))
     (if (or (null region) (eq region +everywhere+))
 	(map-over-data-points
@@ -298,7 +298,7 @@
 (defmethod map-over-output-records-containing-position
 	   (function (record dataset-output-record) x y 
 	    &optional (x-offset 0) (y-offset 0) &rest continuation-args)
-  (declare (dynamic-extent function continuation-args))
+  #+allegro (declare (dynamic-extent function continuation-args))
   (let ((data (dataset-data record)))
     (translate-positions x-offset y-offset x y)
     (multiple-value-bind (xoff yoff)
@@ -454,7 +454,7 @@
   (window-clear (get-frame-pane *application-frame* 'display)))
 
 (defun display-caption (&rest strings)
-  (declare (dynamic-extent strings))
+  #+allegro (declare (dynamic-extent strings))
   (let* ((stream (get-frame-pane *application-frame* 'caption))
 	 (width (min (floor (window-inside-width stream) 
 			    (stream-character-width stream #\0))

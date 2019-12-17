@@ -636,7 +636,8 @@
 (defmethod print-object :around ((node lisp-object-call-node) stream)
   (handler-case
       (call-next-method node stream)
-    (print-not-readable)))
+    (t ()
+      (print-not-readable))))
 
 (defvar *unbound-marker* (list nil))
 (defmethod display-node ((node lisp-object-call-node) stream)
@@ -1148,6 +1149,7 @@
 	(terpri stream)
 	(display-graph-pane *application-frame* stream)))))
 
+#+allegro
 (define-browser-command (com-hardcopy-graph :name t :menu "Hardcopy")
     (&key (printer '(member :|lw| :|lw2| :|lw3|)
 		    :display-default t

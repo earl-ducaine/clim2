@@ -98,9 +98,13 @@
 		   (with-ref-par ,more-bindings ,@body)))))))))
 
 (defmacro object-display (object)
-  `(locally (declare (optimize (speed 3) (safety 0)))
-     (excl::slot-value-using-class-name 'display-object ,object
-					'display)))
+  `(locally #+allegro (declare (optimize (speed 3) (safety 0)))
+	    ;; Not clear how this is supposed to work. Do we get here
+	    ;; in practice?
+	    #-allegro (clos:slot-value-using-class  'display-object ,object
+					       'display)
+	    #+allegro (excl::slot-value-using-class-name 'display-object ,object
+					       'display)))
 
 (defvar *malloced-objects*)
 
@@ -115,6 +119,12 @@
        (dolist (entry *malloced-objects*)
 	 (funcall (car entry) (cdr entry))))))
 
+#-allegro
+(defmacro lisp-string-to-string8 (string)
+  (clim-utils:with-gensyms (length string8 i)
+    (clim-utils:once-only (string) string)))
+
+#+allegro
 (defmacro lisp-string-to-string8 (string)
   (clim-utils:with-gensyms (length string8 i)
     (clim-utils:once-only (string)
@@ -129,6 +139,18 @@
 	   ,string8))
 	(:-ics ,string)))))
 
+#-allegro
+(defun lisp-string-to-string16 (string)
+  (let ((foreign-string-buffer (cffi:foreign-alloc :uint16
+						   :count (length string)
+						   :initial-element 0)))
+    (cffi:lisp-string-to-foreign string foreign-string-buffer
+				 (* (1+ (length string)) 2)
+				 :encoding :utf-16)))
+
+
+  
+#+allegro
 (defmacro lisp-string-to-string16 (string)
   (clim-utils:with-gensyms (length string16 i j code)
     (clim-utils:once-only (string)
@@ -150,13 +172,18 @@
 	(:-ics (error "~S called in non-ICS Lisp"
 		      'lisp-string-to-string16))))))
 
+#-allegro
+(defmacro xchar-code (char)
+  (clim-utils:with-gensyms (code)
+    `(let ((,code (char-code ,char))) ,code)))
+
+#+allegro
 (defmacro xchar-code (char)
   (clim-utils:with-gensyms (code)
     `(let ((,code (char-code
 		   (excl:ics-target-case
 		    (:+ics
-		     #+(version>= 6 0 :pre-alpha 19) (excl::process-code ,char)
-		     #-(version>= 6 0 :pre-alpha 19) ,char)
+		     (excl::process-code ,char))
 		    (:-ics ,char)))))
        (excl:ics-target-case
 	(:+ics (logand ,code

@@ -4,41 +4,42 @@
 
 (in-package :tk)
 
-#-(version>= 6 1)
-(eval-when (eval compile)
-  (defmacro define-convenience-class (class superclasses entry-point)
-    (let ((c-function-name
-	   (intern (substitute #\_ #\-
-			       (lispify-tk-name entry-point :package nil)))))
-      `(progn
-	 (eval-when (eval compile)
-	   (defforeign ',c-function-name
-	       :entry-point (ff-wrapper:convert-foreign-name ,entry-point)
-	       :call-direct t
-	       :arguments '(foreign-address foreign-address foreign-address fixnum)
-	       :arg-checking nil
-	       :return-type :foreign-address))
-	 (defclass ,class ,superclasses
-	   ()
-	   (:metaclass xt-class))
-	 (defmethod make-widget ((w ,class) name parent &rest args
-				 &key (managed t) &allow-other-keys)
-	   (remf args :managed)
-	   (with-malloced-objects
-	       (multiple-value-bind
-		   (arglist n)
-		   (make-arglist-for-class (find-class ',class)
-					   parent
-					   args)
-	       (let ((o (,c-function-name
-			 parent
-			 (note-malloced-object (string-to-foreign name))
-			 arglist
-			 n)))
-		 (when managed
-		   (xt_manage_child o))
-		 o))))))))
-#+(version>= 6 1)
+;; #-(version>= 6 1)
+;; (eval-when (eval compile)
+;;   (defmacro define-convenience-class (class superclasses entry-point)
+;;     (let ((c-function-name
+;; 	   (intern (substitute #\_ #\-
+;; 			       (lispify-tk-name entry-point :package nil)))))
+;;       `(progn
+;; 	 (eval-when (eval compile)
+;; 	   (defforeign ',c-function-name
+;; 	       :entry-point (ff-wrapper:convert-foreign-name ,entry-point)
+;; 	       :call-direct t
+;; 	       :arguments '(foreign-address foreign-address foreign-address fixnum)
+;; 	       :arg-checking nil
+;; 	       :return-type :foreign-address))
+;; 	 (defclass ,class ,superclasses
+;; 	   ()
+;; 	   (:metaclass xt-class))
+;; 	 (defmethod make-widget ((w ,class) name parent &rest args
+;; 				 &key (managed t) &allow-other-keys)
+;; 	   (remf args :managed)
+;; 	   (with-malloced-objects
+;; 	       (multiple-value-bind
+;; 		   (arglist n)
+;; 		   (make-arglist-for-class (find-class ',class)
+;; 					   parent
+;; 					   args)
+;; 	       (let ((o (,c-function-name
+;; 			 parent
+;; 			 (note-malloced-object (string-to-foreign name))
+;; 			 arglist
+;; 			 n)))
+;; 		 (when managed
+;; 		   (xt_manage_child o))
+;; 		 o))))))))
+
+
 (eval-when (eval compile)
   (defmacro define-convenience-class (class superclasses entry-point)
     (let ((c-function-name

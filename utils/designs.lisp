@@ -27,16 +27,12 @@
 	((= opacity 1) +everywhere+)
 	(t (make-standard-opacity-1 opacity))))
 
-
 ;; Useful as the 0 value in patterns, to let the background show through
 (defconstant +transparent-ink+ +nowhere+)	;i.e., (make-opacity 0)
 
-
-(eval-when (:compile-toplevel)
-  ;; Black and white are the same everywhere
-  (defconstant +black+ (make-gray-color-1 0f0))
-  (defconstant +white+ (make-gray-color-1 1f0)))
-
+;; Black and white are the same everywhere
+(defconstant +black+ (make-gray-color-1 0f0))
+(defconstant +white+ (make-gray-color-1 1f0))
 
 ;;; Gray colors
 

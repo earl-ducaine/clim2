@@ -146,6 +146,24 @@
 		  (+ start (clim-utils:string-to-foreign sequence))
 		  (- end start)))
 
+
+#-allegro
+(defun draw-multibyte-string (drawable font-set gc x y string
+                              &optional start end)
+  (setf start (or start 0)
+        end (or end (length string))
+	string (subseq string start end))
+  (cffi:with-foreign-string (foreign-string string)
+    (x11:xmbdrawstring (object-display drawable)
+		       drawable
+		       font-set
+		       gc
+		       x y
+		       foreign-string
+		       (length string))))
+
+
+#+allegro
 (defun draw-multibyte-string (drawable font-set gc x y string
                               &optional start end)
   (setf start (or start 0)

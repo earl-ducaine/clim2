@@ -59,10 +59,14 @@
 			      (multiple-value-bind (sec msec)
 				  (truncate interval 1000)
 				(cons sec msec))))))
-	(unless (mp:wait-for-input-available fds
-					     :wait-function #'wait-function
-					     :timeout new-timeout)
-	  (setq mask (xt_app_pending context)))))
+	(unless
+	    #+allegro (mp:wait-for-input-available
+		       fds
+		       :wait-function #'wait-function
+		       :timeout new-timeout)
+	    #-allegro t
+	    
+	    (setq mask (xt_app_pending context)))))
     (values mask reason)))
 
 (defun process-one-event (context mask reason)

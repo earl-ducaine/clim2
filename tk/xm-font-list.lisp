@@ -37,9 +37,7 @@
   (declare (ignore class))
   (import-font-list value))
 
-
-
-
+#+allegro
 (excl:ics-target-case
  (:+ics
   (defvar *font-list-tags*
@@ -61,7 +59,13 @@
     (setq value (list value)))
   (flet ((create-font-list-entry (font)
            (note-malloced-object
-            (excl:ics-target-case
+	    #-allegro
+            ;; perhaps this should be xm-font-list-default-tag
+            (xm_font_list_entry_create ""
+                                       xm-font-is-font
+                                       font)
+            #+allegro
+	    (excl:ics-target-case
               (:+ics
                (let ((tag ""))
                  (when (consp font)
